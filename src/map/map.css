@@ -1,0 +1,111 @@
+/* AI-assisted: OpenAI Codex. Team review pending. */
+
+.mission-map {
+  isolation: isolate;
+  background-color: var(--bg);
+  box-shadow: 0 0 0 max(1px, calc(100cqw / 640)) var(--border);
+}
+
+.mission-map > canvas,
+.map-grid {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.mission-map > canvas {
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+
+.map-grid,
+.map-row {
+  display: grid;
+  grid-auto-rows: minmax(0, 1fr);
+}
+
+.map-cell {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+  cursor: pointer;
+  box-shadow: inset -1px -1px color-mix(in srgb, var(--bg) 22%, transparent);
+}
+
+.map-cell[data-fog] {
+  box-shadow: inset -1px -1px color-mix(in srgb, var(--moon-base) 12%, transparent);
+}
+
+.map-cell[aria-selected="true"],
+.map-cell:focus-visible {
+  z-index: 1;
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+}
+
+.map-cell[data-mark="ok"] {
+  outline: 2px solid var(--safe);
+  outline-offset: -2px;
+}
+
+.map-cell[data-mark="bad"] {
+  outline: 2px solid var(--crit);
+  outline-offset: -2px;
+}
+
+.map-cell[data-mark="hint"] {
+  outline: 1px dashed var(--focus);
+  outline-offset: -2px;
+}
+
+.map-cell[data-mark="ok"]::after,
+.map-cell[data-mark="bad"]::after {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  display: grid;
+  place-items: center;
+  width: max(11px, calc(100cqw * 13 / 1280));
+  height: max(11px, calc(100cqw * 13 / 1280));
+  border-radius: 2px;
+  background: var(--bg);
+  font: 700 max(9px, calc(100cqw * 11 / 1280)) / 1 system-ui, sans-serif;
+}
+
+.map-cell[data-mark="ok"]::after {
+  content: "✓";
+  color: var(--safe);
+}
+
+.map-cell[data-mark="bad"]::after {
+  content: "×";
+  color: var(--crit);
+}
+
+.map-dust::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  opacity: .34;
+  pointer-events: none;
+  background: repeating-linear-gradient(-19deg, transparent 0 12%, var(--mars-light) 18%, transparent 23% 32%);
+  animation: map-dust 3s ease-in-out infinite alternate;
+}
+
+.map-dust.map-still::before { animation: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .map-dust::before { animation: none; }
+}
+
+@keyframes map-dust {
+  from { background-position: -56px 48px; opacity: .14; }
+  to { background-position: 56px -48px; opacity: .34; }
+}

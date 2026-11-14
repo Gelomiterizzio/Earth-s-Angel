@@ -1,0 +1,58 @@
+/* AI-assisted: OpenAI Codex, Earth's Angel Integrante C */
+
+.preview-map {
+  --map-unit: calc(100cqw / 1280);
+  overflow: hidden;
+  box-shadow: 0 0 0 calc(2 * var(--map-unit)) var(--border);
+}
+
+.preview-map canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  image-rendering: pixelated;
+}
+
+.preview-map:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.preview-map-title,
+.preview-map-effects {
+  position: absolute;
+  left: calc(10 * var(--map-unit));
+  font-size: max(12px, calc(14 * var(--map-unit)));
+}
+
+.preview-map-title {
+  top: calc(10 * var(--map-unit));
+  padding: 0.3em 0.65em;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--moon-shadow);
+}
+
+.preview-map-effects {
+  bottom: calc(10 * var(--map-unit));
+  right: calc(10 * var(--map-unit));
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(6 * var(--map-unit));
+}
+
+.preview-map-effects button {
+  font: inherit;
+  font-weight: 650;
+  color: var(--text);
+  padding: 0.3em 0.65em;
+  background: var(--bg);
+  border: 1px solid var(--text-dim);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.preview-map-effects button:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}

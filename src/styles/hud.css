@@ -1,0 +1,294 @@
+/* AI-assisted: Cursor Grok 4.7 and OpenAI Codex. Human review by C pending. */
+
+.hud-top,
+.hud-side,
+.hud-bottom {
+  background: var(--panel);
+  border: calc(2 * var(--px)) solid var(--border);
+  box-sizing: border-box;
+}
+
+.hud-top {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc(1280 * var(--px));
+  height: calc(72 * var(--px));
+  z-index: 2;
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr) auto auto auto;
+  align-items: center;
+  gap: calc(6 * var(--px));
+  padding: calc(6 * var(--px)) calc(10 * var(--px));
+  font-size: calc(13 * var(--px));
+}
+
+.hud-side {
+  position: absolute;
+  left: calc(624 * var(--px));
+  top: calc(88 * var(--px));
+  width: calc(632 * var(--px));
+  height: calc(576 * var(--px));
+  overflow: auto;
+  padding: calc(12 * var(--px));
+  display: flex;
+  flex-direction: column;
+  gap: calc(10 * var(--px));
+  scrollbar-color: var(--border) var(--panel);
+}
+
+.hud-bottom {
+  position: absolute;
+  left: 0;
+  top: calc(672 * var(--px));
+  width: calc(1280 * var(--px));
+  height: calc(48 * var(--px));
+  display: flex;
+  align-items: center;
+  gap: calc(8 * var(--px));
+  padding: calc(4 * var(--px)) calc(8 * var(--px));
+}
+
+.hud-clock,
+.meter,
+.hud-stat {
+  display: flex;
+  align-items: center;
+  gap: calc(4 * var(--px));
+  min-height: calc(48 * var(--px));
+  margin: 0;
+  padding: calc(5 * var(--px)) calc(7 * var(--px));
+  background: var(--bg);
+  border: calc(2 * var(--px)) solid var(--border);
+  border-radius: calc(8 * var(--px));
+  color: var(--text);
+}
+
+.hud-clock,
+.hud-stat {
+  white-space: nowrap;
+}
+
+.hud-meters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: calc(6 * var(--px));
+}
+
+.meter-slot {
+  position: relative;
+  min-width: 0;
+}
+
+.meter {
+  width: 100%;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  text-align: left;
+}
+
+.meter-main,
+.meter-reading {
+  display: flex;
+  align-items: center;
+  gap: calc(5 * var(--px));
+  white-space: nowrap;
+}
+
+.meter-main {
+  font-weight: 700;
+}
+
+.meter-reading {
+  justify-content: space-between;
+  color: var(--text-dim);
+}
+
+.meter-reading .status {
+  font-size: calc(12 * var(--px));
+}
+
+.meter-detail {
+  position: absolute;
+  inset: calc(100% + 6 * var(--px)) auto auto 0;
+  width: calc(256 * var(--px));
+  margin: 0;
+  padding: calc(12 * var(--px));
+  border: calc(2 * var(--px)) solid var(--focus);
+  border-radius: calc(8 * var(--px));
+  background: var(--bg);
+  color: var(--text);
+  font-size: calc(14 * var(--px));
+  box-shadow: 0 calc(8 * var(--px)) calc(18 * var(--px)) var(--bg);
+}
+
+.hud-actions { display: flex; gap: calc(4 * var(--px)); }
+.hud-actions .btn { padding-inline: calc(8 * var(--px)); }
+
+.icon {
+  width: calc(16 * var(--px));
+  height: calc(16 * var(--px));
+  flex: none;
+  background-image: url("/assets/ui/icons-16.png");
+  background-repeat: no-repeat;
+  background-size: calc(192 * var(--px)) calc(16 * var(--px));
+  image-rendering: pixelated;
+}
+
+.icon-energy { background-position: 0 0; }
+.icon-oxigeno { background-position: calc(-16 * var(--px)) 0; }
+.icon-agua { background-position: calc(-32 * var(--px)) 0; }
+.icon-alimentos { background-position: calc(-48 * var(--px)) 0; }
+.icon-materiales { background-position: calc(-64 * var(--px)) 0; }
+.icon-radiation { background-position: calc(-80 * var(--px)) 0; }
+.icon-ap { background-position: calc(-96 * var(--px)) 0; }
+.icon-day { background-position: calc(-112 * var(--px)) 0; }
+.icon-earth { background-position: calc(-128 * var(--px)) 0; }
+.icon-seguro { background-position: calc(-144 * var(--px)) 0; }
+.icon-preventivo { background-position: calc(-160 * var(--px)) 0; }
+.icon-critico { background-position: calc(-176 * var(--px)) 0; }
+
+.goal-list,
+.forecast-list,
+.crew-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: calc(2 * var(--px));
+}
+
+.zone-title {
+  margin: 0 0 calc(4 * var(--px));
+  font-size: calc(16 * var(--px));
+  color: var(--text-dim);
+}
+
+.hud-side > section + section:not(:empty) {
+  border-top: calc(1 * var(--px)) solid var(--border);
+  padding-top: calc(8 * var(--px));
+}
+
+.hud-side section > p {
+  margin: 0 0 calc(4 * var(--px));
+}
+
+.hud-side .goal-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: calc(8 * var(--px));
+}
+
+.palette {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: calc(5 * var(--px));
+}
+
+.build-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: calc(2 * var(--px));
+  min-height: calc(82 * var(--px));
+  padding: calc(5 * var(--px)) calc(7 * var(--px));
+  white-space: normal;
+  text-align: left;
+  background: var(--bg);
+}
+
+.build-btn small,
+.why {
+  display: block;
+  color: var(--text-dim);
+}
+
+.build-btn[aria-pressed="true"] {
+  border-color: var(--accent);
+}
+
+.build-name,
+.hud-tools {
+  display: flex;
+  align-items: center;
+  gap: calc(6 * var(--px));
+}
+
+.build-name { font-weight: 650; }
+.hud-tools { margin-top: calc(6 * var(--px)); }
+
+.build-art {
+  width: calc(24 * var(--px));
+  height: calc(32 * var(--px));
+  flex: none;
+  background: url("/assets/sprites/buildings.png") no-repeat;
+  background-position: calc(var(--frame-offset) * var(--px)) 0;
+  background-size: calc(216 * var(--px)) calc(32 * var(--px));
+  image-rendering: pixelated;
+}
+
+.build-art-mars {
+  background-image: url("/assets/sprites/buildings-p1.png");
+  background-size: calc(96 * var(--px)) calc(32 * var(--px));
+}
+
+.portrait {
+  width: calc(32 * var(--px));
+  height: calc(32 * var(--px));
+  flex: none;
+  image-rendering: pixelated;
+  background: var(--bg) url("/assets/sprites/crew.png") no-repeat;
+  background-size: calc(128 * var(--px)) calc(32 * var(--px));
+  background-position: calc(var(--frame-offset, 0) * var(--px)) 0;
+  box-shadow: 0 0 0 calc(1 * var(--px)) var(--border);
+}
+
+.portrait-mars {
+  background-image: url("/assets/sprites/crew-p1.png");
+  background-size: calc(64 * var(--px)) calc(32 * var(--px));
+}
+
+.portrait-empty { background-image: none; }
+
+.bar {
+  height: calc(8 * var(--px));
+  width: calc(80 * var(--px));
+  background: var(--bg);
+  border: calc(1 * var(--px)) solid var(--border);
+}
+
+.bar > span {
+  display: block;
+  height: 100%;
+  background: var(--safe);
+}
+
+.messages {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.end-day {
+  min-width: calc(180 * var(--px));
+  min-height: calc(36 * var(--px));
+}
+
+.crew-row {
+  display: flex;
+  align-items: center;
+  gap: calc(6 * var(--px));
+}
+
+.dust-row,
+.repair-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(6 * var(--px));
+  align-items: center;
+}

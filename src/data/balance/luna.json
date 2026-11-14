@@ -1,0 +1,101 @@
+{
+  "facil": {
+    "crewSize": 4,
+    "dayLimit": 24,
+    "initial": {
+      "energia": 16,
+      "oxigeno": 32,
+      "agua": 32,
+      "alimentos": 40,
+      "materiales": 50
+    },
+    "mineralYield": 20,
+    "reserveThreshold": 12,
+    "energyThreshold": 6,
+    "streakDays": 2,
+    "shelterEnergy": 4,
+    "events": [
+      {
+        "type": "sombra",
+        "startDay": 5,
+        "durationDays": 1,
+        "solarFactorPct": 50,
+        "jitterDays": 0
+      },
+      {
+        "type": "tormenta-solar",
+        "startDay": 9,
+        "durationDays": 1,
+        "radiationLevel": 1,
+        "jitterDays": 1,
+        "sourceRef": "2024-05-13T14:00:00-SEP-001"
+      }
+    ]
+  },
+  "media": {
+    "crewSize": 4,
+    "dayLimit": 20,
+    "initial": {
+      "energia": 10,
+      "oxigeno": 24,
+      "agua": 24,
+      "alimentos": 32,
+      "materiales": 40
+    },
+    "mineralYield": 15,
+    "reserveThreshold": 16,
+    "energyThreshold": 10,
+    "streakDays": 3,
+    "shelterEnergy": 6,
+    "events": [
+      {
+        "type": "sombra",
+        "startDay": 4,
+        "durationDays": 1,
+        "solarFactorPct": 25,
+        "jitterDays": 0
+      },
+      {
+        "type": "tormenta-solar",
+        "startDay": 8,
+        "durationDays": 1,
+        "radiationLevel": 2,
+        "jitterDays": 1,
+        "sourceRef": "2017-09-10T16:25:00-SEP-001"
+      }
+    ]
+  },
+  "imposible": {
+    "crewSize": 4,
+    "dayLimit": 16,
+    "initial": {
+      "energia": 8,
+      "oxigeno": 20,
+      "agua": 20,
+      "alimentos": 24,
+      "materiales": 34
+    },
+    "mineralYield": 15,
+    "reserveThreshold": 16,
+    "energyThreshold": 10,
+    "streakDays": 4,
+    "shelterEnergy": 8,
+    "events": [
+      {
+        "type": "sombra",
+        "startDay": 5,
+        "durationDays": 2,
+        "solarFactorPct": 25,
+        "jitterDays": 0
+      },
+      {
+        "type": "tormenta-solar",
+        "startDay": 8,
+        "durationDays": 2,
+        "radiationLevel": 2,
+        "jitterDays": 0,
+        "sourceRef": "2017-09-10T16:25:00-SEP-001"
+      }
+    ]
+  }
+}

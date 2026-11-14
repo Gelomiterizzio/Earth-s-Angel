@@ -1,0 +1,66 @@
+// AI-assisted: Antigravity (Gemini) and OpenAI Codex; integrated from A and B.
+import type { AppContext } from './app/context';
+import { createFlow } from './app/flow';
+import { createI18n } from './app/i18n';
+import { createOptionsService } from './app/options';
+import { createStore } from './app/store';
+import { createUiStore } from './app/ui-store';
+import { attachAudio, createAudio } from './audio/index';
+import { loadGameData } from './data/index';
+import { createMapView } from './map/index';
+import { registerScreens } from './ui/index';
+import './styles/index.css';
+
+function boot(): void {
+  const mapRoot = document.getElementById('map');
+  const uiRoot = document.getElementById('ui');
+  if (!mapRoot || !uiRoot) return;
+
+  const options = createOptionsService();
+  const i18n = createI18n(options.get().language);
+  options.subscribe(({ language }) => i18n.setLang(language));
+
+  const data = loadGameData();
+  const store = createStore(data);
+  const uiStore = createUiStore();
+  const audio = createAudio(options);
+
+  const flow = createFlow({
+    uiRoot,
+    getContext: () => ctx,
+    getMapView: () => mapView,
+  });
+  const ctx: AppContext = {
+    store,
+    uiStore,
+    flow,
+    options,
+    t: (key, params) => i18n.t(key, params),
+    audio,
+    data,
+  };
+  const mapView = createMapView(mapRoot, ctx);
+  mapView.setVisible(false);
+
+  registerScreens(flow);
+  attachAudio(audio, store, flow);
+  // The mounted UI and map handle their own keyboard shortcuts.
+  flow.go('titulo');
+
+  if (import.meta.env.DEV) {
+    void import('./app/debug').then(({ mountDebugTools }) => mountDebugTools(ctx));
+  }
+}
+
+if (typeof document !== 'undefined') {
+  try {
+    boot();
+  } catch (error) {
+    const title = document.createElement('h1');
+    title.textContent = "Earth's Angel could not start";
+    const details = document.createElement('pre');
+    details.textContent = error instanceof Error ? error.message : String(error);
+    document.getElementById('ui')?.replaceChildren(title, details);
+  }
+}
+

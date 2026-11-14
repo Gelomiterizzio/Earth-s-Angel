@@ -1,0 +1,98 @@
+{
+  "id": "earthVictory",
+  "music": "music-ending",
+  "scenes": [
+    {
+      "durationMs": 8000,
+      "captionKey": "ui.cine.earthVictory.1",
+      "background": "recovery",
+      "layers": [
+        {
+          "image": "earth-victory-1.png",
+          "from": {
+            "x": 12,
+            "y": 0,
+            "scale": 1.035,
+            "opacity": 1
+          },
+          "to": {
+            "x": -12,
+            "y": 0,
+            "scale": 1.035,
+            "opacity": 1
+          }
+        }
+      ],
+      "transition": "fade"
+    },
+    {
+      "durationMs": 8000,
+      "captionKey": "ui.cine.earthVictory.2",
+      "background": "forest",
+      "layers": [
+        {
+          "image": "earth-victory-2.png",
+          "from": {
+            "x": 0,
+            "y": 0,
+            "scale": 1,
+            "opacity": 1
+          },
+          "to": {
+            "x": 0,
+            "y": 0,
+            "scale": 1.04,
+            "opacity": 1
+          }
+        }
+      ],
+      "transition": "fade"
+    },
+    {
+      "durationMs": 8000,
+      "captionKey": "ui.cine.earthVictory.3",
+      "background": "city",
+      "layers": [
+        {
+          "image": "earth-victory-3.png",
+          "from": {
+            "x": 0,
+            "y": 0,
+            "scale": 1.04,
+            "opacity": 1
+          },
+          "to": {
+            "x": 0,
+            "y": 0,
+            "scale": 1,
+            "opacity": 1
+          }
+        }
+      ],
+      "transition": "fade"
+    },
+    {
+      "durationMs": 8000,
+      "captionKey": "ui.cine.earthVictory.4",
+      "background": "ocean",
+      "layers": [
+        {
+          "image": "earth-victory-4.png",
+          "from": {
+            "x": 0,
+            "y": 0,
+            "scale": 1,
+            "opacity": 1
+          },
+          "to": {
+            "x": 0,
+            "y": 0,
+            "scale": 1,
+            "opacity": 1
+          }
+        }
+      ],
+      "transition": "fade"
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "id": "marsVictory",
+  "music": "music-ending",
+  "scenes": [
+    {
+      "durationMs": 8000,
+      "captionKey": "ui.cine.marsVictory.1",
+      "background": "mars-base",
+      "layers": [
+        {
+          "image": "mars-victory-1.png",
+          "from": {
+            "x": 12,
+            "y": 0,
+            "scale": 1.035,
+            "opacity": 1
+          },
+          "to": {
+            "x": -12,
+            "y": 0,
+            "scale": 1.035,
+            "opacity": 1
+          }
+        }
+      ],
+      "transition": "fade"
+    },
+    {
+      "durationMs": 7000,
+      "captionKey": "ui.cine.marsVictory.2",
+      "background": "mars-light",
+      "layers": [
+        {
+          "image": "mars-victory-2.png",
+          "from": {
+            "x": 0,
+            "y": 0,
+            "scale": 1,
+            "opacity": 1
+          },
+          "to": {
+            "x": 0,
+            "y": 0,
+            "scale": 1,
+            "opacity": 1
+          }
+        }
+      ],
+      "transition": "fade"
+    },
+    {
+      "durationMs": 7000,
+      "captionKey": "ui.cine.marsVictory.3",
+      "background": "mars-sky",
+      "layers": [
+        {
+          "image": "mars-victory-3.png",
+          "from": {
+            "x": 0,
+            "y": 0,
+            "scale": 1,
+            "opacity": 1
+          },
+          "to": {
+            "x": 0,
+            "y": 0,
+            "scale": 1.04,
+            "opacity": 1
+          }
+        }
+      ],
+      "transition": "fade"
+    },
+    {
+      "durationMs": 8000,
+      "captionKey": "ui.cine.marsVictory.4",
+      "background": "ocean",
+      "layers": [
+        {
+          "image": "mars-victory-4.png",
+          "from": {
+            "x": 0,
+            "y": 0,
+            "scale": 1.04,
+            "opacity": 1
+          },
+          "to": {
+            "x": 0,
+            "y": 0,
+            "scale": 1,
+            "opacity": 1
+          }
+        }
+      ],
+      "transition": "fade"
+    }
+  ]
+}

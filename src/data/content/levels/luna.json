@@ -1,0 +1,46 @@
+{
+  "id": "luna",
+  "width": 12,
+  "height": 12,
+  "rows": [
+    "##...oo...##",
+    "#..m.oo..?.#",
+    "............",
+    "..#.....#...",
+    "..........m.",
+    "o....S......",
+    "oo......#...",
+    "...m........",
+    ".m..#....ii.",
+    ".........ioo",
+    "#.....m...oo",
+    "##........##"
+  ],
+  "ship": { "x": 5, "y": 5 },
+  "initialExploredRadius": 2,
+  "forecastHorizonDays": 2,
+  "baseCaps": {
+    "energia": 20,
+    "oxigeno": 40,
+    "agua": 40,
+    "alimentos": 40,
+    "materiales": 60
+  },
+  "availableBuildings": [
+    "panel",
+    "bateria",
+    "generador",
+    "reciclador",
+    "extractor",
+    "invernadero",
+    "refugio"
+  ],
+  "objectives": [
+    "soporte",
+    "energia",
+    "alimentos",
+    "reservas",
+    "proteccion",
+    "racha"
+  ]
+}

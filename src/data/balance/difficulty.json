@@ -1,0 +1,5 @@
+{
+  "facil": { "earthDays": 64, "bonusDays": 12 },
+  "media": { "earthDays": 54, "bonusDays": 10 },
+  "imposible": { "earthDays": 44, "bonusDays": 8 }
+}

@@ -1,0 +1,187 @@
+{
+  "building": {
+    "nave": {
+      "name": "Nave de aterrizaje",
+      "desc": "Tu hogar inicial. Guarda el almacén base.",
+      "why": "Ya la tienes. No gasta energía."
+    },
+    "panel": {
+      "name": "Panel solar",
+      "desc": "Hace electricidad con la luz del Sol.",
+      "why": "Da energía cada día con sol."
+    },
+    "bateria": {
+      "name": "Batería",
+      "desc": "Guarda la electricidad que sobra.",
+      "why": "Ahorra energía para los días oscuros."
+    },
+    "generador": {
+      "name": "Generador de oxígeno",
+      "desc": "Separa el agua en oxígeno con electricidad.",
+      "why": "Hace aire para respirar. Necesita agua y energía."
+    },
+    "reciclador": {
+      "name": "Reciclador de agua",
+      "desc": "Devuelve parte del agua que usó la tripulación.",
+      "why": "Recupera agua usada para perder menos."
+    },
+    "extractor": {
+      "name": "Extractor de hielo",
+      "desc": "Saca agua del hielo lunar.",
+      "why": "Agua nueva del hielo. Solo sobre hielo."
+    },
+    "invernadero": {
+      "name": "Invernadero",
+      "desc": "Cultiva comida durante varios días.",
+      "why": "Comida fresca cada cuatro días."
+    },
+    "refugio": {
+      "name": "Refugio radiativo",
+      "desc": "Protege a la tripulación en tormentas solares.",
+      "why": "Blindaje cuando llegan las partículas."
+    }
+  },
+  "event": {
+    "sombra": {
+      "name": "Sombra del cráter",
+      "desc": "Llega menos luz a los paneles.",
+      "forecast2": "Sombra del cráter en 2 días",
+      "forecast1": "Mañana habrá poca luz",
+      "today": "Hoy: los paneles dan menos energía"
+    },
+    "tormenta-solar": {
+      "name": "Tormenta solar",
+      "desc": "Partículas rápidas del Sol llegan a tu base.",
+      "forecast2": "Región activa vigilada",
+      "forecast1": "Alerta: partículas en camino",
+      "today": "Tormenta solar hoy: elige refugio o trabajo"
+    }
+  },
+  "card": {
+    "power": {
+      "title": "Energía y baterías",
+      "body": "Los paneles hacen electricidad con la luz del Sol. Si hay sombra, hacen menos. Las baterías guardan la que sobra para usarla después."
+    },
+    "waterLoop": {
+      "title": "Agua que vuelve",
+      "body": "En el espacio el agua se recicla. En la Estación Espacial se recupera cerca del 90 %. Tu base recupera el 75 %: ese número es del juego."
+    },
+    "airFromWater": {
+      "title": "Aire del agua",
+      "body": "El agua tiene oxígeno dentro. Con electricidad se puede separar: se llama electrólisis. Así se fabrica oxígeno en la Estación Espacial."
+    },
+    "growFood": {
+      "title": "Comida que crece",
+      "body": "Las plantas necesitan agua, luz y tiempo. Si un día les falta algo, la cosecha llega más tarde y es más pequeña."
+    },
+    "firstAir": {
+      "title": "Primero el aire",
+      "body": "Sin aire se aguanta muy poco, sin agua algo más y sin comida más todavía. Por eso el juego reparte en ese orden."
+    },
+    "solarStorm": {
+      "title": "Tormenta solar",
+      "body": "A veces el Sol lanza partículas muy rápidas. NASA registra esos eventos. El que ves en el juego ocurrió de verdad. La radiación de tu base es un valor del juego."
+    },
+    "moonIce": {
+      "title": "Hielo lunar",
+      "body": "En tu misión hay hielo en el suelo de un cráter. De él sale el agua de la base. Ese detalle del mapa es historia del juego."
+    },
+    "signalDelay": {
+      "title": "Señales que tardan",
+      "body": "Las señales de radio viajan a la velocidad de la luz. Aun así tardan: poco más de un segundo hasta la Luna y varios minutos hasta Marte."
+    }
+  },
+  "tutorial": {
+    "t01": "Esta es tu base. Arriba ves energía, soporte vital y protección.",
+    "t02": "Sin electricidad nada funciona. Construye un panel solar.",
+    "t03": "Hay mineral cerca de la nave. Recógelo para tener más materiales.",
+    "t04": "Los sensores detectan hielo al sureste. Explora hacia allí.",
+    "t05": "Pulsa Finalizar día para ver qué pasó.",
+    "t06": "Pon un extractor sobre el hielo y un reciclador. Así tendrás agua.",
+    "t07": "El generador saca oxígeno del agua. El invernadero da comida cada 4 días.",
+    "t08": "Viene poca luz. Una batería guarda energía para ese día.",
+    "t09": "Tormenta solar a la vista. El refugio tarda 2 días: constrúyelo hoy.",
+    "t10": "Tú decides. Cada opción tiene un costo.",
+    "t11": "Día estable. Mantén la racha para completar la misión."
+  },
+  "decision": {
+    "title": "Tormenta solar hoy",
+    "levelModerate": "Tormenta moderada",
+    "levelSevere": "Tormenta severa",
+    "nasaBlockLabel": "Dato real de NASA",
+    "gameBlockLabel": "Valores del juego",
+    "archivedNotice": "Registro archivado de NASA DONKI. No es un dato en vivo.",
+    "testDataNotice": "Datos de prueba",
+    "shelterBtn": "Refugiar a la tripulación",
+    "workBtn": "Seguir trabajando",
+    "shelterCost": "Gasta {energy} de energía. Hoy no se construye ni se explora. Exposición +{exposure}.",
+    "workCost": "Conservas tus {ap} acciones. Exposición +{exposure}.",
+    "noShelter": "Aún no tienes refugio",
+    "needEnergy": "Faltan {need} de energía",
+    "exposureWith": "Con refugio: +{n} de exposición",
+    "exposureWithout": "Sin refugio: +{n} de exposición",
+    "compareShelter": "Con refugio: +{with} de exposición. Sin refugio habrían sido +{without}.",
+    "compareWork": "Sin refugio: +{with} de exposición. Con refugio habrían sido +{without}.",
+    "idLabel": "Identificador",
+    "linkLabel": "Abrir registro DONKI",
+    "flareLabel": "Clase de fulguración",
+    "instrumentLabel": "Instrumento",
+    "leadLabel": "Minutos entre la fulguración y las primeras partículas",
+    "regionLabel": "Región activa"
+  },
+  "learning": {
+    "question": "¿Qué debe hacer la tripulación cuando llega una tormenta solar?",
+    "optionA": "Seguir trabajando fuera para ahorrar tiempo",
+    "optionB": "Refugiarse aunque cueste energía y un día de trabajo",
+    "optionC": "Apagar todos los paneles solares para siempre",
+    "correct": "optionB"
+  },
+  "error": {
+    "WRONG_PHASE": "No puedes hacer eso en esta fase.",
+    "STALE_DAY": "Ese día ya pasó.",
+    "DECISION_PENDING": "Primero elige refugio o trabajo.",
+    "NO_AP": "Hoy no quedan acciones.",
+    "NO_MATERIALS": "Hacen falta {need} materiales. Tienes {have}.",
+    "TILE_OUT_OF_BOUNDS": "Esa casilla está fuera del mapa.",
+    "TILE_UNEXPLORED": "Primero explora esta casilla.",
+    "TILE_OCCUPIED": "Aquí ya hay algo.",
+    "TILE_BLOCKED": "No se puede construir en este suelo.",
+    "WRONG_TERRAIN": "Este edificio pide otro suelo.",
+    "ALREADY_EXPLORED": "Esta casilla ya está explorada.",
+    "NOT_ADJACENT": "Explora junto a una casilla conocida.",
+    "NOTHING_TO_COLLECT": "Aquí no hay nada que recoger.",
+    "UNKNOWN_BUILDING": "Edificio desconocido.",
+    "NOT_AVAILABLE_IN_LEVEL": "No está en esta misión.",
+    "NO_SHELTER": "Aún no tienes refugio.",
+    "NO_ENERGY_FOR_SHELTER": "No alcanza la energía para el refugio.",
+    "NO_RADIATION_TODAY": "Hoy no hay tormenta solar.",
+    "INVALID_PRIORITY": "Ese orden de energía no vale."
+  },
+  "tools": {
+    "inspect": "Inspeccionar",
+    "explore": "Explorar",
+    "collect": "Recolectar",
+    "build": "Construir",
+    "status": "Acciones {ap}. Materiales {materials}.",
+    "lang": "English"
+  },
+  "map": {
+    "readyDay": "Listo el día {day}",
+    "rejectPrefix": "No se puede:",
+    "collectedPlus": "+{n}",
+    "placedAnnounce": "{name} colocado en columna {col}, fila {row}. Listo el día {day}.",
+    "colRow": "Columna {col}, fila {row}",
+    "terrain": {
+      "llano": "Llano",
+      "roca": "Roca",
+      "crater": "Cráter",
+      "hielo": "Hielo",
+      "mineral": "Mineral",
+      "misterio": "Misterio",
+      "nave": "Nave"
+    },
+    "fog": "Sin explorar",
+    "free": "Libre",
+    "occupied": "Ocupado"
+  }
+}

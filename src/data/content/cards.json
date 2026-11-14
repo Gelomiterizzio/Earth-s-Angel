@@ -1,0 +1,70 @@
+[
+  {
+    "id": "power",
+    "titleKey": "content.card.power.title",
+    "bodyKey": "content.card.power.body",
+    "tag": "didactic",
+    "level": "all"
+  },
+  {
+    "id": "waterLoop",
+    "titleKey": "content.card.waterLoop.title",
+    "bodyKey": "content.card.waterLoop.body",
+    "tag": "nasa",
+    "source": {
+      "label": "NASA ECLSS",
+      "url": "https://www.nasa.gov/reference/environmental-control-and-life-support-systems-eclss/"
+    },
+    "level": "all"
+  },
+  {
+    "id": "airFromWater",
+    "titleKey": "content.card.airFromWater.title",
+    "bodyKey": "content.card.airFromWater.body",
+    "tag": "nasa",
+    "source": {
+      "label": "NASA ECLSS",
+      "url": "https://www.nasa.gov/reference/environmental-control-and-life-support-systems-eclss/"
+    },
+    "level": "all"
+  },
+  {
+    "id": "growFood",
+    "titleKey": "content.card.growFood.title",
+    "bodyKey": "content.card.growFood.body",
+    "tag": "didactic",
+    "level": "all"
+  },
+  {
+    "id": "firstAir",
+    "titleKey": "content.card.firstAir.title",
+    "bodyKey": "content.card.firstAir.body",
+    "tag": "didactic",
+    "level": "all"
+  },
+  {
+    "id": "solarStorm",
+    "titleKey": "content.card.solarStorm.title",
+    "bodyKey": "content.card.solarStorm.body",
+    "tag": "nasa",
+    "source": {
+      "label": "NASA CCMC DONKI",
+      "url": "https://ccmc.gsfc.nasa.gov/tools/DONKI/"
+    },
+    "level": "all"
+  },
+  {
+    "id": "moonIce",
+    "titleKey": "content.card.moonIce.title",
+    "bodyKey": "content.card.moonIce.body",
+    "tag": "fiction",
+    "level": "luna"
+  },
+  {
+    "id": "signalDelay",
+    "titleKey": "content.card.signalDelay.title",
+    "bodyKey": "content.card.signalDelay.body",
+    "tag": "didactic",
+    "level": "all"
+  }
+]

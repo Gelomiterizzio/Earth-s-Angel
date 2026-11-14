@@ -1,0 +1,35 @@
+/* AI-assisted: Cursor Grok 4.7, reviewed by C */
+/* Canonical colors from docs/ARTE-Y-ACTIVOS.md. No other file sets a color. */
+
+:root {
+  --bg: #0b1026;
+  --panel: #141b3a;
+  --border: #2e3a6e;
+  --text: #f2f4ff;
+  --text-dim: #b8c0e6;
+  --accent: #ffd166;
+  --focus: #7df9ff;
+  --safe: #3ddc97;
+  --warn: #ffb020;
+  --crit: #ff5a5f;
+  --moon-base: #8e9aaf;
+  --moon-shadow: #4a5568;
+  --moon-light: #dde3ee;
+  --ice: #9be7ff;
+  --mineral: #c9a227;
+  --crater: #2d3748;
+  --mars-base: #b5532a;
+  --mars-shadow: #6e2f1a;
+  --mars-light: #e8a87c;
+  --dust: #d9a066;
+  --mars-sky: #c97b4a;
+  --ocean: #1e6fb8;
+  --crisis: #8b5e3c;
+  --recovery: #7bd389;
+  --forest: #2e8b57;
+  --city: #9aa5b1;
+  --font-title: "Pixelify Sans", system-ui, "Segoe UI", Roboto, sans-serif;
+  --font-body: system-ui, "Segoe UI", Roboto, sans-serif;
+  --radius: 8;
+  --space: 8;
+}

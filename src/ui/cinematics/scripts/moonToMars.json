@@ -1,0 +1,123 @@
+{
+  "id": "moonToMars",
+  "music": "music-transit",
+  "scenes": [
+    {
+      "durationMs": 7000,
+      "captionKey": "ui.cine.moonToMars.1",
+      "background": "moon-shadow",
+      "layers": [
+        {
+          "image": "moon-to-mars-1.png",
+          "from": {
+            "x": 12,
+            "y": 0,
+            "scale": 1.035,
+            "opacity": 1
+          },
+          "to": {
+            "x": -12,
+            "y": 0,
+            "scale": 1.035,
+            "opacity": 1
+          }
+        }
+      ],
+      "transition": "fade"
+    },
+    {
+      "durationMs": 6000,
+      "captionKey": "ui.cine.moonToMars.2",
+      "background": "panel",
+      "layers": [
+        {
+          "image": "moon-to-mars-2.png",
+          "from": {
+            "x": 0,
+            "y": 0,
+            "scale": 1,
+            "opacity": 1
+          },
+          "to": {
+            "x": 0,
+            "y": 0,
+            "scale": 1,
+            "opacity": 1
+          }
+        }
+      ],
+      "transition": "fade"
+    },
+    {
+      "durationMs": 8000,
+      "captionKey": "ui.cine.moonToMars.3",
+      "background": "ocean",
+      "layers": [
+        {
+          "image": "moon-to-mars-3.png",
+          "from": {
+            "x": 0,
+            "y": 0,
+            "scale": 1,
+            "opacity": 1
+          },
+          "to": {
+            "x": 0,
+            "y": 0,
+            "scale": 1.04,
+            "opacity": 1
+          }
+        }
+      ],
+      "transition": "fade"
+    },
+    {
+      "durationMs": 7000,
+      "captionKey": "ui.cine.moonToMars.4",
+      "background": "bg",
+      "layers": [
+        {
+          "image": "moon-to-mars-4.png",
+          "from": {
+            "x": -12,
+            "y": 0,
+            "scale": 1.035,
+            "opacity": 1
+          },
+          "to": {
+            "x": 12,
+            "y": 0,
+            "scale": 1.035,
+            "opacity": 1
+          }
+        }
+      ],
+      "transition": "fade",
+      "sfx": "sfx-launch"
+    },
+    {
+      "durationMs": 8000,
+      "captionKey": "ui.cine.moonToMars.5",
+      "background": "mars-base",
+      "layers": [
+        {
+          "image": "moon-to-mars-5.png",
+          "from": {
+            "x": 0,
+            "y": 0,
+            "scale": 1.04,
+            "opacity": 1
+          },
+          "to": {
+            "x": 0,
+            "y": 0,
+            "scale": 1,
+            "opacity": 1
+          }
+        }
+      ],
+      "transition": "fade",
+      "sfx": "sfx-landing"
+    }
+  ]
+}

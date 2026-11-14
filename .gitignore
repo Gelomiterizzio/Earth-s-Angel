@@ -1,0 +1,9 @@
+node_modules
+dist
+/Integrante A y B/
+.env*
+*.local
+.DS_Store
+
+/EARTH'S ANGEL/
+.claude/

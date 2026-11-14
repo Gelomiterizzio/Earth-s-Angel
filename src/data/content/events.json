@@ -1,0 +1,20 @@
+{
+  "sombra": {
+    "type": "sombra",
+    "nameKey": "content.event.sombra.name",
+    "descKey": "content.event.sombra.desc",
+    "forecastKey2": "content.event.sombra.forecast2",
+    "forecastKey1": "content.event.sombra.forecast1",
+    "todayKey": "content.event.sombra.today",
+    "icon": "shadow"
+  },
+  "tormenta-solar": {
+    "type": "tormenta-solar",
+    "nameKey": "content.event.tormenta-solar.name",
+    "descKey": "content.event.tormenta-solar.desc",
+    "forecastKey2": "content.event.tormenta-solar.forecast2",
+    "forecastKey1": "content.event.tormenta-solar.forecast1",
+    "todayKey": "content.event.tormenta-solar.today",
+    "icon": "solar-storm"
+  }
+}

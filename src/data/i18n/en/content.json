@@ -1,0 +1,187 @@
+{
+  "building": {
+    "nave": {
+      "name": "Landing ship",
+      "desc": "Your starting home. It holds base storage.",
+      "why": "You already have it. It does not spend power."
+    },
+    "panel": {
+      "name": "Solar panel",
+      "desc": "Makes electricity from sunlight.",
+      "why": "Gives power each sunny day."
+    },
+    "bateria": {
+      "name": "Battery",
+      "desc": "Stores spare electricity.",
+      "why": "Saves energy for dark days."
+    },
+    "generador": {
+      "name": "Oxygen generator",
+      "desc": "Splits water into oxygen with power.",
+      "why": "Makes air to breathe. Needs water and power."
+    },
+    "reciclador": {
+      "name": "Water recycler",
+      "desc": "Returns part of the water the crew used.",
+      "why": "Recovers used water so less is lost."
+    },
+    "extractor": {
+      "name": "Ice extractor",
+      "desc": "Pulls water from lunar ice.",
+      "why": "New water from ice. Place only on ice."
+    },
+    "invernadero": {
+      "name": "Greenhouse",
+      "desc": "Grows food over several days.",
+      "why": "Fresh food every four days."
+    },
+    "refugio": {
+      "name": "Radiation shelter",
+      "desc": "Shields the crew during solar storms.",
+      "why": "Protection when particles arrive."
+    }
+  },
+  "event": {
+    "sombra": {
+      "name": "Crater shadow",
+      "desc": "Less sunlight reaches the panels.",
+      "forecast2": "Crater shadow in 2 days",
+      "forecast1": "Low light tomorrow",
+      "today": "Today: panels make less power"
+    },
+    "tormenta-solar": {
+      "name": "Solar storm",
+      "desc": "Fast particles from the Sun reach your base.",
+      "forecast2": "Active region watched",
+      "forecast1": "Alert: particles on the way",
+      "today": "Solar storm today: choose shelter or work"
+    }
+  },
+  "card": {
+    "power": {
+      "title": "Energy and batteries",
+      "body": "Solar panels turn sunlight into electricity. In the shade they make less. Batteries store what is left over for later."
+    },
+    "waterLoop": {
+      "title": "Water that returns",
+      "body": "In space, water is recycled. On the Space Station nearly 90% comes back. Your base recovers 75%: that number is a game value."
+    },
+    "airFromWater": {
+      "title": "Air from water",
+      "body": "Water holds oxygen. With electricity you can split it. That process is electrolysis. The Space Station makes oxygen this way."
+    },
+    "growFood": {
+      "title": "Food that grows",
+      "body": "Plants need water, light, and time. If one day they miss something, the harvest comes later and is smaller."
+    },
+    "firstAir": {
+      "title": "Air first",
+      "body": "Without air you last a short time. Without water a bit longer. Without food longer still. The game checks needs in that order."
+    },
+    "solarStorm": {
+      "title": "Solar storm",
+      "body": "Sometimes the Sun throws fast particles. NASA records those events. The one you see here was real. Base radiation numbers are game values."
+    },
+    "moonIce": {
+      "title": "Lunar ice",
+      "body": "In this mission, ice sits in a crater floor. Your extractor turns it into water for the base. This map detail is story for the game."
+    },
+    "signalDelay": {
+      "title": "Signals that take time",
+      "body": "Radio signals travel at light speed. They still take time: about a second to the Moon, and minutes to Mars."
+    }
+  },
+  "tutorial": {
+    "t01": "This is your base. Above you see energy, life support, and protection.",
+    "t02": "Without power nothing works. Build a solar panel.",
+    "t03": "There is mineral near the ship. Collect it for more materials.",
+    "t04": "Sensors detect ice to the southeast. Explore that way.",
+    "t05": "Press End day to see what happened.",
+    "t06": "Place an extractor on ice and a recycler. That gives you water.",
+    "t07": "The generator makes oxygen from water. The greenhouse grows food every 4 days.",
+    "t08": "Low light is coming. A battery stores energy for that day.",
+    "t09": "Solar storm ahead. The shelter takes 2 days: build it today.",
+    "t10": "You decide. Each option has a cost.",
+    "t11": "Stable day. Keep the streak to finish the mission."
+  },
+  "decision": {
+    "title": "Solar storm today",
+    "levelModerate": "Moderate storm",
+    "levelSevere": "Severe storm",
+    "nasaBlockLabel": "Real NASA data",
+    "gameBlockLabel": "Game values",
+    "archivedNotice": "Archived NASA DONKI record. Not a live feed.",
+    "testDataNotice": "Test data",
+    "shelterBtn": "Shelter the crew",
+    "workBtn": "Keep working",
+    "shelterCost": "Spends {energy} energy. No building or exploring today. Exposure +{exposure}.",
+    "workCost": "Keep your {ap} actions. Exposure +{exposure}.",
+    "noShelter": "You do not have a shelter yet",
+    "needEnergy": "Need {need} more energy",
+    "exposureWith": "With shelter: +{n} exposure",
+    "exposureWithout": "Without shelter: +{n} exposure",
+    "compareShelter": "With shelter: +{with} exposure. Without shelter it would be +{without}.",
+    "compareWork": "Without shelter: +{with} exposure. With shelter it would be +{without}.",
+    "idLabel": "Record id",
+    "linkLabel": "Open DONKI record",
+    "flareLabel": "Flare class",
+    "instrumentLabel": "Instrument",
+    "leadLabel": "Minutes from flare to first particles",
+    "regionLabel": "Active region"
+  },
+  "learning": {
+    "question": "What should a crew do when a solar storm arrives?",
+    "optionA": "Keep working outside to save time",
+    "optionB": "Take shelter even if it costs energy and a work day",
+    "optionC": "Turn off all solar panels forever",
+    "correct": "optionB"
+  },
+  "error": {
+    "WRONG_PHASE": "You cannot do that in this phase.",
+    "STALE_DAY": "That day already passed.",
+    "DECISION_PENDING": "Choose shelter or work first.",
+    "NO_AP": "No actions left today.",
+    "NO_MATERIALS": "Need {need} materials. You have {have}.",
+    "TILE_OUT_OF_BOUNDS": "That tile is outside the map.",
+    "TILE_UNEXPLORED": "Explore this tile first.",
+    "TILE_OCCUPIED": "Something is already here.",
+    "TILE_BLOCKED": "You cannot build on this ground.",
+    "WRONG_TERRAIN": "This building needs different ground.",
+    "ALREADY_EXPLORED": "This tile is already explored.",
+    "NOT_ADJACENT": "Explore next to a known tile.",
+    "NOTHING_TO_COLLECT": "Nothing to collect here.",
+    "UNKNOWN_BUILDING": "Unknown building.",
+    "NOT_AVAILABLE_IN_LEVEL": "Not available on this mission.",
+    "NO_SHELTER": "You do not have a shelter yet.",
+    "NO_ENERGY_FOR_SHELTER": "Not enough energy to shelter.",
+    "NO_RADIATION_TODAY": "No solar storm today.",
+    "INVALID_PRIORITY": "That power order is not valid."
+  },
+  "tools": {
+    "inspect": "Inspect",
+    "explore": "Explore",
+    "collect": "Collect",
+    "build": "Build",
+    "status": "Actions {ap}. Materials {materials}.",
+    "lang": "Español"
+  },
+  "map": {
+    "readyDay": "Ready on day {day}",
+    "rejectPrefix": "Cannot:",
+    "collectedPlus": "+{n}",
+    "placedAnnounce": "{name} placed at column {col}, row {row}. Ready on day {day}.",
+    "colRow": "Column {col}, row {row}",
+    "terrain": {
+      "llano": "Flat ground",
+      "roca": "Rock",
+      "crater": "Crater",
+      "hielo": "Ice",
+      "mineral": "Mineral",
+      "misterio": "Mystery",
+      "nave": "Ship"
+    },
+    "fog": "Unexplored",
+    "free": "Free",
+    "occupied": "Occupied"
+  }
+}

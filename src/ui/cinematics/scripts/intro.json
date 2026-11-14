@@ -1,0 +1,147 @@
+{
+  "id": "intro",
+  "music": "music-cinematic",
+  "scenes": [
+    {
+      "durationMs": 7000,
+      "captionKey": "ui.cine.intro.1",
+      "background": "bg",
+      "layers": [
+        {
+          "image": "intro-1.png",
+          "from": {
+            "x": 0,
+            "y": 0,
+            "scale": 1,
+            "opacity": 1
+          },
+          "to": {
+            "x": 0,
+            "y": 0,
+            "scale": 1.04,
+            "opacity": 1
+          }
+        }
+      ],
+      "transition": "fade"
+    },
+    {
+      "durationMs": 8000,
+      "captionKey": "ui.cine.intro.2",
+      "background": "crisis",
+      "layers": [
+        {
+          "image": "intro-2.png",
+          "from": {
+            "x": 12,
+            "y": 0,
+            "scale": 1.035,
+            "opacity": 1
+          },
+          "to": {
+            "x": -12,
+            "y": 0,
+            "scale": 1.035,
+            "opacity": 1
+          }
+        }
+      ],
+      "transition": "fade"
+    },
+    {
+      "durationMs": 7000,
+      "captionKey": "ui.cine.intro.3",
+      "background": "panel",
+      "layers": [
+        {
+          "image": "intro-3.png",
+          "from": {
+            "x": 0,
+            "y": 0,
+            "scale": 1,
+            "opacity": 1
+          },
+          "to": {
+            "x": 0,
+            "y": 0,
+            "scale": 1,
+            "opacity": 1
+          }
+        }
+      ],
+      "transition": "fade"
+    },
+    {
+      "durationMs": 8000,
+      "captionKey": "ui.cine.intro.4",
+      "background": "panel",
+      "layers": [
+        {
+          "image": "intro-4.png",
+          "from": {
+            "x": 0,
+            "y": 0,
+            "scale": 1.04,
+            "opacity": 1
+          },
+          "to": {
+            "x": 0,
+            "y": 0,
+            "scale": 1,
+            "opacity": 1
+          }
+        }
+      ],
+      "transition": "fade",
+      "sfx": "sfx-radio"
+    },
+    {
+      "durationMs": 7000,
+      "captionKey": "ui.cine.intro.5",
+      "background": "mars-sky",
+      "layers": [
+        {
+          "image": "intro-5.png",
+          "from": {
+            "x": 0,
+            "y": 10,
+            "scale": 1.04,
+            "opacity": 1
+          },
+          "to": {
+            "x": 0,
+            "y": -10,
+            "scale": 1.04,
+            "opacity": 1
+          }
+        }
+      ],
+      "transition": "cut",
+      "sfx": "sfx-launch"
+    },
+    {
+      "durationMs": 8000,
+      "captionKey": "ui.cine.intro.6",
+      "background": "bg",
+      "layers": [
+        {
+          "image": "intro-6.png",
+          "from": {
+            "x": 0,
+            "y": 0,
+            "scale": 1,
+            "opacity": 1
+          },
+          "to": {
+            "x": 0,
+            "y": 0,
+            "scale": 1.04,
+            "opacity": 1
+          }
+        }
+      ],
+      "transition": "fade",
+      "sfx": "sfx-landing"
+    }
+  ]
+}

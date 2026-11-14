@@ -1,0 +1,23 @@
+{
+  "panelOutput": 8,
+  "batteryCapacity": 20,
+  "extractorWater": 6,
+  "recyclePct": 75,
+  "generatorWaterIn": 2,
+  "generatorOxygenOut": 6,
+  "greenhouseWaterIn": 2,
+  "greenhouseCycleDays": 4,
+  "greenhouseHarvest": 24,
+  "greenhouseStressPenalty": 6,
+  "crewNeedPerDay": 1,
+  "backgroundExposure": 1,
+  "exposure": {
+    "1": { "unsheltered": 25, "sheltered": 2 },
+    "2": { "unsheltered": 50, "sheltered": 5 }
+  },
+  "exposureCaution": 50,
+  "exposureLimit": 100,
+  "healthPenalty": { "oxigeno": 50, "agua": 25, "alimentos": 15 },
+  "healthRecovery": 10,
+  "exploreRevealRadius": 1
+}

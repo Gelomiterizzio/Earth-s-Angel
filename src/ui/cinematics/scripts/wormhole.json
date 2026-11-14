@@ -1,0 +1,99 @@
+{
+  "id": "wormhole",
+  "music": "music-portal",
+  "scenes": [
+    {
+      "durationMs": 7000,
+      "captionKey": "ui.cine.wormhole.1",
+      "background": "panel",
+      "layers": [
+        {
+          "image": "wormhole-1.png",
+          "from": {
+            "x": 0,
+            "y": 0,
+            "scale": 1,
+            "opacity": 1
+          },
+          "to": {
+            "x": 0,
+            "y": 0,
+            "scale": 1.04,
+            "opacity": 1
+          }
+        }
+      ],
+      "transition": "fade",
+      "sfx": "sfx-portal"
+    },
+    {
+      "durationMs": 7000,
+      "captionKey": "ui.cine.wormhole.2",
+      "background": "bg",
+      "layers": [
+        {
+          "image": "wormhole-2.png",
+          "from": {
+            "x": 0,
+            "y": 0,
+            "scale": 1,
+            "opacity": 1
+          },
+          "to": {
+            "x": 0,
+            "y": 0,
+            "scale": 1,
+            "opacity": 1
+          }
+        }
+      ],
+      "transition": "fade"
+    },
+    {
+      "durationMs": 8000,
+      "captionKey": "ui.cine.wormhole.3",
+      "background": "ice",
+      "layers": [
+        {
+          "image": "wormhole-3.png",
+          "from": {
+            "x": 0,
+            "y": 0,
+            "scale": 1,
+            "opacity": 1
+          },
+          "to": {
+            "x": 0,
+            "y": 0,
+            "scale": 1.04,
+            "opacity": 1
+          }
+        }
+      ],
+      "transition": "fade"
+    },
+    {
+      "durationMs": 8000,
+      "captionKey": "ui.cine.wormhole.4",
+      "background": "forest",
+      "layers": [
+        {
+          "image": "wormhole-4.png",
+          "from": {
+            "x": 12,
+            "y": 0,
+            "scale": 1.035,
+            "opacity": 1
+          },
+          "to": {
+            "x": -12,
+            "y": 0,
+            "scale": 1.035,
+            "opacity": 1
+          }
+        }
+      ],
+      "transition": "fade"
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+[
+  {
+    "id": "t01",
+    "trigger": { "event": "day/started", "day": 1 },
+    "highlight": "hud-meters",
+    "textKey": "content.tutorial.t01",
+    "unlockCards": []
+  },
+  {
+    "id": "t02",
+    "trigger": { "event": "day/started", "day": 1 },
+    "highlight": "palette-panel",
+    "textKey": "content.tutorial.t02",
+    "completeOn": "building/placed",
+    "unlockCards": ["power"]
+  },
+  {
+    "id": "t03",
+    "trigger": { "event": "day/started", "day": 1 },
+    "highlight": "tool-collect",
+    "textKey": "content.tutorial.t03",
+    "completeOn": "resource/collected",
+    "unlockCards": []
+  },
+  {
+    "id": "t04",
+    "trigger": { "event": "day/started", "day": 1 },
+    "highlight": "tool-explore",
+    "textKey": "content.tutorial.t04",
+    "completeOn": "tile/explored",
+    "unlockCards": ["moonIce"]
+  },
+  {
+    "id": "t05",
+    "trigger": { "event": "day/started", "day": 1 },
+    "highlight": "btn-end-day",
+    "textKey": "content.tutorial.t05",
+    "completeOn": "day/ended",
+    "unlockCards": []
+  },
+  {
+    "id": "t06",
+    "trigger": { "event": "day/started", "day": 2 },
+    "highlight": "palette-extractor",
+    "textKey": "content.tutorial.t06",
+    "unlockCards": ["waterLoop"]
+  },
+  {
+    "id": "t07",
+    "trigger": { "event": "day/started", "day": 3 },
+    "highlight": "palette-generador",
+    "textKey": "content.tutorial.t07",
+    "unlockCards": ["airFromWater", "growFood", "firstAir"]
+  },
+  {
+    "id": "t08",
+    "trigger": { "event": "event/forecast", "eventType": "sombra", "inDays": 2 },
+    "highlight": "hud-forecast",
+    "textKey": "content.tutorial.t08",
+    "unlockCards": []
+  },
+  {
+    "id": "t09",
+    "trigger": { "event": "event/forecast", "eventType": "tormenta-solar", "inDays": 2 },
+    "highlight": "palette-refugio",
+    "textKey": "content.tutorial.t09",
+    "unlockCards": ["solarStorm"]
+  },
+  {
+    "id": "t10",
+    "trigger": { "event": "decision/required" },
+    "highlight": "panel-decision",
+    "textKey": "content.tutorial.t10",
+    "completeOn": "decision/made",
+    "unlockCards": ["signalDelay"]
+  },
+  {
+    "id": "t11",
+    "trigger": { "event": "streak/changed" },
+    "highlight": "hud-objectives",
+    "textKey": "content.tutorial.t11",
+    "unlockCards": []
+  }
+]
