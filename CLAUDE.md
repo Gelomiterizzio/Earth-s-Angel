@@ -4,9 +4,9 @@ Juego educativo 2D por turnos para navegador. Entrada del equipo al NASA Space A
 
 ## Estado del proyecto
 
-- **14-nov-2026:** P0 lunar integrado en la raíz con arranque, núcleo, datos DONKI, mapa, interfaz, cinemática y audio. La vista de `tests/ui/` permite revisar el arte de Marte y las secuencias de P1/P2 con datos de prueba. [Comandos y verificación](docs/DESPLIEGUE.md).
+- **14-nov-2026.** Luna, Marte y Tierra están integrados y verificados en la compilación local. [Comandos y verificación](docs/DESPLIEGUE.md).
 - Entrega local: **domingo 15-nov a las 12:00** (envío) y **14:00** (defensa), hora de Bolivia. Congelación interna de código: domingo 09:30.
-- Alcance comprometido: **P0, prototipo lunar**. P1 (Marte) y P2 (Tierra) están diseñados y quedan fuera del envío salvo que P0 esté verificado antes.
+- La demo mínima del reto usa la Luna. La campaña publicada incluye Marte y la ruta opcional de Tierra cuando se complete el despliegue.
 
 Actualiza esta sección cuando cambie el estado real.
 

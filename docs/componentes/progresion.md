@@ -11,7 +11,7 @@
 | Depende de | [ARQUITECTURA.md](../ARQUITECTURA.md), [persistencia](persistencia.md), [motor-cinematicas](motor-cinematicas.md) |
 | No incluye | Las cinemáticas. Las reglas de cada nivel. |
 | Responsable · revisor | A · B |
-| Estado | Propuesto. Sin validar. |
+| Estado | Implementado y probado. |
 
 ## 2. Arquitectura y funcionamiento
 
@@ -55,16 +55,16 @@ El bono vive dentro de `luna->marte`. Como la transición se aplica y se guarda 
 
 dan exactamente el mismo estado.
 
-### Manifiesto de transferencia · propuesta sin validar
+### Manifiesto de transferencia
 
 | Qué | Regla |
 | --- | --- |
 | Tripulación | Los cuatro de la Luna, con salud 100 y la mitad de su exposición. Se suman dos especialistas con exposición 0. |
-| Suministros | La mitad de cada reserva lunar de oxígeno, agua, alimentos y materiales, más el equipo de llegada de la dificultad. |
+| Suministros | La mitad de oxígeno, agua, alimentos y materiales (redondeada hacia abajo), más el equipo de llegada y con el límite de capacidad de Marte. La energía llega con el equipo de Marte. |
 | Hallazgos y pistas | Todos. |
 | Bono | `bonusDays` de la dificultad: 12, 10 u 8. |
 
-La pantalla de resultado de la Luna muestra el manifiesto antes de partir. La explicación del tiempo ganado es `ficción`: los avances de la base lunar dan margen a la Tierra.
+El manifiesto aparece al inicio de la cinemática Luna → Marte. La explicación del tiempo ganado es `ficción`: los avances de la base lunar dan margen a la Tierra.
 
 ### Reinicio de misión · `RESTART_MISSION`
 
@@ -83,7 +83,6 @@ Media. Victoria lunar el día 9: plazo 54 − 9 = 45. Transición: 45 + 10 = **5
 - Victoria lunar con el plazo terrestre en 1: la transición suma el bono y Marte empieza con margen.
 - Transición pedida sin victoria: error, sin cambios.
 - Fallo en la Tierra: se reproduce la victoria ordinaria de Marte con una frase adicional.
-- En P0 la transición no existe: tras la victoria lunar se muestra "Marte: próximamente".
 
 ## 4. Implementación delegable
 

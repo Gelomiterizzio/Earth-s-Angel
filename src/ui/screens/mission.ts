@@ -1,5 +1,6 @@
-// AI-assisted: Cursor Grok 4.7, reviewed by C
+// AI-assisted: Cursor Grok 4.7 and OpenAI Codex. Human review by C pending.
 import type { Screen } from '../app-bridge';
+import type { CampaignState } from '../core-bridge';
 import { mountMissionHud } from '../hud/mission-hud';
 import { mountEarth } from './earth';
 
@@ -7,9 +8,8 @@ let cleanup: (() => void) | null = null;
 
 export const missionScreen: Screen = {
   mount(root, ctx) {
-    const state = ctx.store.getState();
-    const earth = state as { earth?: unknown } | null;
-    cleanup = state?.mission.level === 'tierra' || earth?.earth
+    const state: CampaignState | null = ctx.store.getState();
+    cleanup = state?.mission.level === 'tierra' || state?.earth
       ? mountEarth(root, ctx)
       : mountMissionHud(root, ctx);
   },

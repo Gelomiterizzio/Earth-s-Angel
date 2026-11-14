@@ -4,7 +4,7 @@
 
 Earth's Angel is our entry for the **2026 NASA International Space Apps Challenge** (Santa Cruz de la Sierra, Bolivia), answering the challenge **Build a Junior Astronaut Mission Trainer**.
 
-> Status (14 Nov 2026): the lunar P0 mission runs locally from title to mission result. Mars and Earth have art and cinematic previews. The game has not been published.
+> Campaign status (14 Nov 2026). The Moon and Mars missions lead to the Mars ending or unlock an Earth recovery mission. Campaign progress saves in the browser.
 
 ## The idea
 
@@ -12,7 +12,7 @@ You lead the crew of Project Last Hope. Power, oxygen, water, food and radiation
 
 - **Audience:** kids ages 7–12 (the age range stated in the challenge), with harder difficulty levels for older players.
 - **Format:** turn-based 2D grid game. Plays in the browser. No download, no account, no payment.
-- **Scope of the hackathon build:** the Moon mission (P0). Mars and a secret Earth epilogue are designed and documented as later phases.
+- **Campaign:** Moon outpost, Mars colony and the optional Second Chance mission on Earth.
 
 ## NASA data
 
@@ -20,7 +20,7 @@ The storm decision is driven by archived records from the **Space Weather Databa
 
 ## Play
 
-- Playable build: `[POR COMPLETAR: public URL]`
+- Vercel production URL pending. [Production setup](docs/DESPLIEGUE.md#producción-en-vercel).
 - 30-second demo: `[POR COMPLETAR: public link]`
 
 ## Art and cinematic preview
@@ -76,3 +76,7 @@ The team defined the concept and story. Claude Code assisted with planning docum
 [MIT](LICENSE) for the project. The bundled Pixelify Sans font is distributed under the SIL Open Font License 1.1.
 
 Earth's Angel is a student hackathon project. It is not affiliated with, sponsored by, or endorsed by NASA.
+
+## Campaign verification
+
+The test suite replays the lunar vectors, wins Mars in all three difficulties and checks the Earth missions and ending conditions. A local production build was also played in Edge through both endings and through failure on Earth. [Test evidence](docs/PRUEBAS.md#verificación-de-campaña).

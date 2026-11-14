@@ -4,13 +4,15 @@ import type { SceneId } from '../app/context';
 
 export const PACKAGED_AUDIO: readonly string[] = [];
 
-export const EVENT_SFX: Partial<Record<GameEvent['type'], string>> = {
+export const EVENT_SFX: Partial<Record<GameEvent['type'] | 'building/damaged' | 'earth/season', string>> = {
   'building/placed': 'sfx-build',
   'building/operational': 'sfx-online',
   'action/rejected': 'sfx-error',
   'tile/explored': 'sfx-explore',
   'resource/collected': 'sfx-collect',
   'day/ended': 'sfx-day-end',
+  'earth/season': 'sfx-day-end',
+  'building/damaged': 'sfx-error',
   'harvest/done': 'sfx-produce',
   'decision/required': 'sfx-alert-radiation',
   'alert/shortage': 'sfx-alert-shortage',

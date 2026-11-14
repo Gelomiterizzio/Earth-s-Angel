@@ -24,6 +24,7 @@ import {
   evaluateMissionOutcome,
   evaluateObjectives,
 } from './objectives';
+import { forecastHorizon } from './progression';
 import { applyRadiationStep } from './radiation';
 
 const ALL_RESOURCES: ResourceId[] = [
@@ -39,7 +40,6 @@ export function startDay(
   data: GameData,
 ): { state: GameState; events: SimEvent[] } {
   const { mission, campaign } = state;
-  const levelCfg = data.levels[mission.level] ?? data.levels.luna;
   const day = mission.day;
   const events: SimEvent[] = [];
 
@@ -68,9 +68,13 @@ export function startDay(
     });
   }
 
-  const forecast = getForecast(mission.schedule, day, levelCfg.forecastHorizonDays);
-  for (const item of forecast) {
-    events.push({ type: 'event/forecast', item });
+  let buildings = mission.buildings;
+  for (const event of getActiveEvents(mission.schedule, day)) {
+    if (event.type !== 'averia' || event.startDay !== day || !event.target) continue;
+    const target = buildings.find((b) => b.type === event.target && !b.damaged && b.operationalFromDay <= day);
+    if (!target) continue;
+    buildings = buildings.map((b) => b.id === target.id ? { ...b, damaged: true } : b);
+    events.push({ type: 'building/damaged', buildingId: target.id, building: target.type });
   }
 
   const nextState: GameState = {
@@ -78,6 +82,7 @@ export function startDay(
     mission: {
       ...mission,
       phase,
+      buildings,
       ap,
       apSpentToday: 0,
       shelterToday: false,
@@ -85,6 +90,8 @@ export function startDay(
     },
   };
 
+  const forecast = getForecast(mission.schedule, day, forecastHorizon(nextState, data));
+  for (const item of forecast) events.push({ type: 'event/forecast', item });
   return { state: nextState, events };
 }
 
@@ -260,6 +267,42 @@ export function advanceDay(
       discoveries: [...mission.discoveries],
     },
   };
+
+  if (mission.level === 'marte') {
+    stateAtClose.mission.dust = Math.min(cfg.dustCap ?? 0, (mission.dust ?? 0) + (cfg.dustPerDay ?? 0));
+  }
+  const antenna = modulesStep.buildings.find((b) => b.type === 'comunicaciones' && energyStep.poweredIds.has(b.id));
+  const online = antenna !== undefined;
+  if (mission.level === 'marte') {
+    const linkStreak = online ? (mission.linkStreak ?? 0) + 1 : 0;
+    stateAtClose.mission.linkStreak = linkStreak;
+    stateAtClose.mission.linkEstablished = Boolean(mission.linkEstablished || linkStreak >= (cfg.linkDays ?? 1));
+    stateAtClose.mission.linkOutageDays = !online && mission.linkEstablished ? (mission.linkOutageDays ?? 0) + 1 : 0;
+  }
+
+  if (levelCfg.secret) {
+    const laboratory = modulesStep.buildings.some((b) => b.type === 'laboratorio' && energyStep.poweredIds.has(b.id));
+    const labDays = (mission.labDays ?? 0) + Number(laboratory);
+    if (labDays) stateAtClose.mission.labDays = labDays;
+    const clues = stateAtClose.campaign.clues;
+    const addClue = (kind: 'signal' | 'row') => {
+      const id = mission.level + '.' + kind;
+      if (!clues.includes(id)) {
+        clues.push(id);
+        events.push({ type: 'discovery/found', discoveryId: id });
+      }
+    };
+    if (antenna) {
+      addClue('signal');
+      const { x, y } = antenna;
+      const beacon = levelCfg.secret.beacon;
+      stateAtClose.campaign.clueSignals = {
+        ...campaign.clueSignals,
+        [mission.level]: { x, y, distance: Math.max(Math.abs(x - beacon.x), Math.abs(y - beacon.y)) },
+      };
+    }
+    if (labDays >= (data.constants.labClueDays ?? 3)) addClue('row');
+  }
 
   const stability = computeDayStability(stateAtClose, data, {
     lsOk,

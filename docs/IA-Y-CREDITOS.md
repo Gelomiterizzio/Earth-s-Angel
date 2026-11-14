@@ -167,3 +167,7 @@ Earth's Angel is not affiliated with, sponsored by, or endorsed by NASA.
 - [ ] La revisión humana de cada fila tiene nombre.
 - [ ] El texto de créditos del juego coincide con este registro.
 - [ ] Los campos del formulario coinciden con este registro.
+
+## Implementación de la campaña P1 y P2
+
+OpenAI Codex coordinó contratos, transiciones, guardado, validación de campaña y despliegue (A). Pascal, subagente de Codex, implementó datos y mapa de Marte, integración de escaneo y simulación terrestre (B). Darwin, subagente de Codex, integró las vistas bilingües, cinemáticas, estilos y audio (C). Se reutilizaron los activos acreditados arriba. La revisión de los integrantes A, B y C sigue pendiente. Codex hizo la integración y la verificación automatizada y en navegador.

@@ -27,7 +27,7 @@
     },
     "extractor": {
       "name": "Ice extractor",
-      "desc": "Pulls water from lunar ice.",
+      "desc": "Extracts water from ice deposits.",
       "why": "New water from ice. Place only on ice."
     },
     "invernadero": {
@@ -39,6 +39,26 @@
       "name": "Radiation shelter",
       "desc": "Shields the crew during solar storms.",
       "why": "Protection when particles arrive."
+    },
+    "deposito": {
+      "name": "Supply depot",
+      "desc": "Expands storage for oxygen, water, food, and materials.",
+      "why": "More space for reserves helps the base last through a disruption."
+    },
+    "comunicaciones": {
+      "name": "Communications antenna",
+      "desc": "Maintains the link and extends the forecast when powered.",
+      "why": "Earlier warnings give the crew time to prepare."
+    },
+    "laboratorio": {
+      "name": "Laboratory",
+      "desc": "Studies the ground for clues while it has power.",
+      "why": "Readings from beneath the surface help locate a buried signal."
+    },
+    "habitat": {
+      "name": "Habitat",
+      "desc": "Provides two shelter places and a closer logistics point.",
+      "why": "A second base of operations helps the crew work farther from the ship."
     }
   },
   "event": {
@@ -55,6 +75,18 @@
       "forecast2": "Active region watched",
       "forecast1": "Alert: particles on the way",
       "today": "Solar storm today: choose shelter or work"
+    },
+    "tormenta-polvo": {
+      "name": "Dust storm",
+      "desc": "Dust in the air reduces the sunlight reaching the panels.",
+      "forecast2": "Dust storm in two sols",
+      "forecast1": "Dust storm next sol",
+      "today": "Dust storm today. The panels generate less power."
+    },
+    "averia": {
+      "name": "Equipment failure",
+      "desc": "A damaged building stays offline until repaired.",
+      "today": "Check the damaged building and repair it."
     }
   },
   "card": {
@@ -89,6 +121,18 @@
     "signalDelay": {
       "title": "Signals that take time",
       "body": "Radio signals travel at light speed. They still take time: about a second to the Moon, and minutes to Mars."
+    },
+    "sol": {
+      "title": "A day on Mars",
+      "body": "A Martian solar day is called a sol. It lasts about 24 hours and 40 minutes. In this mission, a sol is one turn."
+    },
+    "marsDust": {
+      "title": "Power in a dust storm",
+      "body": "During a regional storm, InSight’s solar energy fell from 425 to 275 watt-hours per sol. The game models that drop by setting panel output to 65% during a regional storm."
+    },
+    "sameStormMars": {
+      "title": "A solar storm reaches Mars",
+      "body": "During the September 2017 solar storm, Curiosity measured more than twice its previous record radiation level on the Martian surface. The mission uses its own exposure scale."
     }
   },
   "tutorial": {
@@ -183,5 +227,33 @@
     "fog": "Unexplored",
     "free": "Free",
     "occupied": "Occupied"
+  },
+  "earth": {
+    "error": {
+      "staleSeason": "That season is no longer active."
+    },
+    "report": {
+      "energia": "Clean energy avoided emissions.",
+      "agua": "Water efficiency improved water availability.",
+      "reciclaje": "Recycling saved water and avoided emissions.",
+      "restauracion": "Restoration helped ecosystems recover.",
+      "recyclingBoost": "Recycling made water efficiency more effective.",
+      "lowWater": "Water scarcity cut the gains from restoration in half.",
+      "drift": "Water availability and ecosystem health decline without upkeep."
+    },
+    "result": {
+      "victory": {
+        "principle": "The practices that kept the base alive also helped Earth recover.",
+        "suggestion": "Keep clean energy, efficient water use, recycling, and restoration working together."
+      },
+      "deadline": {
+        "principle": "The season ended before every indicator reached its target.",
+        "suggestion": "Invest early in several lines so their gains can build each season."
+      },
+      "water": {
+        "principle": "Water ran out before the project could finish.",
+        "suggestion": "Invest in water efficiency and recycling early to protect the water supply."
+      }
+    }
   }
 }

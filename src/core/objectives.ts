@@ -13,6 +13,7 @@ import type {
 } from './types';
 import { resolveEnergyStep } from './energy';
 import { getForecast, getRadiationForDay, getSolarFactorForDay } from './events';
+import { forecastHorizon } from './progression';
 import { getOperationalShelterSeats } from './radiation';
 
 export interface DayStabilityFacts {
@@ -50,7 +51,8 @@ export function computeDayStability(
     mission.resources.agua >= cfg.reserveThreshold &&
     mission.resources.alimentos >= cfg.reserveThreshold;
   const energyOk = mission.resources.energia >= cfg.energyThreshold;
-  const stable = facts.lsOk && noShortage && protectedToday && reservesOk && energyOk;
+  const linkOk = mission.level !== 'marte' || (mission.linkStreak ?? 0) > 0;
+  const stable = facts.lsOk && noShortage && protectedToday && reservesOk && energyOk && linkOk;
 
   return {
     lsOk: facts.lsOk,
@@ -142,20 +144,17 @@ export function evaluateObjectives(
           current: mission.streak,
           target: cfg.streakDays,
         };
-      case 'comunicaciones': {
-        const hasComm = mission.buildings.some(
-          (b) =>
-            b.type === 'comunicaciones' &&
-            b.enabled &&
-            !b.damaged &&
-            day >= b.operationalFromDay,
-        );
-        return { id: 'comunicaciones', met: hasComm };
-      }
+      case 'comunicaciones':
+        return {
+          id: 'comunicaciones',
+          met: (mission.linkStreak ?? 0) >= (cfg.linkDays ?? 1),
+          current: mission.linkStreak ?? 0,
+          target: cfg.linkDays ?? 1,
+        };
       case 'autonomia':
         return {
           id: 'autonomia',
-          met: mission.streak >= cfg.streakDays,
+          met: mission.streak >= cfg.streakDays && (mission.dust ?? 0) < (cfg.dustCap ?? Infinity),
           current: mission.streak,
           target: cfg.streakDays,
         };
@@ -244,6 +243,13 @@ export function buildCauseEffectKeys(params: {
   return keys.slice(0, 5);
 }
 
+function missingEssentialBuilding(state: GameState): boolean {
+  const types = new Set(state.mission.buildings.map((building) => building.type));
+  return (['panel', 'extractor', 'reciclador', 'generador', 'invernadero', 'comunicaciones'] as const)
+    .some((type) => !types.has(type))
+    || (!types.has('refugio') && !types.has('habitat'));
+}
+
 export function evaluateMissionOutcome(params: {
   state: GameState;
   data: GameData;
@@ -270,6 +276,16 @@ export function evaluateMissionOutcome(params: {
     cause = 'exposicion';
   } else if (objectives.length > 0 && objectives.every((o) => o.met)) {
     outcome = 'victory';
+  } else if (
+    mission.level === 'marte' && mission.resources.materiales === 0
+    && mission.map.tiles.every((tile) => tile.terrain !== 'mineral' || tile.collected)
+    && missingEssentialBuilding(state)
+  ) {
+    outcome = 'defeat';
+    cause = 'escasez';
+  } else if (cfg.maxLinkOutage !== undefined && (mission.linkOutageDays ?? 0) > cfg.maxLinkOutage) {
+    outcome = 'defeat';
+    cause = 'objetivos';
   } else if (
     (cfg.dayLimit !== null && closedDay >= cfg.dayLimit) ||
     nextEarthDaysRemaining <= 0
@@ -359,7 +375,7 @@ export function previewEnergy(
     (b) => b.type === 'panel' && b.enabled && !b.damaged && mission.day >= b.operationalFromDay,
   ).length;
 
-  const generated = Math.floor((activePanels * data.constants.panelOutput * solar) / 100);
+  const generated = Math.floor((activePanels * data.constants.panelOutput * solar * (100 - (mission.dust ?? 0))) / 10_000);
   const moduleDemand = mission.buildings
     .filter((b) => b.enabled && !b.damaged && mission.day >= b.operationalFromDay)
     .reduce((sum, b) => sum + (data.buildings[b.type]?.energyPerDay ?? 0), 0);
@@ -374,7 +390,6 @@ export function previewEnergy(
 
 export function summarizeHud(state: GameState, data: GameData): HudSummary {
   const { mission, campaign } = state;
-  const levelCfg = data.levels[mission.level] ?? data.levels.luna;
   const diffBlock = data.difficulty[campaign.difficulty];
   const cfg = diffBlock.levels[mission.level] ?? diffBlock.levels.luna;
 
@@ -442,7 +457,7 @@ export function summarizeHud(state: GameState, data: GameData): HudSummary {
   const maxExposure = Math.max(0, ...mission.crew.map((c) => c.exposure));
   const shelterSeats = getOperationalShelterSeats(mission.buildings, mission.day, data);
   const shelterReady = shelterSeats >= mission.crew.length;
-  const forecast = getForecast(mission.schedule, mission.day, levelCfg.forecastHorizonDays);
+  const forecast = getForecast(mission.schedule, mission.day, forecastHorizon(state, data));
   const radAlerts = forecast.filter((f) => (f.radiationLevel ?? 0) > 0);
   const alertInDays =
     radAlerts.length > 0 ? Math.min(...radAlerts.map((f) => f.inDays)) : null;

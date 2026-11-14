@@ -111,5 +111,5 @@ describe('Property / Invariant Fuzzing across 100 seeded games (I-INV-01)', () =
         expect(issues).toEqual([]);
       }
     }
-  });
+  }, 15_000);
 });

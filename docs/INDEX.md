@@ -1,6 +1,6 @@
 # Earth's Angel · mapa de lectura
 
-Estado al **14 de noviembre de 2026**. P0 lunar integrado en la raíz. El juego usa los datos, la simulación y el mapa de A y B con la interfaz, el arte y el audio de C. La vista de arte permite revisar Marte y las secuencias de P1/P2. [Ejecución y comprobaciones](DESPLIEGUE.md).
+Estado al **14 de noviembre de 2026**. Luna, Marte y Tierra integrados en la raíz. La campaña tiene guardado local, continuidad entre niveles y dos finales. [Ejecución y comprobaciones](DESPLIEGUE.md).
 
 ## Si eres integrante del equipo
 
@@ -11,6 +11,14 @@ Estado al **14 de noviembre de 2026**. P0 lunar integrado en la raíz. El juego 
 2. [PLAN-EQUIPO.md](PLAN-EQUIPO.md): horarios, hitos y criterios para cortar alcance.
 3. [ARQUITECTURA.md](ARQUITECTURA.md): contratos que todos comparten.
 4. [agentes/PROTOCOLO-INTEGRACION.md](agentes/PROTOCOLO-INTEGRACION.md): cómo se une el trabajo en Git.
+
+## Paquetes de campaña
+
+| Integrante | P1 · Marte | P2 · Tierra |
+| --- | --- | --- |
+| A · Motor | [Transferencia y guardado](agentes/tareas/T-P1-A-motor.md) | [Pistas, portal y finales](agentes/tareas/T-P2-A-motor.md) |
+| B · Jugabilidad | [Mapa, balance y riesgos](agentes/tareas/T-P1-B-jugabilidad.md) | [Pistas y sostenibilidad](agentes/tareas/T-P2-B-jugabilidad.md) |
+| C · Interfaz | [Interfaz y cinemáticas](agentes/tareas/T-P1-C-interfaz.md) | [Tierra y desenlaces](agentes/tareas/T-P2-C-interfaz.md) |
 
 ## Si eres un agente de IA con una tarea
 

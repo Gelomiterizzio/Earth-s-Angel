@@ -11,7 +11,7 @@
 | Depende de | [mapa](mapa.md), [construccion](construccion.md) (laboratorio y comunicaciones), [agujero-de-gusano](agujero-de-gusano.md) |
 | No incluye | Activación del portal. |
 | Responsable · revisor | B · C |
-| Estado | Propuesto. Sin validar. Todo es `ficción`. |
+| Estado | Integrado y probado. Todo es `ficción`. |
 
 ## 2. Arquitectura y funcionamiento
 
@@ -23,7 +23,7 @@ Cada mapa tiene **una baliza** en una casilla de terreno llano, sin marca visibl
 | Registro científico | Laboratorio operativo durante 3 días | La **fila** de la baliza, como lectura del subsuelo |
 | Señal de antena | Comunicaciones operativas | Distancia en casillas desde la antena hasta la baliza |
 
-Con columna y fila el jugador conoce la casilla exacta. Con una de ellas y la distancia, quedan como mucho dos candidatas.
+Con columna y fila el jugador conoce la casilla exacta. Con una de ellas y la distancia, se reduce el área de búsqueda.
 
 ### Descubrimiento
 
@@ -55,13 +55,13 @@ Las pistas obtenidas viven en `campaign.clues` y viajan en el manifiesto de tran
 ### Cómo se muestran
 
 - **Registro de pistas** en el panel de ayuda: una línea por pista, con icono.
-- El fragmento se enseña como un dibujo con tantas muescas como la columna, para que contarlas sea parte del juego. El texto alternativo da el número.
+- El registro nombra el nivel y muestra la columna, la fila o la distancia, según lo encontrado.
 - Cuando el jugador tiene columna y fila, la casilla **no** se marca sola en el mapa: la encuentra él.
 
 ### Relación con la campaña
 
 - En P0 la casilla `misterio` de la Luna ya existe y da una tarjeta de hallazgo, sin más efecto.
-- La baliza lunar exige laboratorio o comunicaciones, que son edificios de P1.
+- El laboratorio lunar revela la fila y el misterio revela la columna. En Marte, una antena encendida registra la distancia y su coordenada; ambas quedan en el guardado.
 - No encontrar las balizas no impide ganar: lleva a la victoria ordinaria.
 
 ### Casos límite

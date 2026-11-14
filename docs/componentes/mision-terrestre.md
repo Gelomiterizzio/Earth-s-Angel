@@ -1,5 +1,7 @@
 # Misión terrestre
 
+Verificado en la campaña local. El recorrido y sus resultados están en [PRUEBAS.md](../PRUEBAS.md#verificación-de-campaña).
+
 Contrato del sistema del epílogo. El diseño del nivel, con sus acciones, metas y números, está en [niveles/tierra-alternativa.md](../niveles/tierra-alternativa.md).
 
 ## 1. Identificación y límites
@@ -13,7 +15,7 @@ Contrato del sistema del epílogo. El diseño del nivel, con sus acciones, metas
 | Depende de | [agujero-de-gusano](agujero-de-gusano.md), [progresion](progresion.md), [resultados-y-finales](resultados-y-finales.md) |
 | No incluye | Tablero de casillas, tripulación, radiación. Es un sistema distinto y más simple. |
 | Responsable · revisor | B (diseño y datos) y A (núcleo) · A |
-| Estado | Propuesto. Sin validar. |
+| Estado | Implementado y probado. |
 
 ## 2. Arquitectura y funcionamiento
 

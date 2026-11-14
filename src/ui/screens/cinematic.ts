@@ -121,6 +121,7 @@ function showManifest(art: HTMLElement, ctx: AppContext, manifest: Manifest, the
       food: manifest.supplies.alimentos,
       materials: manifest.supplies.materiales,
     })),
+    el('p', undefined, ctx.t('ui.manifest.clues', { n: manifest.clues.length })),
     el('p', undefined, ctx.t('ui.manifest.bonus', { n: manifest.bonusDaysApplied })),
   );
   const go = button({

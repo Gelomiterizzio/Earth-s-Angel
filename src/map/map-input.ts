@@ -17,6 +17,7 @@ export function actionForTool(
   if (tool.kind === 'build') return { type: 'BUILD', building: tool.building, x, y };
   if (tool.kind === 'explore') return { type: 'EXPLORE', x, y };
   if (tool.kind === 'collect') return { type: 'COLLECT', x, y };
+  if (tool.kind === 'scan') return { type: 'SCAN', x, y };
   return null;
 }
 

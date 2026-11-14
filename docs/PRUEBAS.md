@@ -362,3 +362,11 @@ Sin resultados. Esta sección se rellena con fecha, navegador, versión, número
 | Fecha | Qué se ejecutó | Resultado | Quién |
 | --- | --- | --- | --- |
 | — | — | — | — |
+
+## Verificación de campaña
+
+- `npm test` pasó 159 pruebas en 25 archivos. Cubre las regresiones de Luna, Marte ganable en tres dificultades, bono único, persistencia, bloqueos del portal y las temporadas de Tierra. Véanse [campaign.test.ts](../tests/core/campaign.test.ts) y [earth.test.ts](../tests/core/earth.test.ts).
+- `npm run build` comprueba tipos y genera el sitio de producción.
+- Edge con compilación local y semilla canónica. Acciones reales en los dos mapas, partida guardada en Marte, salto y reproducción completa de Luna → Marte con estado idéntico, final ordinario, fallo de Tierra con retorno y final alternativo. Verificó la derrota en Marte, el arranque de una nueva campaña y la reproducción de los dos temas de Web Audio. Cargó 45 URLs de activos sin respuestas de error ni excepciones de JavaScript.
+
+El recorrido automatizado vive en [tests/browser/campaign.mjs](../tests/browser/campaign.mjs). Arranca el build con `npm run preview -- --host 127.0.0.1 --port 5186`. Abre Edge o Chromium con un perfil de pruebas separado, `--remote-debugging-port=9227`, una ventana de 1440 × 900 y `--autoplay-policy=no-user-gesture-required`. El script usa la primera pestaña de ese perfil y sustituye su guardado de prueba. Ejecuta `node tests/browser/campaign.mjs` para la URL local o añade la URL pública como argumento. Define `EA_NATURAL=1` para esperar el fin natural del viaje.

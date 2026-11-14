@@ -68,6 +68,11 @@ export interface Flow {
   startCampaign(difficulty: DifficultyId): void;
   completeCinematic(id: string): void;
   hasActiveMission(): boolean;
+  canContinue?(): boolean;
+  continueCampaign?(): void;
+  departToMars?(): void;
+  chooseEnding?(choice: 'mars' | 'portal'): void;
+  finishEarth?(choice: 'retry' | 'mars' | 'earth'): void;
   subscribe(listener: (e: { from: SceneId; to: SceneId }) => void): () => void;
 }
 

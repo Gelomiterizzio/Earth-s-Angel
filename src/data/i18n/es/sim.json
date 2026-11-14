@@ -79,5 +79,15 @@
   "sim.crew.2": "Botánica",
   "sim.crew.3": "Medicina",
   "sim.crew.4": "Geología",
-  "sim.crew.5": "Comunicaciones"
+  "sim.crew.5": "Comunicaciones",
+  "sim.error.NOTHING_TO_CLEAN": "No hay polvo que limpiar.",
+  "sim.error.ALREADY_FOUND": "Ya encontraste esta baliza.",
+  "sim.error.PORTAL_LOCKED": "El portal está cerrado.",
+  "sim.portal.beaconMoon": "Encuentra primero la baliza lunar.",
+  "sim.portal.beaconMars": "Encuentra primero la baliza marciana.",
+  "sim.portal.laboratory": "Hace falta un laboratorio operativo en Marte.",
+  "sim.portal.victory": "Completa primero la misión de Marte.",
+  "sim.error.NOT_ON_EARTH": "Inicia primero la misión terrestre.",
+  "sim.error.NO_BUDGET": "No hay suficientes puntos de proyecto.",
+  "sim.error.MAX_LEVEL": "Este proyecto está en su nivel máximo."
 }

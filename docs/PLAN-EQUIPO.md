@@ -170,3 +170,9 @@ Domingo, de 09:30 a 11:30. Cada línea tiene dueño.
 | C7 · Entrega | Pendientes publicación, materiales de demo y comprobación de los requisitos del evento. |
 
 [Comprobaciones del build y del navegador](DESPLIEGUE.md).
+
+## Integración de P1 y P2
+
+El reparto detallado y los prompts están en el [índice de campaña](INDEX.md#paquetes-de-campaña). A integra núcleo, contratos, flujo y guardado. B posee datos, simulación terrestre y mapa. C posee pantallas, estilos, sonido y catálogo de interfaz. El orden es contratos → datos y simulación → interfaz → pruebas de campaña → publicación.
+
+OpenAI Codex coordinó A. Los agentes Pascal y Darwin trabajaron B y C en copias separadas. Las revisiones de los integrantes humanos siguen pendientes.

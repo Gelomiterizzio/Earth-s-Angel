@@ -1,0 +1,61 @@
+{
+  "id": "marte",
+  "width": 20,
+  "height": 20,
+  "rows": [
+    "##....oo......m...##",
+    "#.....oo...........#",
+    "..m.........#.......",
+    "........#.......?...",
+    "...o...............m",
+    "..oo......i.........",
+    ".........ii....#....",
+    "....#...............",
+    ".........S.....m....",
+    "....................",
+    "..m......#.....oo...",
+    "...............oo...",
+    "......#.............",
+    ".i..........m.......",
+    "ii.................#",
+    "........oo..........",
+    "...m....oo.....#....",
+    "..............i.....",
+    "#.........m...ii...#",
+    "##................##"
+  ],
+  "ship": { "x": 9, "y": 8 },
+  "initialExploredRadius": 2,
+  "forecastHorizonDays": 1,
+  "forecastHorizonWithComms": 3,
+  "secret": { "beacon": { "x": 17, "y": 12 } },
+  "baseCaps": {
+    "energia": 30,
+    "oxigeno": 60,
+    "agua": 60,
+    "alimentos": 60,
+    "materiales": 90
+  },
+  "availableBuildings": [
+    "panel",
+    "bateria",
+    "generador",
+    "reciclador",
+    "extractor",
+    "invernadero",
+    "refugio",
+    "deposito",
+    "comunicaciones",
+    "laboratorio",
+    "habitat"
+  ],
+  "objectives": [
+    "soporte",
+    "energia",
+    "alimentos",
+    "reservas",
+    "proteccion",
+    "comunicaciones",
+    "autonomia"
+  ]
+}

@@ -44,13 +44,18 @@ export function deserialize(
     return { ok: false, reason: 'invalido' };
   }
 
-  const issues = validateState(envelope.state, data);
-  if (issues.length > 0) {
+  try {
+    if (validateState(envelope.state, data).length > 0) return { ok: false, reason: 'invalido' };
+  } catch {
     return { ok: false, reason: 'invalido' };
   }
 
-  return {
-    ok: true,
-    state: JSON.parse(JSON.stringify(envelope.state)) as GameState,
-  };
+  const state = JSON.parse(JSON.stringify(envelope.state)) as GameState;
+  // P0 saves can lack energy-priority entries added for the secret route.
+  for (const type of data.levels[state.mission.level]?.availableBuildings ?? []) {
+    if (data.buildings[type].energyPerDay > 0 && !state.mission.energyPriority.includes(type)) {
+      state.mission.energyPriority.push(type);
+    }
+  }
+  return { ok: true, state };
 }

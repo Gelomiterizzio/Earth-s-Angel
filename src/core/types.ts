@@ -1,3 +1,4 @@
+// P1/P2 assisted by OpenAI Codex. Human review pending.
 // AI-assisted: Antigravity (Gemini), reviewed by A
 
 export type DifficultyId = 'facil' | 'media' | 'imposible';
@@ -70,6 +71,7 @@ export interface ScheduledEvent {
   solarFactorPct?: number;
   radiationLevel?: RadiationLevel;
   sourceRef?: string;
+  target?: BuildingType;
 }
 
 export interface ObjectiveStatus {
@@ -129,7 +131,43 @@ export interface MissionResult {
   incidents: string[];
   principleKey: string;
   suggestionKey: string;
+  earth?: { indicators: EarthIndicators; targets: EarthIndicators; seasonsUsed: number };
 }
+
+export type EarthLine = 'energia' | 'agua' | 'reciclaje' | 'restauracion';
+export type EarthIndicator = 'agua' | 'emisiones' | 'ecosistemas';
+export type EarthIndicators = Record<EarthIndicator, number>;
+export interface EarthSeasonReport {
+  season: number;
+  gains: EarthIndicators;
+  drift: EarthIndicators;
+  causeEffectKeys: string[];
+}
+export interface EarthState {
+  season: number;
+  seasons: number;
+  budget: number;
+  levels: Record<EarthLine, number>;
+  indicators: EarthIndicators;
+  lastReport: EarthSeasonReport | null;
+  result: MissionResult | null;
+}
+export interface EarthData {
+  maxLevel: number;
+  lines: Record<EarthLine, { cost: number; effects: Partial<EarthIndicators> }>;
+  start: EarthIndicators;
+  drift: EarthIndicators;
+  combos: {
+    recyclingBoostsWaterAt: number;
+    cleanPowerDiscountAt: number;
+    restorationDiscountCost: number;
+    lowWaterThreshold: number;
+  };
+  difficulty: Record<DifficultyId, { seasons: number; budget: number; carryMax: number; targets: EarthIndicators }>;
+}
+export type EarthAction =
+  | { type: 'EARTH_INVEST'; action: EarthLine }
+  | { type: 'EARTH_END_SEASON'; season: number };
 
 export interface MissionState {
   level: LevelId;
@@ -152,6 +190,11 @@ export interface MissionState {
   streak: number;
   objectives: ObjectiveStatus[];
   discoveries: string[];
+  dust?: number;
+  labDays?: number;
+  linkStreak?: number;
+  linkEstablished?: boolean;
+  linkOutageDays?: number;
   lastReport: DayReport | null;
   result: MissionResult | null;
 }
@@ -174,6 +217,7 @@ export interface CampaignState {
   appliedTransitions: string[];
   clues: string[];
   narrativeFlags: Record<string, boolean>;
+  clueSignals?: Partial<Record<LevelId, { x: number; y: number; distance: number }>>;
   manifest: TransferManifest | null;
   history: MissionResult[];
 }
@@ -181,6 +225,7 @@ export interface CampaignState {
 export interface GameState {
   campaign: CampaignState;
   mission: MissionState;
+  earth?: EarthState;
 }
 
 export type Action =
@@ -195,7 +240,9 @@ export type Action =
   | { type: 'RESTART_MISSION' }
   | { type: 'REPAIR'; buildingId: number }
   | { type: 'CLEAN_PANELS' }
-  | { type: 'ACTIVATE_BEACONS' };
+  | { type: 'ACTIVATE_BEACONS' }
+  | { type: 'SCAN'; x: number; y: number }
+  | EarthAction;
 
 export type ErrorCode =
   | 'WRONG_PHASE'
@@ -216,7 +263,13 @@ export type ErrorCode =
   | 'NO_SHELTER'
   | 'NO_ENERGY_FOR_SHELTER'
   | 'NO_RADIATION_TODAY'
-  | 'INVALID_PRIORITY';
+  | 'INVALID_PRIORITY'
+  | 'NOTHING_TO_CLEAN'
+  | 'PORTAL_LOCKED'
+  | 'ALREADY_FOUND'
+  | 'NOT_ON_EARTH'
+  | 'NO_BUDGET'
+  | 'MAX_LEVEL';
 
 export type ActionErrorCode = ErrorCode;
 
@@ -273,7 +326,13 @@ export interface DifficultyConfig {
     radiationLevel?: RadiationLevel;
     jitterDays?: number;
     sourceRef?: string;
+    target?: BuildingType;
   }[];
+  dustPerDay?: number;
+  dustCap?: number;
+  linkDays?: number;
+  maxLinkOutage?: number;
+  logistics?: { near: number; far: number | null };
 }
 
 export interface LevelConfig {
@@ -287,6 +346,8 @@ export interface LevelConfig {
   availableBuildings: BuildingType[];
   objectives: ObjectiveId[];
   forecastHorizonDays: number;
+  forecastHorizonWithComms?: number;
+  secret?: { beacon: { x: number; y: number } };
 }
 
 export interface SimConstants {
@@ -308,6 +369,8 @@ export interface SimConstants {
   healthPenalty: { oxigeno: number; agua: number; alimentos: number };
   healthRecovery: number;
   exploreRevealRadius: number;
+  repairCost?: number;
+  labClueDays?: number;
 }
 
 export interface NasaSepRecord {
@@ -346,6 +409,7 @@ export interface GameData {
   >;
   constants: SimConstants;
   nasa: { sep: NasaSepRecord[] };
+  earth?: EarthData;
   events?: Record<string, unknown>;
   cards?: unknown[];
   tutorial?: unknown[];
@@ -364,6 +428,9 @@ export type SimEvent =
     }
   | { type: 'resource/collected'; resource: ResourceId; amount: number }
   | { type: 'discovery/found'; discoveryId: string }
+  | { type: 'scan/empty' }
+  | { type: 'building/damaged'; buildingId: number; building: BuildingType }
+  | { type: 'earth/season'; report: EarthSeasonReport }
   | { type: 'day/started'; day: number }
   | { type: 'decision/required'; eventId: string; sourceRef?: string }
   | { type: 'decision/made'; eventId: string; shelter: boolean }
@@ -419,7 +486,8 @@ export type Tool =
   | { kind: 'inspect' }
   | { kind: 'build'; building: BuildingType }
   | { kind: 'explore' }
-  | { kind: 'collect' };
+  | { kind: 'collect' }
+  | { kind: 'scan' };
 
 export interface UiState {
   tool: Tool;

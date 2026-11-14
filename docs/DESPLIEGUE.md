@@ -211,3 +211,9 @@ git push origin entrega-2026-11-15
 ```
 
 En el formulario van dos enlaces distintos: la demo y el proyecto final. Detalle en [ENTREGA.md](ENTREGA.md).
+
+## Producción en Vercel
+
+Vincula `Gelomiterizzio/Earth-s-Angel` a un proyecto de Vercel y selecciona `main` como rama de producción. El directorio raíz es la raíz del repositorio y el preset es Vite. [vercel.json](../vercel.json) configura la instalación, compilación y salida `dist`. Selecciona Node.js 24 si el proyecto usa otra versión.
+
+En Vercel → Deployments, comprueba que el despliegue de producción apunta al mismo SHA publicado en GitHub. Abre su dominio en una sesión sin iniciar sesión y ejecuta los recorridos de [PRUEBAS.md](PRUEBAS.md#verificación-de-campaña). La sesión de CLI disponible devolvió `Logged out`. Se necesita autenticar una cuenta con acceso al proyecto o importar el repositorio desde el panel.

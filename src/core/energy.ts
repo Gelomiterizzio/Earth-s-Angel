@@ -55,7 +55,9 @@ export function resolveEnergyStep(
   ).length;
 
   const start = mission.resources.energia;
-  const generated = Math.floor((activePanels * data.constants.panelOutput * solarFactorPct) / 100);
+  const generated = Math.floor(
+    (activePanels * data.constants.panelOutput * solarFactorPct * (100 - (mission.dust ?? 0))) / 10_000,
+  );
   let available = start + generated;
   let used = 0;
 

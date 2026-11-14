@@ -1,10 +1,10 @@
 # Nivel 2 · Marte, la nueva frontera
 
-La vista de arte muestra mesetas escalonadas, vetas diagonales de arena y ráfagas de polvo. La muestra tiene tema propio y controles de efectos. La simulación marciana y el viaje desde una partida real se mantienen en P1. [Cómo abrir la muestra](../DESPLIEGUE.md#vista-previa-de-interfaz).
+Marte se abre tras la victoria lunar. La cuadrícula usa el atlas marciano, efectos de polvo y un tema propio de Web Audio. Los controles del HUD permiten limpiar paneles y reparar módulos.
 
 | Campo | Valor |
 | --- | --- |
-| Estado de implementación | **Propuesto. Sin validar por simulación.** No entra en el envío del 15-nov salvo que P0 esté verificado antes. |
+| Estado de implementación | **Integrado.** Validado en las tres dificultades mediante recorridos desde la Luna. |
 | Prioridad | P1 |
 | Responsable · revisor | B · A |
 | Tareas | [P1-campana-principal.md](../agentes/tareas/P1-campana-principal.md) |
@@ -15,7 +15,7 @@ Marte reutiliza mapa, construcción y simulación de la Luna. Añade distancia, 
 
 | Tema | Luna | Marte |
 | --- | --- | --- |
-| Mapa | 12 × 12 | 20 × 20, con cámara y vista general |
+| Mapa | 12 × 12 | 20 × 20, con cuadrícula navegable mediante ratón y flechas |
 | Tripulación | 4 | 6 |
 | Unidad de tiempo | Día | **Sol** |
 | Límite de tiempo | Ventana local y plazo terrestre | Solo el plazo terrestre que quede, más el bono |
@@ -91,7 +91,7 @@ Un **hábitat** cuenta como punto de partida: construir uno lejos acerca esa zon
 
 ### Polvo
 
-- **Tormenta de polvo regional:** paneles al 65 %. La cifra sale de un dato real: InSight pasó de 425 a 275 vatios-hora por sol ([CIENCIA-Y-DATOS.md](../CIENCIA-Y-DATOS.md), F-03).
+- **Tormenta de polvo regional:** paneles al 65 %. El 65 % es un redondeo didáctico a partir de un dato real. InSight pasó de 425 a 275 vatios-hora por sol ([CIENCIA-Y-DATOS.md](../CIENCIA-Y-DATOS.md), F-03).
 - **Tormenta global:** paneles al 20 % (`balance`).
 - **Polvo acumulado:** cada sol los paneles pierden un poco, hasta un tope. La acción `CLEAN_PANELS` cuesta 1 punto de acción y lo devuelve a cero.
 
@@ -129,17 +129,10 @@ Las de la Luna, más:
 | Causa | Condición |
 | --- | --- |
 | `plazo` | El plazo terrestre llega a 0 |
-| `escasez` | No quedan materiales ni depósitos alcanzables y falta un edificio obligatorio |
-| `objetivos` | El enlace de comunicaciones se pierde durante más soles de los permitidos en Imposible |
+| `escasez` | Los materiales llegan a cero, se agotaron todos los minerales y falta un tipo de edificio esencial |
+| `objetivos` | En Imposible pasan más de cinco soles consecutivos sin enlace tras haberlo establecido |
+
 
 ## Rutas de prueba
 
-Pendientes. Tarea T-P1-B2: construir un modelo o pruebas de recorrido y documentar aquí, como en [luna.md](luna.md), un recorrido de victoria por dificultad con el estado al cerrar cada sol. **Hasta entonces no se afirma que ninguna dificultad de Marte sea ganable.**
-
-Rutas que deben quedar cubiertas:
-
-- Luna → Marte → final normal, con el bono aplicado una vez.
-- Tormenta regional de tres soles con y sin baterías.
-- Limpieza de paneles frente a no limpiarlos durante diez soles.
-- Refugio para seis: dos tripulantes fuera con un solo refugio.
-- Derrota por plazo terrestre.
+La secuencia común para las tres dificultades está en [mars.ts](../../tests/core/plans/mars.ts). Construye soporte vital y dos invernaderos, recoge minerales, reserva dos refugios y completa el enlace. [campaign.test.ts](../../tests/core/campaign.test.ts) la ejecuta desde la victoria lunar con cada dificultad y cubre la derrota por plazo. El recorrido en Edge con las dos balizas ganó Marte en el sol 19 con dificultad Media.

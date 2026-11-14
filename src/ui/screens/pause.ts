@@ -1,5 +1,6 @@
-// AI-assisted: Cursor Grok 4.7, reviewed by C
+// AI-assisted: Cursor Grok 4.7 and OpenAI Codex. Human review by C pending.
 import type { AppContext, Screen } from '../app-bridge';
+import type { CampaignState } from '../core-bridge';
 import { button } from '../components/button';
 import { openDialog } from '../components/dialog';
 import { bindChrome, press } from '../chrome';
@@ -47,7 +48,10 @@ function mountPause(root: HTMLElement, ctx: AppContext): () => void {
       onClick: press(ctx, () => confirm(ctx, screen, 'ui.pause.confirmExit', () => ctx.flow.go('titulo'))),
     });
     const actions = el('div', 'menu-actions');
-    actions.append(resume, options, retry, exit);
+    actions.append(resume, options);
+    const state: CampaignState | null = ctx.store.getState();
+    if (state?.campaign.level !== 'tierra') actions.append(retry);
+    actions.append(exit);
     screen.append(el('h1', 'screen-title', ctx.t('ui.pause.heading')), actions);
     resume.focus();
   };

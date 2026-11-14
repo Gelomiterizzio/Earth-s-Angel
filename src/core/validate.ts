@@ -27,7 +27,8 @@ export function validateState(state: GameState, data: GameData): string[] {
     issues.push(`campaign.difficulty: unknown difficulty ${String(campaign.difficulty)}`);
   }
   const levelCfg = data.levels[mission.level];
-  if (!levelCfg || campaign.level !== mission.level) {
+  const earthActive = campaign.level === 'tierra' && state.earth && mission.level === 'marte';
+  if (!levelCfg || (!earthActive && campaign.level !== mission.level)) {
     issues.push(`mission.level: invalid or mismatched level ${String(mission.level)}`);
   }
 
@@ -177,6 +178,30 @@ export function validateState(state: GameState, data: GameData): string[] {
     !campaign.appliedTransitions.includes('marte->tierra')
   ) {
     issues.push('campaign.appliedTransitions: missing marte->tierra for tierra level');
+  }
+
+  if (campaign.level === 'tierra' || state.earth) {
+    const earth = state.earth;
+    const cfg = data.earth?.difficulty[campaign.difficulty];
+    if (!earthActive || !earth || !cfg || !data.earth || mission.result?.outcome !== 'victory'
+      || !campaign.appliedTransitions.includes('marte->tierra')
+      || !Number.isInteger(earth.season) || earth.season < 1 || earth.season > cfg.seasons
+      || earth.seasons !== cfg.seasons || !Number.isInteger(earth.budget)
+      || earth.budget < 0 || earth.budget > cfg.budget + cfg.carryMax
+      || (earth.result !== null && earth.result?.level !== 'tierra')) {
+      issues.push('earth: invalid mission state');
+    } else {
+      for (const key of ['agua', 'emisiones', 'ecosistemas'] as const) {
+        if (!Number.isInteger(earth.indicators[key]) || earth.indicators[key] < 0 || earth.indicators[key] > 100) {
+          issues.push('earth: invalid indicator ' + key);
+        }
+      }
+      for (const line of ['energia', 'agua', 'reciclaje', 'restauracion'] as const) {
+        if (!Number.isInteger(earth.levels[line]) || earth.levels[line] < 0 || earth.levels[line] > data.earth.maxLevel) {
+          issues.push('earth: invalid level ' + line);
+        }
+      }
+    }
   }
 
   // 11. Collected tiles & streak

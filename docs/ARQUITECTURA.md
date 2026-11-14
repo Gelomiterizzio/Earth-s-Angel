@@ -2,7 +2,7 @@
 
 Este documento es la **fuente canónica de los contratos compartidos**: tipos, acciones, eventos, API del núcleo y máquina de estados. Si otro documento contradice a este, manda este. Solo A modifica los contratos (ver [agentes/PROTOCOLO-INTEGRACION.md](agentes/PROTOCOLO-INTEGRACION.md)).
 
-> **Estado real (14-nov-2026):** el repositorio está vacío. `src/`, `public/assets/` y `tests/` son la **estructura prevista**. Ningún comando de este documento se ha ejecutado dentro del repo.
+> **Estado real (14-nov-2026).** La campaña se ejecuta con TypeScript 5.9.3 y Vite. El mapa usa Canvas y controles DOM. Los contratos integrados al final del documento actualizan los ejemplos de planificación.
 
 ## 1. Stack
 
@@ -632,3 +632,10 @@ stateDiagram-v2
 | [niveles/luna.md](niveles/luna.md) | `src/data/content/levels/luna.json` |
 | [CIENCIA-Y-DATOS.md](CIENCIA-Y-DATOS.md) | `src/data/nasa/donki-sep.json` |
 | [PRUEBAS.md](PRUEBAS.md) | `tests/**` |
+
+## Contratos integrados de campaña
+
+- El contrato de código vive en `src/core/types.ts`. `MissionState` contiene polvo, duración del enlace y soles de laboratorio. El núcleo calcula el recargo al previsualizar y al ejecutar la acción. La producción y su estimación usan el mismo factor de polvo.
+- La Tierra vive en `GameState.earth`. Mientras se juega, `campaign.level` es `tierra` y `mission` conserva la última victoria de Marte. La interfaz lee `earth.result` para el desenlace terrestre.
+- `SCAN` revela una baliza persistente. `ACTIVATE_BEACONS` verifica las condiciones después de ganar Marte. `applyTransition` repite una transición como operación vacía y la interfaz guarda el estado antes de reproducir la escena.
+- El almacenamiento `ea.save.v1` contiene el último estado completo aceptado por el almacén. Continuar recupera el turno, el resultado o la cinemática pendiente. Los guardados lunares previos conservan compatibilidad con el nuevo orden de energía.

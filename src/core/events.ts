@@ -57,6 +57,7 @@ export function buildSchedule(
     if (sourceRef !== undefined) {
       scheduled.sourceRef = sourceRef;
     }
+    if (tmpl.target !== undefined) scheduled.target = tmpl.target;
     return scheduled;
   });
 }
@@ -95,6 +96,7 @@ export function getForecast(
     const endDay = e.startDay + e.durationDays - 1;
     const isActive = e.startDay <= day && day <= endDay;
     const isUpcoming = e.startDay > day && e.startDay - day <= horizonDays;
+    if (e.type === 'averia' && !isActive) continue;
     if (isActive || isUpcoming) {
       const item: ForecastItem = {
         eventId: e.id,

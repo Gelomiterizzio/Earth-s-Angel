@@ -19,5 +19,7 @@
   "exposureLimit": 100,
   "healthPenalty": { "oxigeno": 50, "agua": 25, "alimentos": 15 },
   "healthRecovery": 10,
-  "exploreRevealRadius": 1
+  "exploreRevealRadius": 1,
+  "repairCost": 2,
+  "labClueDays": 3
 }

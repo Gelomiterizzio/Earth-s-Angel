@@ -3,6 +3,7 @@ import type { AppContext } from './app/context';
 import { createFlow } from './app/flow';
 import { createI18n } from './app/i18n';
 import { createOptionsService } from './app/options';
+import { createPersistenceService } from './app/persistence';
 import { createStore } from './app/store';
 import { createUiStore } from './app/ui-store';
 import { attachAudio, createAudio } from './audio/index';
@@ -22,6 +23,10 @@ function boot(): void {
 
   const data = loadGameData();
   const store = createStore(data);
+  const persistence = createPersistenceService();
+  const saved = persistence.loadCampaign(data);
+  if (saved.ok) store.load(saved.state);
+  store.subscribe((state) => { persistence.saveCampaign(state); });
   const uiStore = createUiStore();
   const audio = createAudio(options);
 
@@ -63,4 +68,3 @@ if (typeof document !== 'undefined') {
     document.getElementById('ui')?.replaceChildren(title, details);
   }
 }
-

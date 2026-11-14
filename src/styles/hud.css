@@ -218,7 +218,10 @@
 }
 
 .build-name { font-weight: 650; }
-.hud-tools { margin-top: calc(6 * var(--px)); }
+.hud-tools {
+  flex-wrap: wrap;
+  margin-top: calc(6 * var(--px));
+}
 
 .build-art {
   width: calc(24 * var(--px));
@@ -291,4 +294,22 @@
   flex-wrap: wrap;
   gap: calc(6 * var(--px));
   align-items: center;
+}
+
+.dust-row,
+.repair-row:not(:last-child) {
+  margin-bottom: calc(4 * var(--px));
+}
+
+.clue-log summary {
+  cursor: pointer;
+}
+
+.clue-log[open] .goal-list {
+  display: flex;
+  margin: calc(8 * var(--px)) 0;
+}
+
+.clue-log p {
+  margin: calc(6 * var(--px)) 0 0;
 }

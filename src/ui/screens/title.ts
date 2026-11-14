@@ -1,5 +1,6 @@
 // AI-assisted: Cursor Grok 4.7 and OpenAI Codex. Human review by C pending.
-import type { AppContext, Screen } from '../app-bridge';
+import { campaignFlow, type AppContext, type Screen } from '../app-bridge';
+import { readMissionResult } from '../core-bridge';
 import { button } from '../components/button';
 import { openDialog } from '../components/dialog';
 import { bindChrome, demoSeed, press, showNarrow } from '../chrome';
@@ -52,11 +53,16 @@ function mountTitle(root: HTMLElement, ctx: AppContext): () => void {
     }
 
     const actions = el('div', 'menu-actions');
-    const continueBtn = ctx.flow.hasActiveMission() && !ctx.store.getState()?.mission.result
+    const flow = campaignFlow(ctx.flow);
+    const canContinue = flow.canContinue?.() ?? (flow.hasActiveMission() && !readMissionResult(ctx.store.getState()));
+    const continueBtn = canContinue
       ? button({
           label: ctx.t('ui.title.continue'),
           className: 'btn-primary',
-          onClick: press(ctx, () => ctx.flow.go('mision')),
+          onClick: press(ctx, () => {
+            if (flow.continueCampaign) flow.continueCampaign();
+            else flow.go('mision');
+          }),
         })
       : null;
     if (continueBtn) continueBtn.dataset.action = 'continue';
@@ -129,7 +135,8 @@ function mountTitle(root: HTMLElement, ctx: AppContext): () => void {
 }
 
 function confirmOrGo(ctx: AppContext, screen: HTMLElement, scene: 'dificultad' | 'despedida', confirmKey: string): void {
-  if (!ctx.flow.hasActiveMission()) {
+  const flow = campaignFlow(ctx.flow);
+  if (!(flow.canContinue?.() ?? flow.hasActiveMission())) {
     ctx.flow.go(scene);
     return;
   }

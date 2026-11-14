@@ -16,5 +16,21 @@
     "forecastKey1": "content.event.tormenta-solar.forecast1",
     "todayKey": "content.event.tormenta-solar.today",
     "icon": "solar-storm"
+  },
+  "tormenta-polvo": {
+    "type": "tormenta-polvo",
+    "nameKey": "content.event.tormenta-polvo.name",
+    "descKey": "content.event.tormenta-polvo.desc",
+    "forecastKey2": "content.event.tormenta-polvo.forecast2",
+    "forecastKey1": "content.event.tormenta-polvo.forecast1",
+    "todayKey": "content.event.tormenta-polvo.today",
+    "icon": "dust-storm"
+  },
+  "averia": {
+    "type": "averia",
+    "nameKey": "content.event.averia.name",
+    "descKey": "content.event.averia.desc",
+    "todayKey": "content.event.averia.today",
+    "icon": "breakdown"
   }
 }

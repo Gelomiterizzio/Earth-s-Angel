@@ -27,7 +27,7 @@
     },
     "extractor": {
       "name": "Extractor de hielo",
-      "desc": "Saca agua del hielo lunar.",
+      "desc": "Extrae agua de los depósitos de hielo.",
       "why": "Agua nueva del hielo. Solo sobre hielo."
     },
     "invernadero": {
@@ -39,6 +39,26 @@
       "name": "Refugio radiativo",
       "desc": "Protege a la tripulación en tormentas solares.",
       "why": "Blindaje cuando llegan las partículas."
+    },
+    "deposito": {
+      "name": "Depósito",
+      "desc": "Amplía el almacén de oxígeno, agua, alimentos y materiales.",
+      "why": "Tener más reservas ayuda a la base a superar interrupciones."
+    },
+    "comunicaciones": {
+      "name": "Antena de comunicaciones",
+      "desc": "Mantiene el enlace y amplía el pronóstico mientras recibe energía.",
+      "why": "Recibir avisos antes da tiempo a la tripulación para prepararse."
+    },
+    "laboratorio": {
+      "name": "Laboratorio",
+      "desc": "Estudia el subsuelo en busca de pistas mientras recibe energía.",
+      "why": "Las lecturas del subsuelo ayudan a localizar una señal enterrada."
+    },
+    "habitat": {
+      "name": "Hábitat",
+      "desc": "Aporta dos plazas de refugio y un punto de logística más cercano.",
+      "why": "Un segundo punto de operaciones facilita trabajar lejos de la nave."
     }
   },
   "event": {
@@ -55,6 +75,18 @@
       "forecast2": "Región activa vigilada",
       "forecast1": "Alerta: partículas en camino",
       "today": "Tormenta solar hoy: elige refugio o trabajo"
+    },
+    "tormenta-polvo": {
+      "name": "Tormenta de polvo",
+      "desc": "El polvo en el aire reduce la luz que llega a los paneles.",
+      "forecast2": "Tormenta de polvo en dos soles",
+      "forecast1": "Tormenta de polvo el próximo sol",
+      "today": "Tormenta de polvo hoy. Los paneles generan menos energía."
+    },
+    "averia": {
+      "name": "Avería",
+      "desc": "Un edificio dañado queda fuera de servicio hasta que se repara.",
+      "today": "Revisa el edificio dañado y repáralo."
     }
   },
   "card": {
@@ -89,6 +121,18 @@
     "signalDelay": {
       "title": "Señales que tardan",
       "body": "Las señales de radio viajan a la velocidad de la luz. Aun así tardan: poco más de un segundo hasta la Luna y varios minutos hasta Marte."
+    },
+    "sol": {
+      "title": "Un día en Marte",
+      "body": "Un día solar marciano se llama sol. Dura cerca de 24 horas y 40 minutos. En esta misión, un sol es un turno."
+    },
+    "marsDust": {
+      "title": "Energía durante una tormenta de polvo",
+      "body": "Durante una tormenta regional, la energía solar de InSight bajó de 425 a 275 vatios-hora por sol. Para representar esa caída, los paneles del juego rinden al 65 % durante una tormenta regional."
+    },
+    "sameStormMars": {
+      "title": "Una tormenta solar llega a Marte",
+      "body": "Durante la tormenta solar de septiembre de 2017, Curiosity midió en la superficie marciana más del doble de su récord anterior de radiación. La misión usa su propia escala de exposición."
     }
   },
   "tutorial": {
@@ -183,5 +227,33 @@
     "fog": "Sin explorar",
     "free": "Libre",
     "occupied": "Ocupado"
+  },
+  "earth": {
+    "error": {
+      "staleSeason": "Esa temporada ya no está activa."
+    },
+    "report": {
+      "energia": "La energía limpia evitó emisiones.",
+      "agua": "El uso eficiente del agua mejoró su disponibilidad.",
+      "reciclaje": "El reciclaje ahorró agua y evitó emisiones.",
+      "restauracion": "La restauración ayudó a recuperar los ecosistemas.",
+      "recyclingBoost": "El reciclaje aumentó el efecto del uso eficiente del agua.",
+      "lowWater": "La escasez de agua redujo a la mitad el avance de la restauración.",
+      "drift": "Sin mantenimiento, disminuyen el agua disponible y la salud de los ecosistemas."
+    },
+    "result": {
+      "victory": {
+        "principle": "Lo que mantuvo viva a la base también ayudó a recuperar la Tierra.",
+        "suggestion": "Combina energía limpia, uso eficiente del agua, reciclaje y restauración."
+      },
+      "deadline": {
+        "principle": "El plazo terminó antes de que todos los indicadores alcanzaran sus metas.",
+        "suggestion": "Invierte pronto en varias líneas para que sus efectos se acumulen cada temporada."
+      },
+      "water": {
+        "principle": "El agua se agotó antes de completar el proyecto.",
+        "suggestion": "Invierte pronto en uso eficiente del agua y reciclaje para proteger el suministro."
+      }
+    }
   }
 }

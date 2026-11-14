@@ -1,0 +1,65 @@
+{
+  "facil": {
+    "crewSize": 6,
+    "dayLimit": null,
+    "initial": { "energia": 12, "oxigeno": 20, "agua": 20, "alimentos": 20, "materiales": 60 },
+    "mineralYield": 20,
+    "reserveThreshold": 18,
+    "energyThreshold": 10,
+    "streakDays": 4,
+    "shelterEnergy": 4,
+    "dustPerDay": 2,
+    "dustCap": 20,
+    "linkDays": 3,
+    "logistics": { "near": 6, "far": null },
+    "events": [
+      { "type": "tormenta-polvo", "startDay": 7, "durationDays": 3, "solarFactorPct": 65 },
+      { "type": "tormenta-solar", "startDay": 12, "durationDays": 2, "radiationLevel": 1, "sourceRef": "2017-09-10T16:25:00-SEP-001" },
+      { "type": "averia", "startDay": 16, "durationDays": 1, "target": "extractor" }
+    ]
+  },
+  "media": {
+    "crewSize": 6,
+    "dayLimit": null,
+    "initial": { "energia": 12, "oxigeno": 12, "agua": 12, "alimentos": 12, "materiales": 50 },
+    "mineralYield": 15,
+    "reserveThreshold": 24,
+    "energyThreshold": 15,
+    "streakDays": 5,
+    "shelterEnergy": 6,
+    "dustPerDay": 3,
+    "dustCap": 30,
+    "linkDays": 4,
+    "logistics": { "near": 5, "far": null },
+    "events": [
+      { "type": "tormenta-polvo", "startDay": 7, "durationDays": 3, "solarFactorPct": 65 },
+      { "type": "tormenta-solar", "startDay": 12, "durationDays": 2, "radiationLevel": 1, "sourceRef": "2017-09-10T16:25:00-SEP-001" },
+      { "type": "averia", "startDay": 16, "durationDays": 1, "target": "extractor" },
+      { "type": "tormenta-polvo", "startDay": 20, "durationDays": 3, "solarFactorPct": 20 },
+      { "type": "tormenta-polvo", "startDay": 28, "durationDays": 3, "solarFactorPct": 65 }
+    ]
+  },
+  "imposible": {
+    "crewSize": 6,
+    "dayLimit": null,
+    "initial": { "energia": 12, "oxigeno": 6, "agua": 6, "alimentos": 6, "materiales": 55 },
+    "mineralYield": 15,
+    "reserveThreshold": 24,
+    "energyThreshold": 15,
+    "streakDays": 6,
+    "shelterEnergy": 8,
+    "dustPerDay": 4,
+    "dustCap": 40,
+    "linkDays": 5,
+    "maxLinkOutage": 5,
+    "logistics": { "near": 4, "far": 9 },
+    "events": [
+      { "type": "tormenta-polvo", "startDay": 7, "durationDays": 4, "solarFactorPct": 65 },
+      { "type": "tormenta-solar", "startDay": 12, "durationDays": 2, "radiationLevel": 1, "sourceRef": "2017-09-10T16:25:00-SEP-001" },
+      { "type": "averia", "startDay": 16, "durationDays": 1, "target": "extractor" },
+      { "type": "tormenta-polvo", "startDay": 20, "durationDays": 5, "solarFactorPct": 20 },
+      { "type": "tormenta-solar", "startDay": 26, "durationDays": 2, "radiationLevel": 1, "sourceRef": "2024-05-13T14:00:00-SEP-001" },
+      { "type": "tormenta-polvo", "startDay": 30, "durationDays": 4, "solarFactorPct": 65 }
+    ]
+  }
+}

@@ -3,10 +3,11 @@ import type { AppContext, Tool } from '../app-bridge';
 import type {
   ActionError,
   BuildingType,
+  CampaignData,
+  CampaignState,
   ForecastItem,
   GameState,
   HudSummary,
-  Status,
 } from '../core-bridge';
 import { computeForecast, previewAction, summarizeHud } from '../core-bridge';
 import { button } from '../components/button';
@@ -18,6 +19,7 @@ import { mountDecisionPanel } from '../panels/decision';
 import { mountLearningCheck, shouldAskPre } from '../panels/learning-check';
 import { openCards } from '../panels/science-card';
 import { mountTutorial } from '../panels/tutorial';
+import { clueLog } from './clues';
 
 const BLOCKS = new Set(['NO_MATERIALS', 'NO_AP', 'NOT_AVAILABLE_IN_LEVEL', 'WRONG_PHASE', 'DECISION_PENDING']);
 const BUILDING_ART = {
@@ -78,7 +80,7 @@ export function mountMissionHud(root: HTMLElement, ctx: AppContext): () => void 
     if (focusKey) {
       screen.querySelector<HTMLElement>(`[data-hud-focus="${CSS.escape(focusKey)}"]`)?.focus({ preventScroll: true });
     }
-    endDay.textContent = ctx.t('ui.hud.endDay');
+    endDay.textContent = ctx.t(state?.mission.level === 'marte' ? 'ui.hud.endSol' : 'ui.hud.endDay');
     endDay.disabled = pending || state?.mission.phase !== 'planning';
     syncReport(state);
     syncDecision(state);
@@ -128,9 +130,10 @@ export function mountMissionHud(root: HTMLElement, ctx: AppContext): () => void 
     }
   }
 
-  bag.add(ctx.store.subscribe(() => {
+  bag.add(ctx.store.subscribe((_state, events) => {
     signature = '';
     draw();
+    if (events?.some(({ type }: { type: string }) => type === 'scan/empty')) say(ctx.t('ui.clues.scanEmpty'));
   }));
   bag.add(ctx.uiStore.subscribe(() => {
     signature = '';
@@ -149,12 +152,25 @@ export function mountMissionHud(root: HTMLElement, ctx: AppContext): () => void 
   bag.add(ctx.store.on('alert/radiation', (event) => {
     say(ctx.t(event.sheltered ? 'ui.hud.radiationSheltered' : 'ui.hud.radiationOpen', { level: event.level }), true);
   }));
+  bag.add(ctx.store.on('discovery/found', ({ discoveryId }) => {
+    if (discoveryId.startsWith('beacon-')) say(ctx.t('ui.clues.beaconFound'));
+    else if (/^(luna|marte)\.(column|row|signal)$/.test(discoveryId)) say(ctx.t('ui.clues.newClue'));
+  }));
   bag.add(on(window, 'keydown', (event) => {
-    if (event.key === 'Escape' && openMeter && !hasModal()) {
-      event.preventDefault();
-      openMeter = null;
-      draw();
-      return;
+    if (event.key === 'Escape' && !hasModal() && !event.defaultPrevented) {
+      if (openMeter) {
+        event.preventDefault();
+        openMeter = null;
+        draw();
+        return;
+      }
+      const clues = side.querySelector<HTMLDetailsElement>('.clue-log[open]');
+      if (clues) {
+        event.preventDefault();
+        clues.open = false;
+        clues.querySelector('summary')?.focus();
+        return;
+      }
     }
     onKey(event, ctx, endDayNow, showCards);
   }));
@@ -225,10 +241,10 @@ function paintTop(
   }
   const summary = readSummary(state, ctx);
   const level = ctx.data.difficulty[state.campaign.difficulty]?.levels[state.mission.level];
-  const dayKey = state.mission.level === 'marte' ? 'ui.hud.sol' : 'ui.hud.day';
-  const clock = el('p', 'hud-clock', level?.dayLimit == null
-    ? ctx.t('ui.hud.dayOpen', { day: state.mission.day })
-    : ctx.t(dayKey, { day: state.mission.day, limit: level.dayLimit }));
+  const unit = state.mission.level === 'marte' ? 'sol' : 'day';
+  const clock = el('p', 'hud-clock', ctx.t(`ui.hud.${unit}${level?.dayLimit == null ? 'Open' : ''}`, {
+    day: state.mission.day, limit: level?.dayLimit ?? '',
+  }));
   if (state.mission.level === 'marte') clock.title = ctx.t('ui.hud.solHint');
   const earth = el('p', 'hud-stat');
   earth.append(el('span', 'icon icon-earth'), el('span', undefined, ctx.t('ui.hud.earth', { days: state.campaign.earthDaysRemaining })));
@@ -322,16 +338,15 @@ function meterDetail(ctx: AppContext, id: 'energia' | 'soporte' | 'proteccion', 
   });
 }
 
-function paintSide(side: HTMLElement, ctx: AppContext, state: GameState | null, tool: Tool): void {
+function paintSide(side: HTMLElement, ctx: AppContext, state: CampaignState | null, tool: Tool): void {
+  const cluesOpen = side.querySelector('.clue-log[open]') !== null;
   side.replaceChildren();
   if (!state) return;
-  side.append(
-    objectives(ctx, state),
-    forecast(ctx, state),
-    palette(ctx, state, tool),
-    crew(ctx, state),
-    marsExtras(ctx, state),
-  );
+  side.append(objectives(ctx, state), forecast(ctx, state));
+  if (state.mission.level === 'marte') side.append(marsExtras(ctx, state));
+  const clues = clueLog(ctx, state, cluesOpen);
+  if (clues) side.append(clues);
+  side.append(palette(ctx, state, tool), crew(ctx, state));
 }
 
 function objectives(ctx: AppContext, state: GameState): HTMLElement {
@@ -355,10 +370,13 @@ function forecast(ctx: AppContext, state: GameState): HTMLElement {
   block.append(el('h2', 'zone-title', ctx.t('ui.hud.forecast')));
   const list = el('ul', 'forecast-list');
   const items = readForecast(state, ctx);
-  if (items.length === 0) list.append(el('li', undefined, ctx.t('ui.hud.forecastEmpty')));
+  const mars = state.mission.level === 'marte';
+  if (items.length === 0) list.append(el('li', undefined, ctx.t(mars ? 'ui.hud.marsForecastEmpty' : 'ui.hud.forecastEmpty')));
   for (const item of items) {
-    const when = item.inDays === 0 ? ctx.t('ui.hud.today') : ctx.t('ui.hud.inDays', { days: item.inDays });
-    list.append(el('li', undefined, `${when}: ${ctx.t(`content.event.${item.type}.name`)}`));
+    const when = item.inDays === 0
+      ? ctx.t(mars ? 'ui.hud.thisSol' : 'ui.hud.today')
+      : ctx.t(mars ? (item.inDays === 1 ? 'ui.hud.nextSol' : 'ui.hud.inSols') : 'ui.hud.inDays', { days: item.inDays });
+    list.append(el('li', undefined, `${when} · ${ctx.t(`content.event.${item.type}.name`)}`));
   }
   block.append(list);
   return block;
@@ -386,6 +404,17 @@ function palette(ctx: AppContext, state: GameState, tool: Tool): HTMLElement {
   collect.dataset.hudFocus = 'collect';
   const tools = el('div', 'hud-tools');
   tools.append(explore, collect);
+  const data: CampaignData = ctx.data;
+  if (data.levels[state.mission.level]?.secret) {
+    const scan = button({
+      label: ctx.t('ui.hud.scan'),
+      pressed: (tool.kind as string) === 'scan',
+      disabled: state.mission.phase !== 'planning' || state.mission.ap === 0,
+      onClick: press(ctx, () => ctx.uiStore.setTool({ kind: 'scan' } as unknown as Tool)),
+    });
+    scan.dataset.hudFocus = 'scan';
+    tools.append(scan);
+  }
   block.append(row, tools);
   return block;
 }
@@ -464,34 +493,52 @@ function crew(ctx: AppContext, state: GameState): HTMLElement {
   return block;
 }
 
-function marsExtras(ctx: AppContext, state: GameState): HTMLElement {
-  const block = el('section', 'dust-row');
-  if (state.mission.level !== 'marte') return block;
-  const summary = readSummary(state, ctx) as (HudSummary & {
-    dust?: { status: Status; coverage: number };
-    link?: { status: Status; delay?: number };
-  }) | null;
-  if (summary?.dust) {
-    block.append(statusBadge(summary.dust.status, ctx.t('ui.hud.dust', { n: summary.dust.coverage }), ctx.t(`ui.status.mark.${summary.dust.status}`)));
-  } else {
-    block.append(el('p', undefined, ctx.t('ui.hud.dustPending')));
-  }
-  block.append(button({
+function marsExtras(ctx: AppContext, state: CampaignState): HTMLElement {
+  const block = el('section');
+  block.append(el('h2', 'zone-title', ctx.t('ui.hud.maintenance')));
+  const row = el('div', 'dust-row');
+  const data: CampaignData = ctx.data;
+  const cfg = data.difficulty[state.campaign.difficulty].levels.marte;
+  const dust = state.mission.dust ?? 0;
+  const damaged = state.mission.buildings.filter((building) => building.damaged);
+  const cleanAction = { type: 'CLEAN_PANELS' } as const;
+  const cleanError = previewAction(state, cleanAction, ctx.data);
+  const clean = button({
     label: ctx.t('ui.hud.clean'),
-    disabled: state.mission.phase !== 'planning',
-    onClick: press(ctx, () => ctx.store.dispatch({ type: 'CLEAN_PANELS' })),
-  }));
-  if (summary?.link) {
-    block.append(statusBadge(summary.link.status, ctx.t('ui.hud.link', { n: summary.link.delay ?? '—' }), ctx.t(`ui.status.mark.${summary.link.status}`)));
-  } else {
-    block.append(el('p', undefined, ctx.t('ui.hud.linkPending')));
+    disabled: state.mission.phase !== 'planning' || dust === 0 || cleanError !== null,
+    onClick: press(ctx, () => ctx.store.dispatch(cleanAction)),
+  });
+  clean.dataset.hudFocus = 'clean';
+  if (cleanError) clean.title = ctx.t(cleanError.messageKey, cleanError.params);
+  row.append(el('span', undefined, ctx.t('ui.hud.dust', { n: dust })), clean);
+  block.append(row);
+  const comms = state.mission.objectives.find(({ id }) => id === 'comunicaciones');
+  const linkTarget = comms?.target ?? cfg?.linkDays;
+  if (linkTarget !== undefined) {
+    block.append(el('p', undefined, ctx.t('ui.hud.linkStreak', {
+      n: state.mission.linkStreak ?? comms?.current ?? 0, target: linkTarget,
+    })));
   }
-  const damaged = state.mission.buildings.find((building) => building.damaged);
-  if (damaged) {
-    block.append(button({
+  if (cfg?.maxLinkOutage !== undefined && state.mission.linkEstablished) {
+    block.append(el('p', undefined, ctx.t('ui.hud.linkOutage', {
+      n: state.mission.linkOutageDays ?? 0, limit: cfg.maxLinkOutage,
+    })));
+  }
+  for (const building of damaged) {
+    const repairAction = { type: 'REPAIR', buildingId: building.id } as const;
+    const reason = previewAction(state, repairAction, ctx.data);
+    const name = ctx.t(ctx.data.buildings[building.type].nameKey);
+    const repair = button({
       label: ctx.t('ui.hud.repair'),
-      onClick: press(ctx, () => ctx.store.dispatch({ type: 'REPAIR', buildingId: damaged.id })),
-    }));
+      disabled: state.mission.phase !== 'planning' || reason !== null,
+      onClick: press(ctx, () => ctx.store.dispatch(repairAction)),
+    });
+    if (reason) repair.title = ctx.t(reason.messageKey, reason.params);
+    repair.dataset.hudFocus = `repair-${building.id}`;
+    const item = el('div', 'repair-row');
+    item.append(el('span', undefined, ctx.t('ui.hud.damaged', { name, x: building.x, y: building.y })), repair);
+    if (data.constants.repairCost !== undefined) item.append(el('small', undefined, ctx.t('ui.hud.repairCost', { n: data.constants.repairCost })));
+    block.append(item);
   }
   return block;
 }
@@ -513,7 +560,7 @@ function readForecast(state: GameState, ctx: AppContext): ForecastItem[] {
 }
 
 function snapshot(
-  state: GameState | null,
+  state: CampaignState | null,
   tool: Tool,
   openMeter: string | null,
   pending: boolean,
@@ -531,6 +578,11 @@ function snapshot(
     streak: state?.mission.streak,
     objectives: state?.mission.objectives,
     crew: state?.mission.crew,
+    dust: state?.mission.dust,
+    linkStreak: state?.mission.linkStreak,
+    linkOutageDays: state?.mission.linkOutageDays,
+    labDays: state?.mission.labDays,
+    clues: state?.campaign.clues,
     buildings: state?.mission.buildings.map((building) => [building.id, building.enabled, building.damaged]),
   };
 }

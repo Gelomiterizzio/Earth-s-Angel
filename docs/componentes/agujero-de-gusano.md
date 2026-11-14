@@ -1,5 +1,7 @@
 # Agujero de gusano
 
+Verificado en la campaña local. El recorrido y sus resultados están en [PRUEBAS.md](../PRUEBAS.md#verificación-de-campaña).
+
 ## 1. Identificación y límites
 
 | Campo | Valor |
@@ -11,7 +13,7 @@
 | Depende de | [objetos-secretos](objetos-secretos.md), [progresion](progresion.md), [objetivos](objetivos.md), [motor-cinematicas](motor-cinematicas.md) |
 | No incluye | La misión terrestre ([mision-terrestre](mision-terrestre.md)). |
 | Responsable · revisor | C (pantalla) y A (núcleo) · A |
-| Estado | Propuesto. Sin validar. Todo es `ficción`. |
+| Estado | Implementado y probado. Todo es `ficción`. |
 
 ## 2. Arquitectura y funcionamiento
 

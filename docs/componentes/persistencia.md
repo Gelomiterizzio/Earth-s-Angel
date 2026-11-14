@@ -11,7 +11,7 @@
 | Depende de | [ARQUITECTURA.md](../ARQUITECTURA.md) (`SaveData`, `GameState`), [arranque-y-escenas](arranque-y-escenas.md) (`Options`) |
 | No incluye | Guardado en la nube ni cuentas. |
 | Responsable · revisor | A · C |
-| Estado | Propuesto |
+| Estado | Integrado y probado |
 
 ## 2. Arquitectura y funcionamiento
 
@@ -34,10 +34,7 @@ Al arrancar: leer → validar campo a campo → sustituir cada valor inválido p
 
 **Puntos estables de guardado:**
 
-1. Al crear la misión.
-2. Al abrir cada día, con la fase en `planning` o `decision`.
-3. Después de cada `applyTransition`, antes de la cinemática.
-4. Al terminar una misión.
+El almacén guarda después de cada acción aceptada y cada reemplazo de estado, incluidos los informes, las inversiones terrestres y las transiciones antes de la cinemática.
 
 Nunca se guarda a mitad de `advanceDay`.
 
@@ -88,14 +85,14 @@ Tabla `migrations[version]`: función pura que lleva un estado de la versión `n
 | Reiniciar misión | Pausa y resultado | Misma dificultad y semilla; plazo terrestre del inicio de esa misión | Sí |
 | Nueva partida | Título | Crea campaña. Sobrescribe el guardado | Sí, si existe guardado |
 
-En P0 no hay Continuar. Recargar la página vuelve al título. Reiniciar misión y Nueva partida funcionan igual.
+Continuar recupera una misión en curso, un resultado o una cinemática pendiente. El esquema v1 completa el orden de energía de guardados lunares anteriores cuando se habilita el laboratorio.
 
 ### Casos límite
 
 - Almacenamiento lleno o bloqueado: aviso discreto "No se pudo guardar" y el juego sigue.
 - Dos pestañas abiertas: gana la última que guarda. No se sincronizan.
 - Guardado de una versión del juego con otro balance: los invariantes lo detectan si ya no es válido.
-- Recarga durante una cinemática de transición: la transición ya estaba guardada; se entra directo a la misión siguiente.
+- Recarga durante una cinemática de transición: la transición ya está guardada y Continuar reabre la cinemática. El bono no se aplica de nuevo.
 
 ### Privacidad
 

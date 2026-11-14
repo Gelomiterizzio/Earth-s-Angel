@@ -79,5 +79,15 @@
   "sim.crew.2": "Botanist",
   "sim.crew.3": "Medic",
   "sim.crew.4": "Geologist",
-  "sim.crew.5": "Communications Specialist"
+  "sim.crew.5": "Communications Specialist",
+  "sim.error.NOTHING_TO_CLEAN": "There is no dust to clean.",
+  "sim.error.ALREADY_FOUND": "You already found this beacon.",
+  "sim.error.PORTAL_LOCKED": "The portal is locked.",
+  "sim.portal.beaconMoon": "Find the Moon beacon first.",
+  "sim.portal.beaconMars": "Find the Mars beacon first.",
+  "sim.portal.laboratory": "An operational Mars laboratory is needed.",
+  "sim.portal.victory": "Complete the Mars mission first.",
+  "sim.error.NOT_ON_EARTH": "Start the Earth mission first.",
+  "sim.error.NO_BUDGET": "There are not enough project points.",
+  "sim.error.MAX_LEVEL": "This project is at its maximum."
 }

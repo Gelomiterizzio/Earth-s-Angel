@@ -13,6 +13,8 @@ import type {
 import { advanceDay, startDay } from './day-cycle';
 import { getDefaultEnergyPriority, isDefaultEnergyOrderValid } from './energy';
 import { getRadiationForDay } from './events';
+import { applyEarth, previewEarth } from './earth';
+import { portalRequirements, restartMars } from './progression';
 import { createMission } from './mission';
 import { previewEnergy } from './objectives';
 import { getOperationalShelterSeats } from './radiation';
@@ -59,6 +61,25 @@ function isAdjacentToExplored(
   return false;
 }
 
+function logisticsCost(state: GameState, data: GameData, x: number, y: number): number {
+  const { mission, campaign } = state;
+  const rules = data.difficulty[campaign.difficulty].levels[mission.level]?.logistics;
+  if (!rules) return 0;
+  const origins = mission.buildings.filter((b) => b.type === 'nave'
+    || (b.type === 'habitat' && b.operationalFromDay <= mission.day && b.enabled && !b.damaged));
+  const distance = Math.min(...origins.map((b) => Math.max(Math.abs(x - b.x), Math.abs(y - b.y))));
+  if (rules.far !== null && distance > rules.far) return 2;
+  return distance > rules.near ? 1 : 0;
+}
+
+// Legacy lunar callers send only the four original consumers.
+function withLunarLabPriority(order: GameState['mission']['energyPriority'], state: GameState, data: GameData) {
+  const { mission } = state;
+  if (mission.level === 'luna' && data.levels.luna.availableBuildings.includes('laboratorio')
+    && !order.includes('laboratorio')) return [...order, 'laboratorio' as const];
+  return [...order];
+}
+
 export function previewAction(
   state: GameState,
   action: Action,
@@ -68,6 +89,14 @@ export function previewAction(
   const levelCfg = data.levels[mission.level] ?? data.levels.luna;
   const diffBlock = data.difficulty[campaign.difficulty];
   const cfg = diffBlock.levels[mission.level] ?? diffBlock.levels.luna;
+
+  if (action.type === 'EARTH_INVEST' || action.type === 'EARTH_END_SEASON') {
+    return previewEarth(state, action, data);
+  }
+  if (state.earth) return makeError('WRONG_PHASE');
+  if ('x' in action && (!Number.isInteger(action.x) || !Number.isInteger(action.y))) {
+    return makeError('TILE_OUT_OF_BOUNDS');
+  }
 
   switch (action.type) {
     case 'BUILD': {
@@ -116,9 +145,10 @@ export function previewAction(
           have: mission.resources.materiales,
         });
       }
-      if (mission.ap < def.apCost) {
+      const actionCost = def.apCost + logisticsCost(state, data, action.x, action.y);
+      if (mission.ap < actionCost) {
         return makeError('NO_AP', {
-          need: def.apCost,
+          need: actionCost,
           have: mission.ap,
         });
       }
@@ -142,8 +172,9 @@ export function previewAction(
       if (!isAdjacentToExplored(state, action.x, action.y)) {
         return makeError('NOT_ADJACENT');
       }
-      if (mission.ap < 1) {
-        return makeError('NO_AP', { need: 1, have: mission.ap });
+      const actionCost = 1 + logisticsCost(state, data, action.x, action.y);
+      if (mission.ap < actionCost) {
+        return makeError('NO_AP', { need: actionCost, have: mission.ap });
       }
       return null;
     }
@@ -165,8 +196,9 @@ export function previewAction(
       if (tile.terrain !== 'mineral' || tile.collected) {
         return makeError('NOTHING_TO_COLLECT');
       }
-      if (mission.ap < 1) {
-        return makeError('NO_AP', { need: 1, have: mission.ap });
+      const actionCost = 1 + logisticsCost(state, data, action.x, action.y);
+      if (mission.ap < actionCost) {
+        return makeError('NO_AP', { need: actionCost, have: mission.ap });
       }
       return null;
     }
@@ -186,7 +218,8 @@ export function previewAction(
         levelCfg.availableBuildings,
         data,
       );
-      if (!isDefaultEnergyOrderValid(action.order, expected)) {
+      const order = withLunarLabPriority(action.order, state, data);
+      if (!isDefaultEnergyOrderValid(order, expected)) {
         return makeError('INVALID_PRIORITY');
       }
       return null;
@@ -239,13 +272,36 @@ export function previewAction(
       if (mission.phase !== 'planning') return makeError('WRONG_PHASE');
       const target = mission.buildings.find((b) => b.id === action.buildingId);
       if (!target || !target.damaged) return makeError('UNKNOWN_BUILDING');
+      const need = data.constants.repairCost ?? 0;
+      if (mission.resources.materiales < need) {
+        return makeError('NO_MATERIALS', { need, have: mission.resources.materiales });
+      }
       if (mission.ap < 1) return makeError('NO_AP', { need: 1, have: mission.ap });
       return null;
     }
 
-    case 'CLEAN_PANELS':
-    case 'ACTIVATE_BEACONS': {
+    case 'CLEAN_PANELS': {
       if (mission.phase !== 'planning') return makeError('WRONG_PHASE');
+      if (!mission.dust || !mission.buildings.some((b) => b.type === 'panel')) return makeError('NOTHING_TO_CLEAN');
+      if (mission.ap < 1) return makeError('NO_AP', { need: 1, have: mission.ap });
+      return null;
+    }
+    case 'ACTIVATE_BEACONS': {
+      const missing = portalRequirements(state, data);
+      return missing.length === 0 ? null : {
+        code: 'PORTAL_LOCKED',
+        messageKey: 'sim.portal.' + missing[0],
+      };
+    }
+    case 'SCAN': {
+      if (!levelCfg.secret || mission.phase !== 'planning') return makeError('WRONG_PHASE');
+      const { x, y } = action;
+      if (x < 0 || y < 0 || x >= mission.map.width || y >= mission.map.height) {
+        return makeError('TILE_OUT_OF_BOUNDS');
+      }
+      if (!mission.map.tiles[y * mission.map.width + x].explored) return makeError('TILE_UNEXPLORED');
+      const flag = mission.level === 'luna' ? 'beaconMoon' : 'beaconMars';
+      if (campaign.narrativeFlags[flag]) return makeError('ALREADY_FOUND');
       if (mission.ap < 1) return makeError('NO_AP', { need: 1, have: mission.ap });
       return null;
     }
@@ -263,12 +319,18 @@ export function applyAction(
   }
 
   const { mission, campaign } = state;
+  const levelCfg = data.levels[mission.level] ?? data.levels.luna;
   const diffBlock = data.difficulty[campaign.difficulty];
   const cfg = diffBlock.levels[mission.level] ?? diffBlock.levels.luna;
 
   switch (action.type) {
+    case 'EARTH_INVEST':
+    case 'EARTH_END_SEASON':
+      return applyEarth(state, action, data);
+
     case 'BUILD': {
       const def = data.buildings[action.building];
+      const actionCost = def.apCost + logisticsCost(state, data, action.x, action.y);
       const newBuilding: Building = {
         id: mission.nextBuildingId,
         type: action.building,
@@ -285,8 +347,8 @@ export function applyAction(
         campaign: { ...campaign },
         mission: {
           ...mission,
-          ap: mission.ap - def.apCost,
-          apSpentToday: mission.apSpentToday + def.apCost,
+          ap: mission.ap - actionCost,
+          apSpentToday: mission.apSpentToday + actionCost,
           resources: {
             ...mission.resources,
             materiales: mission.resources.materiales - def.cost,
@@ -308,6 +370,7 @@ export function applyAction(
     }
 
     case 'EXPLORE': {
+      const actionCost = 1 + logisticsCost(state, data, action.x, action.y);
       const radius = data.constants.exploreRevealRadius;
       const nextTiles = mission.map.tiles.map((t) => ({ ...t }));
       const revealed: { x: number; y: number; terrain: typeof nextTiles[number]['terrain'] }[] = [];
@@ -341,6 +404,8 @@ export function applyAction(
             if (!nextClues.includes(discId)) {
               nextClues.push(discId);
             }
+            const columnClue = mission.level + '.column';
+            if (levelCfg.secret && !nextClues.includes(columnClue)) nextClues.push(columnClue);
             events.push({ type: 'discovery/found', discoveryId: discId });
           }
         }
@@ -360,8 +425,8 @@ export function applyAction(
         },
         mission: {
           ...mission,
-          ap: mission.ap - 1,
-          apSpentToday: mission.apSpentToday + 1,
+          ap: mission.ap - actionCost,
+          apSpentToday: mission.apSpentToday + actionCost,
           map: {
             ...mission.map,
             tiles: nextTiles,
@@ -373,6 +438,7 @@ export function applyAction(
     }
 
     case 'COLLECT': {
+      const actionCost = 1 + logisticsCost(state, data, action.x, action.y);
       const nextTiles = mission.map.tiles.map((t) => ({ ...t }));
       const idx = action.y * mission.map.width + action.x;
       nextTiles[idx].collected = true;
@@ -390,8 +456,8 @@ export function applyAction(
         campaign: { ...campaign },
         mission: {
           ...mission,
-          ap: mission.ap - 1,
-          apSpentToday: mission.apSpentToday + 1,
+          ap: mission.ap - actionCost,
+          apSpentToday: mission.apSpentToday + actionCost,
           resources: {
             ...mission.resources,
             materiales: nextMaterials,
@@ -407,7 +473,7 @@ export function applyAction(
         {
           type: 'resource/collected',
           resource: 'materiales',
-          amount: added > 0 ? added : cfg.mineralYield,
+          amount: added,
         },
       ];
       return { ok: true, state: nextState, events };
@@ -432,7 +498,7 @@ export function applyAction(
         campaign: { ...campaign },
         mission: {
           ...mission,
-          energyPriority: [...action.order],
+          energyPriority: withLunarLabPriority(action.order, state, data),
         },
       };
       return { ok: true, state: nextState, events: [] };
@@ -471,6 +537,8 @@ export function applyAction(
     }
 
     case 'RESTART_MISSION': {
+      const mars = mission.level === 'marte' ? restartMars(state, data) : null;
+      if (mars) return { ok: true, ...mars };
       const freshMission = createMission(
         campaign.level,
         campaign.difficulty,
@@ -507,43 +575,54 @@ export function applyAction(
             ap: mission.ap - 1,
             apSpentToday: mission.apSpentToday + 1,
             buildings: nextBuildings,
+            resources: { ...mission.resources, materiales: mission.resources.materiales - (data.constants.repairCost ?? 0) },
           },
         },
         events: [],
       };
     }
 
-    case 'CLEAN_PANELS': {
+    case 'CLEAN_PANELS':
       return {
         ok: true,
         state: {
-          campaign: { ...campaign },
+          ...state,
+          mission: { ...mission, dust: 0, ap: mission.ap - 1, apSpentToday: mission.apSpentToday + 1 },
+        },
+        events: [],
+      };
+
+    case 'SCAN': {
+      const beacon = levelCfg.secret?.beacon;
+      const found = beacon?.x === action.x && beacon.y === action.y;
+      const discoveryId = 'beacon-' + mission.level;
+      const flag = mission.level === 'luna' ? 'beaconMoon' : 'beaconMars';
+      return {
+        ok: true,
+        state: {
+          campaign: found
+            ? { ...campaign, narrativeFlags: { ...campaign.narrativeFlags, [flag]: true } }
+            : campaign,
           mission: {
             ...mission,
+            discoveries: found ? [...mission.discoveries, discoveryId] : mission.discoveries,
             ap: mission.ap - 1,
             apSpentToday: mission.apSpentToday + 1,
           },
         },
-        events: [],
+        events: found ? [{ type: 'discovery/found', discoveryId }] : [{ type: 'scan/empty' }],
       };
     }
 
-    case 'ACTIVATE_BEACONS': {
+    case 'ACTIVATE_BEACONS':
+      if (campaign.narrativeFlags.beaconsActivated) return { ok: true, state, events: [] };
       return {
         ok: true,
         state: {
-          campaign: {
-            ...campaign,
-            narrativeFlags: { ...campaign.narrativeFlags, beaconsActivated: true },
-          },
-          mission: {
-            ...mission,
-            ap: mission.ap - 1,
-            apSpentToday: mission.apSpentToday + 1,
-          },
+          ...state,
+          campaign: { ...campaign, narrativeFlags: { ...campaign.narrativeFlags, beaconsActivated: true } },
         },
         events: [],
       };
-    }
   }
 }

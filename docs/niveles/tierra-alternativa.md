@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 | --- | --- |
-| Estado de implementación | **Propuesto. Sin validar por simulación.** |
+| Estado de implementación | **Integrado.** Validado con recorridos en las tres dificultades. |
 | Prioridad | P2 |
 | Responsable · revisor | B · A |
 | Tareas | [P2-segunda-oportunidad.md](../agentes/tareas/P2-segunda-oportunidad.md) |
@@ -92,14 +92,11 @@ Media, presupuesto 10. El jugador sube Reciclaje a nivel 2 (4 puntos) y Uso efic
 | Emisiones | 0 + (2 × 1) | 2 |
 | Ecosistemas | 10 − 1 | 9 |
 
-Es un cálculo a mano con las reglas de esta ficha. **No se ha validado un recorrido completo de victoria.**
+La prueba de Tierra cubre este efecto y el arrastre de presupuesto.
 
-## Rutas de prueba pendientes
 
-Tarea T-P2-B2. Deben quedar documentadas y probadas:
+## Rutas verificadas
 
-- Un recorrido de victoria por dificultad, temporada a temporada.
-- No invertir nada: fallo por agua, con la temporada en que ocurre.
-- Invertir solo en una línea: fallo por plazo.
-- Fallo y regreso al desenlace marciano.
-- Luna y Marte con balizas → viaje al pasado → misión terrestre → final alternativo, de principio a fin.
+[Pruebas de sostenibilidad](../../tests/core/earth.test.ts) incluye victorias en las tres dificultades, derrota por plazo e indicador de agua agotado. Con los valores normales, la inacción termina con 14 de agua y derrota por plazo en la temporada 8. La derrota inmediata por agua se prueba con una reserva de agua inicial de prueba más baja.
+
+[Prueba de campaña](../../tests/core/campaign.test.ts) comienza en la Luna, encuentra ambas balizas, abre el portal y prueba el regreso a la victoria de Marte. En Edge se jugaron las ocho temporadas de la ruta alternativa, con 100 de agua, 100 de emisiones evitadas y 71 de ecosistemas recuperados en Media.

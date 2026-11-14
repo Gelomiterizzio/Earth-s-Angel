@@ -153,7 +153,7 @@ export function createManager(options: OptionsService): ManagedAudio {
           api.stopMusic();
           return;
         }
-        const track = musicFor(to, from, store.getState()?.mission.level);
+        const track = musicFor(to, from, store.getState()?.campaign.level);
         if (track) api.playMusic(track);
       });
       return () => {

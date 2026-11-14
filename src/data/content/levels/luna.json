@@ -19,6 +19,7 @@
   "ship": { "x": 5, "y": 5 },
   "initialExploredRadius": 2,
   "forecastHorizonDays": 2,
+  "secret": { "beacon": { "x": 10, "y": 2 } },
   "baseCaps": {
     "energia": 20,
     "oxigeno": 40,
@@ -33,7 +34,8 @@
     "reciclador",
     "extractor",
     "invernadero",
-    "refugio"
+    "refugio",
+    "laboratorio"
   ],
   "objectives": [
     "soporte",

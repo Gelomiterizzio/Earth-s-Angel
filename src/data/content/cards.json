@@ -66,5 +66,38 @@
     "bodyKey": "content.card.signalDelay.body",
     "tag": "didactic",
     "level": "all"
+  },
+  {
+    "id": "sol",
+    "titleKey": "content.card.sol.title",
+    "bodyKey": "content.card.sol.body",
+    "tag": "nasa",
+    "source": {
+      "label": "NASA GISS Mars24",
+      "url": "https://www.giss.nasa.gov/tools/mars24/help/notes.html"
+    },
+    "level": "marte"
+  },
+  {
+    "id": "marsDust",
+    "titleKey": "content.card.marsDust.title",
+    "bodyKey": "content.card.marsDust.body",
+    "tag": "didactic",
+    "source": {
+      "label": "NASA/JPL InSight",
+      "url": "https://www.jpl.nasa.gov/news/nasas-insight-waits-out-dust-storm/"
+    },
+    "level": "marte"
+  },
+  {
+    "id": "sameStormMars",
+    "titleKey": "content.card.sameStormMars.title",
+    "bodyKey": "content.card.sameStormMars.body",
+    "tag": "nasa",
+    "source": {
+      "label": "NASA/JPL Curiosity and MAVEN",
+      "url": "https://www.jpl.nasa.gov/news/large-solar-storm-sparks-global-aurora-and-doubles-radiation-levels-on-the-martian-surface/"
+    },
+    "level": "marte"
   }
 ]

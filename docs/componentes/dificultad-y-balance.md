@@ -116,7 +116,8 @@ El umbral de reservas equivale a tres o cuatro días de consumo de la tripulaci�
 | --- | --- | --- | --- |
 | Tripulación | 6 | 6 | 6 |
 | Ventana local | ninguna: manda el plazo terrestre | igual | igual |
-| Suministros de llegada | manifiesto + 20 de cada recurso vital, 60 materiales | manifiesto + 12, 50 materiales | manifiesto + 6, 40 materiales |
+| Suministros de llegada | manifiesto + 20 de cada recurso vital, 60 materiales | manifiesto + 12, 50 materiales | manifiesto + 6, 55 materiales |
+| Energía del equipo de llegada | 12 | 12 | 12 |
 | Umbral de reservas | 18 | 24 | 24 |
 | Umbral de energía | 10 | 15 | 15 |
 | Racha de autonomía (soles) | 4 | 5 | 6 |
@@ -127,7 +128,7 @@ El umbral de reservas equivale a tres o cuatro días de consumo de la tripulaci�
 | Tormenta solar | 1, moderada, 2 soles | 1, moderada, 2 soles | 2, moderada, 2 soles |
 | Recargo logístico | +1 PA a más de 6 casillas | +1 PA a más de 5 | +1 PA a más de 4, +2 a más de 9 |
 
-El factor 65 % de la tormenta regional sale de un dato real (ver [CIENCIA-Y-DATOS.md](../CIENCIA-Y-DATOS.md), InSight). El resto son propuestas. Tarea de validación: [T-P1-B2](../agentes/tareas/P1-campana-principal.md).
+El 65 % deriva del registro de InSight ([ciencia y datos](../CIENCIA-Y-DATOS.md)). Los demás valores son de balance. Los cronogramas exactos y el límite de pérdida de enlace viven en [marte.json](../../src/data/balance/marte.json). [Recorridos validados](../niveles/marte.md#rutas-de-prueba).
 
 ### Tierra · valores de balance iniciales (sin validar)
 

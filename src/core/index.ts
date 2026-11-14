@@ -1,6 +1,7 @@
 // AI-assisted: Antigravity (Gemini), reviewed by A
 
 import type { ForecastItem, GameData, GameState } from './types';
+import { forecastHorizon } from './progression';
 import { getForecast } from './events';
 
 export * from './types';
@@ -23,16 +24,15 @@ export {
   getRadiationForDay,
   getSolarFactorForDay,
 } from './events';
-export { applyTransition } from './progression';
+export { applyTransition, portalRequirements } from './progression';
 export { validateState } from './validate';
 export { deserialize, serialize } from './save';
 export { fixtureGameData, fixtureReport, fixtureState } from './fixtures';
 
 export function computeForecast(state: GameState, data: GameData): ForecastItem[] {
-  const levelCfg = data.levels[state.mission.level] ?? data.levels.luna;
   return getForecast(
     state.mission.schedule,
     state.mission.day,
-    levelCfg.forecastHorizonDays,
+    forecastHorizon(state, data),
   );
 }

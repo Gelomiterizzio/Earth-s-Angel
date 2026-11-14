@@ -1,9 +1,11 @@
 // AI-assisted: Cursor (Composer), reviewed by B
+// Campaign changes assisted by OpenAI Codex. Human review pending.
 import type {
   BuildingDef,
   BuildingType,
   DifficultyConfig,
   DifficultyId,
+  EarthData,
   GameData,
   LevelConfig,
   NasaSepRecord,
@@ -30,6 +32,11 @@ const P0_BUILDINGS: BuildingType[] = [
   'invernadero',
   'refugio',
 ];
+
+const DIFFICULTIES: DifficultyId[] = ['facil', 'media', 'imposible'];
+const RESOURCES = ['energia', 'oxigeno', 'agua', 'alimentos', 'materiales'] as const;
+const EARTH_LINES = ['energia', 'agua', 'reciclaje', 'restauracion'] as const;
+const EARTH_INDICATORS = ['agua', 'emisiones', 'ecosistemas'] as const;
 
 export function dataError(file: string, key: string, detail: string): Error {
   return new Error(`[${file}] ${key}: ${detail}`);
@@ -68,6 +75,12 @@ function assertNonNeg(file: string, key: string, n: number): void {
   }
 }
 
+function assertRange(file: string, key: string, n: number, min: number, max: number): void {
+  if (!Number.isInteger(n) || n < min || n > max) {
+    throw dataError(file, key, `expected integer in [${min}, ${max}], got ${n}`);
+  }
+}
+
 export function validateConstants(c: SimConstants): void {
   const file = 'balance/constants.json';
   const ints: (keyof SimConstants)[] = [
@@ -91,6 +104,10 @@ export function validateConstants(c: SimConstants): void {
   for (const k of ints) {
     assertNonNeg(file, k, c[k] as number);
   }
+  for (const k of ['repairCost', 'labClueDays'] as const) {
+    const value = c[k];
+    if (value !== undefined) assertNonNeg(file, k, value);
+  }
   assertNonNeg(file, 'exposure.1.unsheltered', c.exposure['1'].unsheltered);
   assertNonNeg(file, 'exposure.1.sheltered', c.exposure['1'].sheltered);
   assertNonNeg(file, 'exposure.2.unsheltered', c.exposure['2'].unsheltered);
@@ -100,15 +117,20 @@ export function validateConstants(c: SimConstants): void {
   assertNonNeg(file, 'healthPenalty.alimentos', c.healthPenalty.alimentos);
 }
 
-export function validateBuildings(buildings: Record<string, BuildingDef>): void {
+export function validateBuildings(
+  buildings: Record<string, BuildingDef>,
+  required: BuildingType[] = P0_BUILDINGS,
+): void {
   const file = 'content/buildings.json';
-  for (const type of P0_BUILDINGS) {
+  for (const type of required) {
     const b = buildings[type];
     if (!b) throw dataError(file, type, 'missing building');
     assertNonNeg(file, `${type}.cost`, b.cost);
     assertNonNeg(file, `${type}.apCost`, b.apCost);
     assertNonNeg(file, `${type}.buildDays`, b.buildDays);
     assertNonNeg(file, `${type}.energyPerDay`, b.energyPerDay);
+    assertNonNeg(file, `${type}.priority`, b.priority);
+    if (b.capacity !== undefined) assertNonNeg(file, `${type}.capacity`, b.capacity);
     if (!b.nameKey || !b.descKey || !b.whyKey) {
       throw dataError(file, type, 'missing nameKey/descKey/whyKey');
     }
@@ -116,41 +138,65 @@ export function validateBuildings(buildings: Record<string, BuildingDef>): void 
 }
 
 export function validateLunaMap(level: LevelConfig): void {
-  const file = 'content/levels/luna.json';
-  if (level.width !== 12 || level.height !== 12) {
-    throw dataError(file, 'width/height', 'must be 12×12');
+  validateBaseMap(level, 'luna', 12, { S: 1, i: 3, m: 5, '?': 1 }, { x: 5, y: 5 });
+}
+
+export function validateMarsMap(level: LevelConfig): void {
+  validateBaseMap(level, 'marte', 20, { S: 1, i: 9, m: 8, '?': 1 }, { x: 9, y: 8 });
+}
+
+function validateBaseMap(
+  level: LevelConfig,
+  id: 'luna' | 'marte',
+  size: number,
+  counts: Record<string, number>,
+  ship: LevelConfig['ship'],
+): void {
+  const file = `content/levels/${id}.json`;
+  if (level.id !== id) throw dataError(file, 'id', `must be ${id}`);
+  if (level.width !== size || level.height !== size) {
+    throw dataError(file, 'width/height', `must be ${size}×${size}`);
   }
-  if (level.rows.length !== 12) {
-    throw dataError(file, 'rows', `expected 12 rows, got ${level.rows.length}`);
+  if (level.rows.length !== size) {
+    throw dataError(file, 'rows', `expected ${size} rows, got ${level.rows.length}`);
   }
-  let S = 0;
-  let i = 0;
-  let m = 0;
-  let q = 0;
-  for (let y = 0; y < 12; y++) {
+  const tiles: Record<string, number> = {};
+  for (let y = 0; y < size; y++) {
     const row = level.rows[y];
-    if (row.length !== 12) {
-      throw dataError(file, `rows[${y}]`, `expected 12 chars, got ${row.length}`);
+    if (row.length !== size) {
+      throw dataError(file, `rows[${y}]`, `expected ${size} chars, got ${row.length}`);
     }
-    for (let x = 0; x < 12; x++) {
+    for (let x = 0; x < size; x++) {
       const ch = row[x];
       if (!(ch in TERRAIN_CHARS)) {
         throw dataError(file, `rows[${y}][${x}]`, `invalid char '${ch}'`);
       }
-      if (ch === 'S') S++;
-      if (ch === 'i') i++;
-      if (ch === 'm') m++;
-      if (ch === '?') q++;
+      tiles[ch] = (tiles[ch] ?? 0) + 1;
     }
   }
-  if (S !== 1) throw dataError(file, 'rows', `expected one S, got ${S}`);
-  if (i !== 3) throw dataError(file, 'rows', `expected three i, got ${i}`);
-  if (m !== 5) throw dataError(file, 'rows', `expected five m, got ${m}`);
-  if (q !== 1) throw dataError(file, 'rows', `expected one ?, got ${q}`);
-  if (level.ship.x !== 5 || level.ship.y !== 5) {
-    throw dataError(file, 'ship', 'must be at (5,5)');
+  for (const [ch, expected] of Object.entries(counts)) {
+    if (tiles[ch] !== expected) {
+      throw dataError(file, 'rows', `expected ${expected} ${ch}, got ${tiles[ch] ?? 0}`);
+    }
   }
-  for (const k of ['energia', 'oxigeno', 'agua', 'alimentos', 'materiales'] as const) {
+  if (level.ship.x !== ship.x || level.ship.y !== ship.y || level.rows[ship.y][ship.x] !== 'S') {
+    throw dataError(file, 'ship', `ship marker and coordinates must be at (${ship.x},${ship.y})`);
+  }
+  if (level.secret) {
+    const { x, y } = level.secret.beacon;
+    assertRange(file, 'secret.beacon.x', x, 0, size - 1);
+    assertRange(file, 'secret.beacon.y', y, 0, size - 1);
+    if (level.rows[y][x] !== '.') throw dataError(file, 'secret.beacon', 'must be on flat ground');
+  }
+  assertNonNeg(file, 'initialExploredRadius', level.initialExploredRadius);
+  assertNonNeg(file, 'forecastHorizonDays', level.forecastHorizonDays);
+  if (level.forecastHorizonWithComms !== undefined) {
+    assertNonNeg(file, 'forecastHorizonWithComms', level.forecastHorizonWithComms);
+    if (level.forecastHorizonWithComms < level.forecastHorizonDays) {
+      throw dataError(file, 'forecastHorizonWithComms', 'shorter than forecastHorizonDays');
+    }
+  }
+  for (const k of RESOURCES) {
     assertNonNeg(file, `baseCaps.${k}`, level.baseCaps[k]);
   }
 }
@@ -159,11 +205,13 @@ function validateDifficultyBlock(
   file: string,
   id: DifficultyId,
   cfg: DifficultyConfig,
-  baseCaps: LevelConfig['baseCaps'],
+  level: LevelConfig,
+  sep: NasaSepRecord[],
 ): void {
+  const { baseCaps } = level;
   assertNonNeg(file, `${id}.crewSize`, cfg.crewSize);
   if (cfg.dayLimit !== null) assertNonNeg(file, `${id}.dayLimit`, cfg.dayLimit);
-  for (const k of Object.keys(cfg.initial) as (keyof typeof cfg.initial)[]) {
+  for (const k of RESOURCES) {
     assertNonNeg(file, `${id}.initial.${k}`, cfg.initial[k]);
   }
   assertNonNeg(file, `${id}.mineralYield`, cfg.mineralYield);
@@ -171,6 +219,15 @@ function validateDifficultyBlock(
   assertNonNeg(file, `${id}.energyThreshold`, cfg.energyThreshold);
   assertNonNeg(file, `${id}.streakDays`, cfg.streakDays);
   assertNonNeg(file, `${id}.shelterEnergy`, cfg.shelterEnergy);
+  if (cfg.dustCap !== undefined) assertRange(file, `${id}.dustCap`, cfg.dustCap, 0, 100);
+  if (cfg.dustPerDay !== undefined) assertRange(file, `${id}.dustPerDay`, cfg.dustPerDay, 0, 100);
+  if (cfg.linkDays !== undefined) assertNonNeg(file, `${id}.linkDays`, cfg.linkDays);
+  if (cfg.maxLinkOutage !== undefined) assertNonNeg(file, `${id}.maxLinkOutage`, cfg.maxLinkOutage);
+  if (cfg.logistics) {
+    const { near, far } = cfg.logistics;
+    assertNonNeg(file, `${id}.logistics.near`, near);
+    if (far !== null) assertRange(file, `${id}.logistics.far`, far, near + 1, Number.MAX_SAFE_INTEGER);
+  }
 
   if (cfg.dayLimit !== null && cfg.streakDays > cfg.dayLimit) {
     throw dataError(file, `${id}.streakDays`, 'greater than dayLimit');
@@ -193,6 +250,14 @@ function validateDifficultyBlock(
     assertNonNeg(file, `${key}.startDay`, e.startDay);
     assertNonNeg(file, `${key}.durationDays`, e.durationDays);
     if (e.startDay < 1) throw dataError(file, `${key}.startDay`, 'must be >= 1');
+    if (e.durationDays < 1) throw dataError(file, `${key}.durationDays`, 'must be >= 1');
+    if (e.solarFactorPct !== undefined) assertRange(file, `${key}.solarFactorPct`, e.solarFactorPct, 0, 100);
+    if (e.type === 'averia' && (!e.target || !level.availableBuildings.includes(e.target))) {
+      throw dataError(file, `${key}.target`, 'requires a building available in this level');
+    }
+    if (e.type === 'tormenta-solar' && e.sourceRef && !sep.some((r) => r.nasa.sepID === e.sourceRef)) {
+      throw dataError(file, `${key}.sourceRef`, `unknown ${e.sourceRef}`);
+    }
     const end = e.startDay + e.durationDays - 1;
     lastDay = Math.max(lastDay, end);
     for (const other of ranges) {
@@ -308,32 +373,69 @@ export function validateCards(
   }
 }
 
+function validateEarth(data: EarthData): void {
+  const file = 'balance/tierra.json';
+  assertRange(file, 'maxLevel', data.maxLevel, 1, Number.MAX_SAFE_INTEGER);
+  for (const line of EARTH_LINES) {
+    const rule = data.lines[line];
+    if (!rule) throw dataError(file, `lines.${line}`, 'missing');
+    assertNonNeg(file, `lines.${line}.cost`, rule.cost);
+    for (const [indicator, effect] of Object.entries(rule.effects)) {
+      if (!Object.hasOwn(data.start, indicator)) {
+        throw dataError(file, `lines.${line}.effects.${indicator}`, 'unknown indicator');
+      }
+      assertNonNeg(file, `lines.${line}.effects.${indicator}`, effect);
+    }
+  }
+  for (const id of EARTH_INDICATORS) {
+    assertRange(file, `start.${id}`, data.start[id], 0, 100);
+    assertRange(file, `drift.${id}`, data.drift[id], -100, 100);
+  }
+  assertRange(file, 'combos.recyclingBoostsWaterAt', data.combos.recyclingBoostsWaterAt, 1, data.maxLevel);
+  assertRange(file, 'combos.cleanPowerDiscountAt', data.combos.cleanPowerDiscountAt, 1, data.maxLevel);
+  assertRange(file, 'combos.lowWaterThreshold', data.combos.lowWaterThreshold, 0, 100);
+  assertRange(file, 'combos.restorationDiscountCost', data.combos.restorationDiscountCost, 0, data.lines.restauracion.cost);
+  for (const id of DIFFICULTIES) {
+    const rule = data.difficulty[id];
+    const key = `difficulty.${id}`;
+    if (!rule) throw dataError(file, key, 'missing');
+    assertRange(file, `${key}.seasons`, rule.seasons, 1, Number.MAX_SAFE_INTEGER);
+    assertNonNeg(file, `${key}.budget`, rule.budget);
+    assertNonNeg(file, `${key}.carryMax`, rule.carryMax);
+    for (const indicator of EARTH_INDICATORS) {
+      assertRange(file, `${key}.targets.${indicator}`, rule.targets[indicator], 0, 100);
+    }
+  }
+}
+
 export function validateGameData(data: GameData): void {
   validateConstants(data.constants);
-  validateBuildings(data.buildings as Record<string, BuildingDef>);
   validateLunaMap(data.levels.luna);
+  if (data.levels.marte) validateMarsMap(data.levels.marte);
+  const levels = [data.levels.luna, data.levels.marte].filter((level) => level !== undefined);
+  const required = new Set(P0_BUILDINGS);
+  for (const level of levels) {
+    for (const type of level.availableBuildings) {
+      required.add(type);
+      if (!data.buildings[type]?.levels.includes(level.id)) {
+        throw dataError(`content/levels/${level.id}.json`, 'availableBuildings', `unavailable building ${type}`);
+      }
+    }
+  }
+  validateBuildings(data.buildings, [...required]);
   validateNasa(data.nasa.sep);
+  if (data.earth) validateEarth(data.earth);
 
-  const diffs: DifficultyId[] = ['facil', 'media', 'imposible'];
-  for (const d of diffs) {
+  for (const d of DIFFICULTIES) {
     const block = data.difficulty[d];
     if (!block) throw dataError('balance/difficulty.json', d, 'missing');
     assertNonNeg('balance/difficulty.json', `${d}.earthDays`, block.earthDays);
     assertNonNeg('balance/difficulty.json', `${d}.bonusDays`, block.bonusDays);
-    const luna = block.levels.luna;
-    if (!luna) throw dataError('balance/luna.json', d, 'missing');
-    validateDifficultyBlock('balance/luna.json', d, luna, data.levels.luna.baseCaps);
-
-    for (const e of luna.events) {
-      if (e.type === 'tormenta-solar' && e.sourceRef) {
-        if (!data.nasa.sep.some((r) => r.nasa.sepID === e.sourceRef)) {
-          throw dataError(
-            'balance/luna.json',
-            `${d}.events.sourceRef`,
-            `unknown ${e.sourceRef}`,
-          );
-        }
-      }
+    for (const level of levels) {
+      const file = `balance/${level.id}.json`;
+      const config = block.levels[level.id];
+      if (!config) throw dataError(file, d, 'missing');
+      validateDifficultyBlock(file, d, config, level, data.nasa.sep);
     }
   }
 }

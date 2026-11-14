@@ -1,0 +1,22 @@
+{
+  "maxLevel": 5,
+  "lines": {
+    "energia": { "cost": 3, "effects": { "emisiones": 3 } },
+    "agua": { "cost": 2, "effects": { "agua": 2 } },
+    "reciclaje": { "cost": 2, "effects": { "agua": 1, "emisiones": 1 } },
+    "restauracion": { "cost": 4, "effects": { "ecosistemas": 3 } }
+  },
+  "start": { "agua": 30, "emisiones": 0, "ecosistemas": 10 },
+  "drift": { "agua": -2, "emisiones": 0, "ecosistemas": -1 },
+  "combos": {
+    "recyclingBoostsWaterAt": 2,
+    "cleanPowerDiscountAt": 3,
+    "restorationDiscountCost": 3,
+    "lowWaterThreshold": 20
+  },
+  "difficulty": {
+    "facil": { "seasons": 8, "budget": 12, "carryMax": 2, "targets": { "agua": 50, "emisiones": 50, "ecosistemas": 40 } },
+    "media": { "seasons": 8, "budget": 10, "carryMax": 2, "targets": { "agua": 60, "emisiones": 60, "ecosistemas": 50 } },
+    "imposible": { "seasons": 8, "budget": 9, "carryMax": 2, "targets": { "agua": 70, "emisiones": 70, "ecosistemas": 60 } }
+  }
+}

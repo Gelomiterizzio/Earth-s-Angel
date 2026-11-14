@@ -1,4 +1,4 @@
-// AI-assisted: Cursor Grok 4.7, reviewed by C
+// AI-assisted: Cursor Grok 4.7 and OpenAI Codex. Human review by C pending.
 import type { AppContext } from '../app-bridge';
 import type { DayReport, ObjectiveStatus } from '../core-bridge';
 import { el, on } from '../dom';
@@ -29,8 +29,9 @@ export function mountDayReport(root: HTMLElement, ctx: AppContext): () => void {
 
   let expanded = false;
   const paint = (): void => {
-    const current = ctx.store.getState()?.mission.lastReport ?? report;
-    title.textContent = ctx.t('ui.report.title', { day: current?.day ?? '—' });
+    const mission = ctx.store.getState()?.mission;
+    const current = mission?.lastReport ?? report;
+    title.textContent = ctx.t(mission?.level === 'marte' ? 'ui.report.solTitle' : 'ui.report.title', { day: current?.day ?? '—' });
     events.textContent = current && current.activeEvents.length > 0
       ? current.activeEvents.map((item) => ctx.t(`content.event.${item.type}.name`)).join(' · ')
       : ctx.t('ui.report.noEvents');
