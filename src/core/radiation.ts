@@ -35,6 +35,8 @@ export function applyRadiationStep(
   radiationLevel: RadiationLevel,
   shelterActive: boolean,
   data: GameData,
+  /** Exposure the shielded suits remove on an unsheltered storm day (mission design). */
+  suitShield = 0,
 ): RadiationStepResult {
   const shelterSeats = getOperationalShelterSeats(buildings, day, data);
   const shelteredById = new Map<number, boolean>();
@@ -60,7 +62,7 @@ export function applyRadiationStep(
     if (radiationLevel > 0) {
       const key = String(radiationLevel) as '1' | '2';
       const entry = data.constants.exposure[key];
-      delta += isSheltered ? entry.sheltered : entry.unsheltered;
+      delta += isSheltered ? entry.sheltered : Math.max(0, entry.unsheltered - suitShield);
     }
     const nextExposure = c.exposure + delta;
     exposureDeltas.set(c.id, delta);

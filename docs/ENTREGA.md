@@ -171,7 +171,7 @@ La columna Estado se actualiza con el estado real antes de enviar.
 - [ ] Los tres integrantes están registrados en la web de Space Apps.
 - [ ] Los tres eligieron la sede **Santa Cruz de la Sierra** y no están en lista de espera.
 - [ ] Los tres aparecen en la pestaña **Members** del equipo.
-- [ ] El reto del equipo es *Build a Junior Astronaut Mission Trainer*.
+- [ ] El reto del equipo es *Space Mission Design Game* (comprobar en My Team).
 - [ ] La pestaña **Project** es accesible.
 
 ### Atribuciones

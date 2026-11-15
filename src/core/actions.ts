@@ -1,5 +1,6 @@
 // AI-assisted: Antigravity (Gemini), reviewed by A
 
+import { applyDesignToMission, designMineralYield, designRepairCost, designTrajectoryDays } from './design';
 import type {
   Action,
   ActionError,
@@ -273,7 +274,7 @@ export function previewAction(
       if (mission.phase !== 'planning') return makeError('WRONG_PHASE');
       const target = mission.buildings.find((b) => b.id === action.buildingId);
       if (!target || !target.damaged) return makeError('UNKNOWN_BUILDING');
-      const need = data.constants.repairCost ?? 0;
+      const need = designRepairCost(campaign, data.constants.repairCost ?? 0);
       if (mission.resources.materiales < need) {
         return makeError('NO_MATERIALS', { need, have: mission.resources.materiales });
       }
@@ -444,13 +445,14 @@ export function applyAction(
       const idx = action.y * mission.map.width + action.x;
       nextTiles[idx].collected = true;
 
+      const mineralYield = designMineralYield(campaign, cfg.mineralYield, data);
       const added = Math.min(
-        cfg.mineralYield,
+        mineralYield,
         Math.max(0, mission.caps.materiales - mission.resources.materiales),
       );
       const nextMaterials = Math.min(
         mission.caps.materiales,
-        mission.resources.materiales + cfg.mineralYield,
+        mission.resources.materiales + mineralYield,
       );
 
       const nextState: GameState = {
@@ -552,12 +554,15 @@ export function applyAction(
           ? diffBlock.earthDays
           : campaign.earthDaysRemaining + (mission.day - 1);
 
+      const restartCampaign = {
+        ...campaign,
+        earthDaysRemaining: initialEarthDays
+          + (campaign.level === 'luna' ? designTrajectoryDays(campaign, data) : 0),
+      };
       const baseState: GameState = {
-        campaign: {
-          ...campaign,
-          earthDaysRemaining: initialEarthDays,
-        },
-        mission: freshMission,
+        campaign: restartCampaign,
+        // A retry on the Moon lands again with the payload of the chosen design.
+        mission: applyDesignToMission(freshMission, restartCampaign, data),
       };
       const opened = startDay(baseState, data);
       return { ok: true, state: opened.state, events: opened.events };
@@ -576,7 +581,7 @@ export function applyAction(
             ap: mission.ap - 1,
             apSpentToday: mission.apSpentToday + 1,
             buildings: nextBuildings,
-            resources: { ...mission.resources, materiales: mission.resources.materiales - (data.constants.repairCost ?? 0) },
+            resources: { ...mission.resources, materiales: mission.resources.materiales - designRepairCost(campaign, data.constants.repairCost ?? 0) },
           },
         },
         events: [],

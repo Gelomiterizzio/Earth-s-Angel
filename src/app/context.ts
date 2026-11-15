@@ -17,6 +17,7 @@ export type SceneId =
   | 'titulo'
   | 'opciones'
   | 'dificultad'
+  | 'diseno'
   | 'cinematica'
   | 'mision'
   | 'pausa'

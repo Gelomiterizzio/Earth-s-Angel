@@ -1,0 +1,31 @@
+{
+  "_note": "Mission design before the launch to the Moon. Every figure here is a game balance value (tag: balance) or fiction, not NASA data. Mass in tonnes of payload, cost in millions of game credits.",
+  "budget": { "facil": 120, "media": 100, "imposible": 85 },
+  "rockets": {
+    "ligero": { "capacity": 6, "cost": 25 },
+    "medio": { "capacity": 10, "cost": 40 },
+    "pesado": { "capacity": 16, "cost": 60 }
+  },
+  "trajectories": {
+    "economica": { "cost": 0, "earthDays": 0 },
+    "estandar": { "cost": 10, "earthDays": 2 },
+    "rapida": { "cost": 20, "earthDays": 4 }
+  },
+  "payload": {
+    "oxigeno": { "kind": "supply", "mass": 2, "cost": 6, "amount": 12 },
+    "agua": { "kind": "supply", "mass": 2, "cost": 6, "amount": 12 },
+    "alimentos": { "kind": "supply", "mass": 2, "cost": 6, "amount": 12 },
+    "materiales": { "kind": "supply", "mass": 3, "cost": 5, "amount": 15 },
+    "bateria": { "kind": "supply", "mass": 1, "cost": 6, "amount": 10 },
+    "espectrometro": { "kind": "instrument", "mass": 1, "cost": 12, "amount": 1 },
+    "sensor": { "kind": "instrument", "mass": 1, "cost": 10, "amount": 1 },
+    "herramientas": { "kind": "crew", "mass": 1, "cost": 8, "amount": 0 },
+    "taladro": { "kind": "crew", "mass": 2, "cost": 10, "amount": 50 },
+    "exotraje": { "kind": "crew", "mass": 2, "cost": 12, "amount": 1 }
+  },
+  "objectives": {
+    "autosuficiente": { "minMargin": 6 },
+    "hielo": { "minIceTiles": 6 },
+    "solar": { "maxExposure": 20 }
+  }
+}

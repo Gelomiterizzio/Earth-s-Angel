@@ -1,6 +1,6 @@
 # Earth's Angel · instrucciones para agentes
 
-Juego educativo 2D por turnos para navegador. Entrada del equipo al NASA Space Apps Challenge 2026, reto *Build a Junior Astronaut Mission Trainer*, sede Santa Cruz de la Sierra.
+Juego educativo 2D por turnos para navegador. Entrada del equipo al NASA Space Apps Challenge 2026, reto *Space Mission Design Game* (Juego de diseño de misiones espaciales; antes figuraba *Build a Junior Astronaut Mission Trainer*: confirmar en My Team), sede Santa Cruz de la Sierra.
 
 ## Estado del proyecto
 

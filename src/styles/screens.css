@@ -1151,3 +1151,94 @@
 }
 .science-real strong { display: block; margin-bottom: .2em; color: var(--focus); }
 .science-real p { margin: 0 0 .3em; }
+
+/* Mission design screen, before the launch to the Moon (AI-assisted: Claude Code). */
+.design-screen {
+  justify-content: flex-start;
+  align-items: stretch;
+  gap: calc(10 * var(--px));
+  padding: calc(18 * var(--px)) calc(26 * var(--px));
+  overflow-y: auto;
+}
+.design-head { text-align: center; }
+.design-head .screen-title { margin: 0; font-size: calc(34 * var(--px)); }
+.design-intro { margin: calc(4 * var(--px)) auto 0; max-width: calc(900 * var(--px)); color: var(--text-dim); font-size: calc(15 * var(--px)); }
+.design-body { display: grid; grid-template-columns: 1fr 1.25fr; gap: calc(18 * var(--px)); }
+.design-column { display: grid; gap: calc(8 * var(--px)); align-content: start; }
+.design-section h2 { margin: 0 0 calc(5 * var(--px)); font-family: var(--font-title); font-size: calc(16 * var(--px)); color: var(--accent); }
+.design-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(calc(150 * var(--px)), 1fr)); gap: calc(6 * var(--px)); }
+.design-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: calc(6 * var(--px));
+  align-content: start;
+  padding: calc(6 * var(--px)) calc(8 * var(--px));
+  border: 1px solid var(--border);
+  border-radius: calc(6 * var(--px));
+  background: color-mix(in srgb, var(--panel) 92%, transparent);
+  color: var(--text);
+  font: inherit;
+  font-size: calc(13 * var(--px));
+  text-align: start;
+  cursor: pointer;
+  transition: border-color .15s, box-shadow .15s, transform .15s;
+}
+.design-card:hover { border-color: var(--focus); }
+.design-card:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.design-card.is-selected {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 14%, var(--panel));
+  box-shadow: 0 0 calc(10 * var(--px)) color-mix(in srgb, var(--accent) 35%, transparent);
+}
+.design-icon { grid-row: 1 / 4; font-size: calc(22 * var(--px)); line-height: 1; align-self: center; }
+.design-card strong { font-size: calc(14 * var(--px)); }
+.design-detail { color: var(--focus); font-size: calc(12 * var(--px)); }
+.design-desc { color: var(--text-dim); font-size: calc(12 * var(--px)); }
+.design-foot {
+  position: sticky;
+  bottom: calc(-18 * var(--px));
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  grid-template-areas: "budget mass actions" "status status actions" "note note actions";
+  align-items: center;
+  gap: calc(4 * var(--px)) calc(14 * var(--px));
+  padding: calc(10 * var(--px)) calc(12 * var(--px));
+  border: 1px solid var(--border);
+  border-radius: calc(8 * var(--px));
+  background: var(--panel);
+}
+.design-meters { display: contents; }
+.design-meters > :first-child { grid-area: budget; }
+.design-meters > :last-child { grid-area: mass; }
+.design-meter { display: grid; gap: calc(3 * var(--px)); font-size: calc(13 * var(--px)); }
+.design-meter-bar { display: block; height: calc(9 * var(--px)); border-radius: 99px; background: var(--bg); overflow: hidden; }
+.design-meter-fill {
+  display: block;
+  height: 100%;
+  width: calc(var(--share, 0) * 100%);
+  background: var(--safe);
+  transition: width .25s ease-out;
+}
+.design-meter.is-over .design-meter-fill { background: var(--crit); width: 100%; }
+.design-meter.is-over .design-meter-label { color: var(--crit); font-weight: 700; }
+.design-status { grid-area: status; margin: 0; font-size: calc(13 * var(--px)); color: var(--safe); }
+.design-status.is-problem { color: var(--crit); font-weight: 700; }
+.design-note { grid-area: note; margin: 0; font-size: calc(11 * var(--px)); color: var(--text-dim); }
+.design-actions { grid-area: actions; display: flex; gap: calc(8 * var(--px)); }
+.design-launch:disabled { opacity: .5; cursor: not-allowed; }
+.reduced-motion .design-card, .reduced-motion .design-meter-fill { transition: none; }
+
+/* Design summary on the result screen. */
+.design-summary {
+  width: min(100%, 52em);
+  padding: .5em .8em;
+  border: 1px solid var(--border);
+  border-radius: .45em;
+  background: color-mix(in srgb, var(--panel) 92%, transparent);
+  font-size: .85em;
+  text-align: start;
+}
+.design-summary h2 { margin: 0 0 .3em; font-family: var(--font-title); font-size: 1.1em; color: var(--accent); }
+.design-summary p { margin: .15em 0; }
+.design-summary .is-met { color: var(--safe); font-weight: 700; }
+.design-summary .is-missed { color: var(--warn); font-weight: 700; }

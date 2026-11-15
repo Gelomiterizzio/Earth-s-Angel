@@ -21,6 +21,7 @@ import difficultyJson from './balance/difficulty.json';
 import lunaBalanceJson from './balance/luna.json';
 import marteBalanceJson from './balance/marte.json';
 import tierraBalanceJson from './balance/tierra.json';
+import missionDesignJson from './balance/mission-design.json';
 import { loadSepRecords } from './nasa/adapter';
 import { validateCards, validateContentCatalogs, validateGameData } from './validate';
 import enContent from './i18n/en/content.json';
@@ -70,6 +71,7 @@ export function loadGameData(): GameData {
     events: eventsJson as Record<string, unknown>,
     cards: cardsJson as unknown[],
     tutorial: tutorialJson as unknown[],
+    missionDesign: missionDesignJson as unknown as GameData['missionDesign'],
   };
 
   validateGameData(data);

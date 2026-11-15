@@ -15,7 +15,7 @@ Sigue la estructura que recomienda la guía de entrega. Narración en inglés. S
 | Tiempo | En pantalla | Narración (EN) | Subtítulo incrustado (EN) |
 | --- | --- | --- | --- |
 | 0:00 – 0:02 | Título del juego y nombre del equipo | "We are [TEAM NAME], from Santa Cruz, Bolivia." | We are [TEAM NAME], Santa Cruz, Bolivia |
-| 0:02 – 0:05 | Texto del reto sobre la base lunar | "Our challenge: a mission trainer for junior astronauts." | Challenge: Junior Astronaut Mission Trainer |
+| 0:02 – 0:05 | Texto del reto sobre la base lunar | "Our challenge: design, launch and run a complete space mission." | Challenge: Space Mission Design Game |
 | 0:05 – 0:10 | Tablero con la base en marcha y los tres medidores | "Earth's Angel: run a Moon base where nothing is free." | Earth's Angel — nothing is free in space |
 | 0:10 – 0:16 | Día 8: aparece la tarjeta de decisión. Zoom al bloque de NASA con el identificador del registro | "A solar storm is coming. It is a real event from NASA's DONKI database." | Real NASA DONKI record: 10 Sept 2017, X8.2 flare |
 | 0:16 – 0:22 | Pantalla partida: a la izquierda "Shelter", a la derecha "Keep working", con sus cifras | "Shelter costs power and a day of work. Working costs the crew's health." | Shelter: win on day 9 · Work: win on day 11 |

@@ -1,4 +1,5 @@
 // AI-assisted: Cursor Grok 4.7, reviewed by C
+import { designScreen } from './screens/design';
 import type { Flow } from './app-bridge';
 import { cinematicScreen } from './screens/cinematic';
 import { choiceScreen } from './screens/choice';
@@ -15,6 +16,7 @@ export function registerScreens(flow: Flow): void {
   flow.register('titulo', titleScreen);
   flow.register('opciones', optionsScreen);
   flow.register('dificultad', difficultyScreen);
+  flow.register('diseno', designScreen);
   flow.register('despedida', farewellScreen);
   flow.register('cinematica', cinematicScreen);
   flow.register('mision', missionScreen);

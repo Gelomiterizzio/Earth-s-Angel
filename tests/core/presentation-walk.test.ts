@@ -3,12 +3,12 @@
 // builds on, explores or collects. This replays the scripts and checks that each target can
 // be reached on foot (a diagonal neighbour counts).
 import { describe, expect, it } from 'vitest';
-import { applyAction, applyTransition, createCampaign, startDay } from '../../src/core';
+import { applyAction, applyTransition, createCampaign, launchWithDesign, startDay } from '../../src/core';
 import type { GameState } from '../../src/core';
 import { loadGameData } from '../../src/data';
 import { canWalk } from '../../src/map';
 import { findWalkPath } from '../../src/app/presentation';
-import { LOSING_PLAN, missionSteps, type MissionScript } from '../../src/app/presentation-script';
+import { LOSING_DESIGN, LOSING_PLAN, missionSteps, PRESENTATION_DESIGN, type MissionScript } from '../../src/app/presentation-script';
 
 const data = loadGameData();
 
@@ -35,7 +35,11 @@ function farTargets(start: GameState, plan?: MissionScript): { state: GameState;
   return { state, far };
 }
 
-const fresh = (): GameState => startDay(createCampaign('media', 'EA-DEMO', data, { canonical: true }), data).state;
+const fresh = (design = PRESENTATION_DESIGN): GameState => {
+  const launched = launchWithDesign(startDay(createCampaign('media', 'EA-DEMO', data, { canonical: true }), data).state, design, data);
+  if (!launched) throw new Error('design rejected');
+  return launched;
+};
 
 describe('presentation scripts are played on foot', () => {
   it('reaches every target of the Moon and Mars presentation (X)', () => {
@@ -47,6 +51,6 @@ describe('presentation scripts are played on foot', () => {
   });
 
   it('reaches every target of the defeat demo (Z)', () => {
-    expect(farTargets(fresh(), LOSING_PLAN).far).toEqual([]);
+    expect(farTargets(fresh(LOSING_DESIGN), LOSING_PLAN).far).toEqual([]);
   });
 });

@@ -1,4 +1,5 @@
 // AI-assisted: OpenAI Codex. Human review pending.
+import { designForecastBonus } from './design';
 import type { ActionResult, GameData, GameState, ResourceId, TransferManifest } from './types';
 import { startDay } from './day-cycle';
 import { createEarth } from './earth';
@@ -22,6 +23,11 @@ export function portalRequirements(state: GameState, data: GameData): string[] {
 }
 
 export function forecastHorizon(state: GameState, data: GameData): number {
+  // The radiation sensor chosen in the mission design adds warning days on every level.
+  return baseForecastHorizon(state, data) + designForecastBonus(state.campaign, data);
+}
+
+function baseForecastHorizon(state: GameState, data: GameData): number {
   const { mission, campaign } = state;
   const level = data.levels[mission.level] ?? data.levels.luna;
   if (!level.forecastHorizonWithComms) return level.forecastHorizonDays;

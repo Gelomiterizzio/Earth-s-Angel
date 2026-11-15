@@ -6,14 +6,16 @@
 //   game-over sequence shows the world exploding.
 // Pressing the same key again stops. The player's save and options are restored afterwards,
 // even if the page reloads in the middle, so a demo never overwrites a real campaign.
-import { createCampaign, startDay } from '../core';
+import { createCampaign, launchWithDesign, startDay, type MissionDesign } from '../core';
 import type { Action, GameState } from '../core/types';
 import { canWalk, type LunarWalkController, type WalkPosition } from '../map';
 import type { AppContext } from './context';
 import { OPTIONS_STORAGE_KEY } from './options';
 import { SAVE_STORAGE_KEY } from './persistence';
 import {
+  LOSING_DESIGN,
   LOSING_PLAN,
+  PRESENTATION_DESIGN,
   missionSteps,
   PRESENTATION_DIFFICULTY,
   PRESENTATION_SEED,
@@ -203,6 +205,13 @@ export function mountPresentationMode(ctx: AppContext, getWalk: () => LunarWalkC
   function say(key: string, params: Record<string, number> = {}): void {
     const text = caption?.querySelector('.presentation-text');
     if (text) text.textContent = ctx.t(`ui.presentation.${key}`, params);
+    placeCaption();
+  }
+
+  /** On the results and credits the caption moves to the bottom so it never hides their titles. */
+  function placeCaption(): void {
+    const scene = ctx.flow.current().scene;
+    caption?.classList.toggle('presentation-bottom', scene === 'resultado' || scene === 'creditos');
   }
 
   function readStorage(key: string): string | null {
@@ -351,13 +360,51 @@ export function mountPresentationMode(ctx: AppContext, getWalk: () => LunarWalkC
     }
   }
 
-  function startCampaign(): void {
-    // A fixed, canonical campaign: the scripts are checked against it in the tests.
+  /** Click a card or button on the design screen, if it is there. */
+  function pick(selector: string): void {
+    document.querySelector<HTMLButtonElement>(selector)?.click();
+  }
+
+  /**
+   * A fixed, canonical campaign (the scripts are checked against it in the tests), then the
+   * mission design screen played like a player: objective, rocket, trajectory, payload, launch.
+   */
+  async function startCampaign(design: MissionDesign, captions: 'design' | 'loseDesign'): Promise<void> {
     const created = createCampaign(PRESENTATION_DIFFICULTY, PRESENTATION_SEED, ctx.data, { canonical: true });
     const opened = startDay(created, ctx.data);
     ctx.store.replaceState(opened.state, opened.events);
     ctx.flow.go('dificultad');
-    ctx.flow.go('cinematica', { id: 'opening' });
+    ctx.flow.go('diseno');
+    await wait(400);
+    // Start from an empty payload, whatever the last visitor chose.
+    for (const card of [...document.querySelectorAll<HTMLButtonElement>('[data-design^="payload:"][aria-pressed="true"]')]) card.click();
+    const pace = 1100;
+    say(`${captions}1`);
+    await wait(pace);
+    pick(`[data-design="objective:${design.objective}"]`);
+    await wait(pace);
+    say(`${captions}2`);
+    pick(`[data-design="rocket:${design.rocket}"]`);
+    await wait(pace);
+    pick(`[data-design="trajectory:${design.trajectory}"]`);
+    await wait(pace);
+    say(`${captions}3`);
+    for (const id of design.payload) {
+      if (stopped) return;
+      pick(`[data-design="payload:${id}"]`);
+      await wait(pace * 0.7);
+    }
+    say(`${captions}4`);
+    await wait(pace * 1.6);
+    if (stopped) return;
+    pick('.design-launch');
+    await wait(200);
+    // If the screen refused the design (should not happen), launch it directly.
+    if (ctx.flow.current().scene === 'diseno') {
+      const launched = launchWithDesign(ctx.store.getState()!, design, ctx.data);
+      if (launched) ctx.store.replaceState(launched);
+      ctx.flow.go('cinematica', { id: 'opening' });
+    }
   }
 
   function goToTitle(): void {
@@ -370,7 +417,8 @@ export function mountPresentationMode(ctx: AppContext, getWalk: () => LunarWalkC
     goToTitle();
     await wait(2200);
     if (stopped) return;
-    startCampaign();
+    await startCampaign(PRESENTATION_DESIGN, 'design');
+    if (stopped) return;
     say('opening');
     await hold(5000);
     if (stopped) return;
@@ -432,7 +480,8 @@ export function mountPresentationMode(ctx: AppContext, getWalk: () => LunarWalkC
     goToTitle();
     await wait(2400);
     if (stopped) return;
-    startCampaign();
+    await startCampaign(LOSING_DESIGN, 'loseDesign');
+    if (stopped) return;
     await wait(1800);
     if (stopped) return;
     ctx.flow.completeCinematic('opening');
@@ -521,9 +570,11 @@ export function mountPresentationMode(ctx: AppContext, getWalk: () => LunarWalkC
   };
   window.addEventListener('keydown', onKey, true);
   window.addEventListener('wheel', onWheel, { capture: true, passive: false });
+  const offFlow = ctx.flow.subscribe(() => { if (running) placeCaption(); });
   return () => {
     window.removeEventListener('keydown', onKey, true);
     window.removeEventListener('wheel', onWheel, true);
+    offFlow();
     pending?.();
     shield?.remove();
     caption?.remove();

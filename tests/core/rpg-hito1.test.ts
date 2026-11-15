@@ -456,6 +456,8 @@ function setupMissionTestHarness(difficulty: 'facil' | 'media' | 'imposible' = '
   // Start from Title -> New Game (startCampaign) -> opening cinematic -> mision
   flow.go('titulo');
   flow.startCampaign(difficulty);
+  // Mission design screen (default design), then the launch cinematic.
+  flow.go('cinematica', { id: 'opening' });
   flow.completeCinematic('opening');
 
   const pressKey = (key: string, opts: { repeat?: boolean; target?: unknown } = {}) => {

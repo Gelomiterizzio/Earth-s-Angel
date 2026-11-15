@@ -18,7 +18,7 @@ Requisitos de la guía: letra legible, pocas palabras, imágenes del proyecto, y
 | Título | **Earth's Angel** |
 | Subtítulo | Run a Moon base where nothing is free |
 | Texto | Team: [TEAM NAME] · [MEMBER A], [MEMBER B], [MEMBER C] · Santa Cruz de la Sierra, Bolivia |
-| Texto | Challenge: Build a Junior Astronaut Mission Trainer · NASA Space Apps Challenge 2026 |
+| Texto | Challenge: Space Mission Design Game · NASA Space Apps Challenge 2026 |
 | Imagen | Logotipo propio y captura del tablero |
 
 ## Diapositiva 2 · El problema

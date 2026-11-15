@@ -11,6 +11,7 @@ import { mountDefeatSequence } from '../cinematics/defeat';
 import { drawAstronaut, type SuitRole } from '../../map/astronaut-art';
 import { TILE_PX } from '../../map/art';
 import { badgeShelf } from './badges';
+import { designSummary } from './design-summary';
 
 let cleanup: (() => void) | null = null;
 
@@ -69,6 +70,8 @@ function mountResult(root: HTMLElement, ctx: AppContext): () => void {
     }
     if (!victory && current.cause) screen.append(el('p', undefined, ctx.t(`ui.result.cause.${current.cause}`)));
     screen.append(figures(ctx, current));
+    const designBox = designSummary(ctx, state, current);
+    if (designBox) screen.append(designBox);
     const badges = badgeShelf(ctx, state);
     if (badges) screen.append(badges);
     screen.append(el('p', undefined, ctx.t(current.principleKey)));

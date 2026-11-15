@@ -1,6 +1,8 @@
 // P1/P2 assisted by OpenAI Codex. Human review pending.
 // AI-assisted: Antigravity (Gemini), reviewed by A
 
+import type { MissionDesign, MissionDesignData } from './design';
+
 export type DifficultyId = 'facil' | 'media' | 'imposible';
 export type LevelId = 'luna' | 'marte' | 'tierra';
 export type ResourceId = 'energia' | 'oxigeno' | 'agua' | 'alimentos' | 'materiales';
@@ -220,6 +222,8 @@ export interface CampaignState {
   clueSignals?: Partial<Record<LevelId, { x: number; y: number; distance: number }>>;
   manifest: TransferManifest | null;
   history: MissionResult[];
+  /** Mission design chosen before the launch to the Moon. Missing in older saves: default design. */
+  design?: MissionDesign;
 }
 
 export interface GameState {
@@ -413,6 +417,8 @@ export interface GameData {
   events?: Record<string, unknown>;
   cards?: unknown[];
   tutorial?: unknown[];
+  /** Rockets, trajectories and payload for the mission design screen (balance values). */
+  missionDesign?: MissionDesignData;
 }
 
 export type SimEvent =

@@ -23,7 +23,7 @@ export const EVENT_SFX: Partial<Record<GameEvent['type'] | 'building/damaged' | 
 };
 
 export function musicFor(scene: SceneId, previous: SceneId, level?: LevelId): string | null {
-  if (scene === 'titulo' || scene === 'dificultad' || scene === 'creditos' ||
+  if (scene === 'titulo' || scene === 'dificultad' || scene === 'diseno' || scene === 'creditos' ||
       (scene === 'opciones' && previous === 'titulo')) return 'music-menu';
   if (scene === 'mision' || scene === 'eleccion') {
     if (level === 'marte') return 'music-mars';

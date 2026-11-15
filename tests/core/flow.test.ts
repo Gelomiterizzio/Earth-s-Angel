@@ -118,6 +118,9 @@ describe('Scene flow state machine (U-FLU-01..05)', () => {
 
     flow.go('titulo');
     flow.startCampaign('media');
+    // The mission design screen comes first; its launch button plays the opening.
+    expect(flow.current().scene).toBe('diseno');
+    flow.go('cinematica', { id: 'opening' });
     expect(flow.current().scene).toBe('cinematica');
 
     transitions.length = 0;
@@ -132,6 +135,9 @@ describe('Scene flow state machine (U-FLU-01..05)', () => {
     const { flow, store } = setupFlow();
     flow.go('titulo');
     flow.startCampaign('media');
+    // The mission design screen comes first; its launch button plays the opening.
+    expect(flow.current().scene).toBe('diseno');
+    flow.go('cinematica', { id: 'opening' });
     flow.completeCinematic('opening');
     expect(flow.current().scene).toBe('mision');
 
@@ -190,6 +196,9 @@ describe('Scene flow state machine (U-FLU-01..05)', () => {
     const { flow, store } = setupFlow();
     flow.go('titulo');
     flow.startCampaign('media');
+    // The mission design screen comes first; its launch button plays the opening.
+    expect(flow.current().scene).toBe('diseno');
+    flow.go('cinematica', { id: 'opening' });
     flow.completeCinematic('opening');
     const mission = store.getState();
 
@@ -203,6 +212,9 @@ describe('Scene flow state machine (U-FLU-01..05)', () => {
     flow.go('dificultad');
     expect(flow.current().scene).toBe('dificultad');
     flow.startCampaign('facil');
+    // The mission design screen comes first; its launch button plays the opening.
+    expect(flow.current().scene).toBe('diseno');
+    flow.go('cinematica', { id: 'opening' });
     expect(store.getState()?.campaign.difficulty).toBe('facil');
     expect(flow.current().scene).toBe('cinematica');
   });
@@ -211,6 +223,9 @@ describe('Scene flow state machine (U-FLU-01..05)', () => {
     const { flow } = setupFlow();
     flow.go('titulo');
     flow.startCampaign('media');
+    // The mission design screen comes first; its launch button plays the opening.
+    expect(flow.current().scene).toBe('diseno');
+    flow.go('cinematica', { id: 'opening' });
     flow.completeCinematic('opening');
     flow.go('resultado');
     flow.go('cinematica', { id });

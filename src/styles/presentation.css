@@ -86,3 +86,9 @@
 .presentation-speed-pop { animation: presentation-speed-pop .25s ease-out; }
 @keyframes presentation-speed-pop { 50% { transform: scale(1.18); } }
 .reduced-motion .presentation-speed-pop { animation: none; }
+
+/* On results and credits the caption sits at the bottom, clear of their titles. */
+.presentation-caption.presentation-bottom {
+  top: auto;
+  bottom: calc(100cqh * 24 / 720);
+}

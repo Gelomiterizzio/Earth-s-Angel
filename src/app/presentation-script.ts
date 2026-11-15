@@ -132,3 +132,20 @@ export function* missionSteps(
     }
   }
 }
+
+/**
+ * Mission designs the presentations choose on the design screen, in this order, before the
+ * launch. X picks a sensible design; Z cuts corners and carries nothing for life support.
+ */
+export const PRESENTATION_DESIGN: import('../core/design').MissionDesign = {
+  objective: 'autosuficiente',
+  rocket: 'medio',
+  trajectory: 'estandar',
+  payload: ['agua', 'alimentos', 'sensor', 'herramientas'],
+};
+export const LOSING_DESIGN: import('../core/design').MissionDesign = {
+  objective: 'autosuficiente',
+  rocket: 'ligero',
+  trajectory: 'economica',
+  payload: ['materiales', 'bateria'],
+};

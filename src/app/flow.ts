@@ -12,7 +12,9 @@ export const ALLOWED_TRANSITIONS: Record<SceneId, SceneId[]> = {
   arranque: ['titulo'],
   titulo: ['dificultad', 'opciones', 'creditos', 'despedida', 'mision', 'resultado', 'cinematica'],
   opciones: ['titulo', 'pausa', 'mision'],
-  dificultad: ['titulo', 'cinematica'],
+  dificultad: ['titulo', 'cinematica', 'diseno'],
+  // Mission design before the launch from Earth to the Moon.
+  diseno: ['cinematica', 'dificultad', 'titulo'],
   cinematica: ['mision', 'creditos', 'titulo'],
   mision: ['opciones', 'pausa', 'resultado'],
   pausa: ['mision', 'opciones', 'titulo'],
@@ -201,7 +203,8 @@ export function createFlow(opts: CreateFlowOptions): Flow {
       if (currentScene !== 'dificultad') {
         go('dificultad');
       }
-      go('cinematica', { id: 'opening' });
+      // The player designs the mission first; the design screen then plays the launch.
+      go('diseno');
     },
 
     canContinue(): boolean {

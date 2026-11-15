@@ -1,5 +1,6 @@
 // AI-assisted: Antigravity (Gemini), reviewed by A
 
+import { designSuitShield } from './design';
 import type {
   DayReport,
   GameData,
@@ -185,6 +186,7 @@ export function advanceDay(
     radiationLevel,
     energyStep.shelterActive,
     data,
+    designSuitShield(campaign, data),
   );
 
   const allCrewSheltered =
