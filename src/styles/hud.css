@@ -454,3 +454,74 @@
 .clue-lab-bar { margin-top: calc(4 * var(--px)); }
 .clue-lab-bar i { background: var(--focus); }
 .reduced-motion .goal-bar i { transition: none; }
+
+/* Crew rows and build cards with colours per state (AI-assisted: Claude Code). */
+.crew-board { gap: calc(5 * var(--px)); }
+.crew-board .crew-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: calc(8 * var(--px));
+  padding: calc(3 * var(--px)) calc(6 * var(--px));
+  border-left: calc(3 * var(--px)) solid var(--safe);
+  border-radius: calc(4 * var(--px));
+  background: color-mix(in srgb, var(--panel) 70%, transparent);
+}
+.crew-board .crew-row[data-state="warn"] { border-left-color: var(--warn); }
+.crew-board .crew-row[data-state="crit"] { border-left-color: var(--crit); background: color-mix(in srgb, var(--crit) 12%, var(--panel)); }
+.crew-info { display: grid; gap: calc(2 * var(--px)); min-width: 0; }
+.crew-name { font-weight: 700; color: var(--text); }
+.crew-meters { display: grid; grid-template-columns: 1fr 1fr; gap: calc(8 * var(--px)); }
+.crew-meter { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: calc(4 * var(--px)); }
+.crew-icon { font-size: calc(11 * var(--px)); }
+.crew-health .crew-icon { color: var(--crit); }
+.crew-exposure .crew-icon { color: var(--warn); }
+.crew-bar { height: calc(5 * var(--px)); border-radius: 99px; background: color-mix(in srgb, var(--border) 70%, transparent); overflow: hidden; }
+.crew-bar i { display: block; height: 100%; width: calc(var(--share, 0) * 100%); border-radius: inherit; transition: width .3s ease-out; }
+.crew-num { font-family: var(--font-title); font-weight: 400; min-width: 2.2em; text-align: end; }
+.crew-health[data-level="ok"] i { background: var(--safe); }
+.crew-health[data-level="ok"] .crew-num { color: var(--safe); }
+.crew-health[data-level="warn"] i, .crew-exposure[data-level="warn"] i { background: var(--warn); }
+.crew-health[data-level="warn"] .crew-num, .crew-exposure[data-level="warn"] .crew-num { color: var(--warn); }
+.crew-health[data-level="crit"] i, .crew-exposure[data-level="crit"] i { background: var(--crit); }
+.crew-health[data-level="crit"] .crew-num, .crew-exposure[data-level="crit"] .crew-num { color: var(--crit); }
+.crew-exposure[data-level="ok"] i { background: var(--focus); }
+.crew-exposure[data-level="ok"] .crew-num { color: var(--focus); }
+
+.build-btn { gap: calc(4 * var(--px)); transition: border-color .15s, box-shadow .15s; }
+.build-btn:not(:disabled):hover { border-color: var(--focus); }
+.build-btn[aria-pressed="true"] {
+  background: color-mix(in srgb, var(--accent) 12%, var(--bg));
+  box-shadow: 0 0 calc(10 * var(--px)) color-mix(in srgb, var(--accent) 40%, transparent);
+}
+.build-label { color: var(--text); line-height: 1.15; }
+.build-key {
+  display: inline-grid;
+  place-items: center;
+  min-width: calc(16 * var(--px));
+  height: calc(16 * var(--px));
+  padding: 0 calc(3 * var(--px));
+  border: calc(1 * var(--px)) solid var(--border);
+  border-radius: calc(3 * var(--px));
+  background: var(--panel);
+  color: var(--accent);
+  font-family: var(--font-title);
+  font-size: calc(11 * var(--px));
+}
+.build-costs { display: flex; flex-wrap: wrap; gap: calc(4 * var(--px)); }
+.build-chip {
+  padding: calc(1 * var(--px)) calc(5 * var(--px));
+  border-radius: 99px;
+  font-size: calc(12 * var(--px));
+  font-weight: 700;
+  background: color-mix(in srgb, var(--mineral) 20%, transparent);
+  color: var(--mineral);
+}
+.build-chip-ap { background: color-mix(in srgb, var(--focus) 16%, transparent); color: var(--focus); }
+.build-chip.is-short { background: color-mix(in srgb, var(--crit) 22%, transparent); color: var(--crit); }
+.build-btn .why { color: var(--text-dim); }
+.build-btn.is-blocked { opacity: .78; }
+.build-btn .build-warning { color: var(--crit); font-weight: 700; }
+.reduced-motion .crew-bar i, .reduced-motion .build-btn { transition: none; }
+/* Long names (Reciclador, Invernadero...) get their own line under the icon and the key. */
+.build-btn .build-name { flex-wrap: wrap; row-gap: calc(3 * var(--px)); width: 100%; }
+.build-btn .build-label { flex: 1 1 100%; min-width: 0; overflow-wrap: anywhere; hyphens: auto; }

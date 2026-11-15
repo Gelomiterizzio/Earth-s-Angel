@@ -602,8 +602,15 @@ function buildButton(ctx: AppContext, state: GameState, type: BuildingType, inde
     onClick: press(ctx, () => ctx.uiStore.setTool({ kind: 'build', building: type })),
   });
   const label = def ? ctx.t(def.nameKey) : type;
-  const heading = el('span', 'build-name', index < 7 ? `${index + 1}. ${label}` : label);
-  if (index < 7) node.setAttribute('aria-keyshortcuts', String(index + 1));
+  // AI-assisted: Claude Code (claude-opus-5-5). Key badge, cost chips and warning per card.
+  const heading = el('span', 'build-name');
+  heading.append(el('span', 'build-label', label));
+  if (index < 7) {
+    node.setAttribute('aria-keyshortcuts', String(index + 1));
+    const key = el('kbd', 'build-key', String(index + 1));
+    key.setAttribute('aria-hidden', 'true');
+    heading.prepend(key);
+  }
   if (Object.hasOwn(BUILDING_ART, type)) {
     const art = el('span', 'build-art');
     art.setAttribute('aria-hidden', 'true');
@@ -611,12 +618,21 @@ function buildButton(ctx: AppContext, state: GameState, type: BuildingType, inde
     art.style.setProperty('--frame-offset', String(-24 * BUILDING_ART[type as keyof typeof BUILDING_ART]));
     heading.prepend(art);
   }
-  node.replaceChildren(
-    heading,
-    el('small', undefined, def ? ctx.t('ui.hud.cost', { cost: def.cost, ap: def.apCost }) : ''),
-    el('small', 'why', def ? ctx.t(def.whyKey) : ''),
-  );
-  if (reason) node.append(el('small', undefined, ctx.t(reason.messageKey, reason.params)));
+  const costs = el('span', 'build-costs');
+  if (def) {
+    costs.setAttribute('aria-label', ctx.t('ui.hud.cost', { cost: def.cost, ap: def.apCost }));
+    const materials = el('span', 'build-chip', `🧱 ${def.cost}`);
+    materials.classList.toggle('is-short', state.mission.resources.materiales < def.cost);
+    materials.title = ctx.t('ui.hud.costMaterials', { n: def.cost, have: state.mission.resources.materiales });
+    const ap = el('span', 'build-chip build-chip-ap', `⚡ ${def.apCost} ${ctx.t('ui.hud.apShort')}`);
+    ap.classList.toggle('is-short', state.mission.ap < def.apCost);
+    ap.title = ctx.t('ui.hud.costAp', { n: def.apCost, have: state.mission.ap });
+    for (const chip of [materials, ap]) chip.setAttribute('aria-hidden', 'true');
+    costs.append(materials, ap);
+  }
+  node.replaceChildren(heading, costs, el('small', 'why', def ? ctx.t(def.whyKey) : ''));
+  node.classList.toggle('is-blocked', reason !== null);
+  if (reason) node.append(el('small', 'build-warning', `⚠ ${ctx.t(reason.messageKey, reason.params)}`));
   node.dataset.tutorial = `palette-${type}`;
   node.dataset.hudFocus = `build-${type}`;
   return node;
@@ -640,25 +656,46 @@ function cannotBuild(ctx: AppContext, state: GameState, type: BuildingType): Act
 
 function crew(ctx: AppContext, state: GameState): HTMLElement {
   const block = el('section');
-  block.append(el('h2', 'zone-title', ctx.t('ui.hud.crew')));
-  const list = el('ul', 'crew-list');
+  const limit = ctx.data.constants.exposureLimit;
+  const caution = ctx.data.constants.exposureCaution;
+  const active = state.mission.crew.filter((member) => member.health > 0 && member.exposure < limit).length;
+  const title = el('h2', 'zone-title zone-title-count');
+  title.append(el('span', undefined, ctx.t('ui.hud.crew')),
+    el('span', 'zone-count', ctx.t('ui.hud.crewActive', { n: active, total: state.mission.crew.length })));
+  block.append(title);
+  const list = el('ul', 'crew-list crew-board');
   state.mission.crew.forEach((member, index) => {
     const row = el('li', 'crew-row');
     const portrait = el('span', index > 3 ? 'portrait portrait-mars' : 'portrait');
     if (index < 6) portrait.style.setProperty('--frame-offset', String(-32 * (index % 4)));
     else portrait.classList.add('portrait-empty');
     portrait.setAttribute('aria-hidden', 'true');
-    const health = el('span', 'bar');
-    const fill = el('span');
-    fill.style.width = `${Math.max(0, Math.min(100, member.health))}%`;
-    health.append(fill);
-    row.append(
-      portrait,
-      el('span', undefined, ctx.t(member.nameKey)),
-      health,
-      el('span', undefined, ctx.t('ui.hud.health', { n: member.health })),
-      el('span', undefined, ctx.t('ui.hud.exposureShort', { n: member.exposure })),
+    // AI-assisted: Claude Code (claude-opus-5-5). Health and exposure meters with colour by state.
+    const healthState = member.health <= 0 ? 'crit' : member.health < 50 ? 'crit' : member.health < 80 ? 'warn' : 'ok';
+    const exposureState = member.exposure >= limit ? 'crit' : member.exposure >= caution ? 'warn' : 'ok';
+    row.dataset.state = healthState === 'crit' || exposureState === 'crit' ? 'crit'
+      : healthState === 'warn' || exposureState === 'warn' ? 'warn' : 'ok';
+    const name = ctx.t(member.nameKey);
+    row.setAttribute('aria-label', `${name}. ${ctx.t('ui.hud.health', { n: member.health })}. ${ctx.t('ui.hud.exposureShort', { n: member.exposure })}`);
+    const meter = (kind: 'health' | 'exposure', icon: string, value: number, max: number, level: string): HTMLElement => {
+      const box = el('span', `crew-meter crew-${kind}`);
+      box.dataset.level = level;
+      box.title = kind === 'health' ? ctx.t('ui.hud.health', { n: value }) : ctx.t('ui.hud.exposureShort', { n: value });
+      const bar = el('span', 'crew-bar');
+      const fill = el('i');
+      fill.style.setProperty('--share', String(Math.max(0, Math.min(1, value / max))));
+      bar.append(fill);
+      box.append(el('span', 'crew-icon', icon), bar, el('b', 'crew-num', String(value)));
+      return box;
+    };
+    const info = el('span', 'crew-info');
+    info.append(el('span', 'crew-name', name), el('span', 'crew-meters'));
+    info.lastElementChild!.append(
+      meter('health', '♥', member.health, 100, healthState),
+      meter('exposure', '☢', member.exposure, limit, exposureState),
     );
+    for (const part of [portrait, info]) part.setAttribute('aria-hidden', 'true');
+    row.append(portrait, info);
     list.append(row);
   });
   block.append(list);

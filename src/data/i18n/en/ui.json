@@ -635,5 +635,9 @@
   "ui.presentation.loseDesign3": "They pack materials and a battery… but no oxygen, water or food.",
   "ui.presentation.loseDesign4": "It fits the budget, but the plan ignores life support. Launch!",
   "ui.options.randomMap": "Random map (new games): ice and minerals in different places",
-  "ui.hud.streakShort": "Streak"
+  "ui.hud.streakShort": "Streak",
+  "ui.hud.crewActive": "{n} / {total} active",
+  "ui.hud.apShort": "AP",
+  "ui.hud.costMaterials": "Needs {n} materials (you have {have})",
+  "ui.hud.costAp": "Needs {n} action points (you have {have})"
 }
