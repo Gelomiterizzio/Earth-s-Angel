@@ -1,0 +1,11 @@
+# Only the game sources go to Vercel. It builds with npm ci + npm run build (see vercel.json).
+.env*
+.vercel
+.claude
+.campaign-*
+dist
+node_modules
+Integrante A y B
+MD_P1_P2
+src/audio/soundtrack.local
+tests/browser
