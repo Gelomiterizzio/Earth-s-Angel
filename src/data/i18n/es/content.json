@@ -96,11 +96,13 @@
     },
     "waterLoop": {
       "title": "Agua que vuelve",
-      "body": "En el espacio el agua se recicla. En la Estación Espacial se recupera cerca del 90 %. Tu base recupera el 75 %: ese número es del juego."
+      "body": "En el espacio el agua se recicla. En la Estación Espacial se recupera cerca del 90 %. Tu base recupera el 75 %: ese número es del juego.",
+      "realLife": "El sistema de soporte vital de la Estación Espacial demostró que puede recuperar cerca del 98 % del agua que lleva la tripulación, la meta para viajes largos."
     },
     "airFromWater": {
       "title": "Aire del agua",
-      "body": "El agua tiene oxígeno dentro. Con electricidad se puede separar: se llama electrólisis. Así se fabrica oxígeno en la Estación Espacial."
+      "body": "El agua tiene oxígeno dentro. Con electricidad se puede separar: se llama electrólisis. Así se fabrica oxígeno en la Estación Espacial.",
+      "realLife": "En la Estación Espacial, el sistema de generación de oxígeno separa el agua con electricidad (electrólisis). Produce oxígeno para la tripulación e hidrógeno como subproducto."
     },
     "growFood": {
       "title": "Comida que crece",
@@ -112,7 +114,8 @@
     },
     "solarStorm": {
       "title": "Tormenta solar",
-      "body": "A veces el Sol lanza partículas muy rápidas. NASA registra esos eventos. El que ves en el juego ocurrió de verdad. La radiación de tu base es un valor del juego."
+      "body": "A veces el Sol lanza partículas muy rápidas. NASA registra esos eventos. El que ves en el juego ocurrió de verdad. La radiación de tu base es un valor del juego.",
+      "realLife": "La tormenta de este juego se basa en un evento real: una tormenta de partículas solares que la base de datos DONKI de la NASA registró el 10 de septiembre de 2017."
     },
     "moonIce": {
       "title": "Hielo lunar",
@@ -124,22 +127,26 @@
     },
     "sol": {
       "title": "Un día en Marte",
-      "body": "Un día solar marciano se llama sol. Dura cerca de 24 horas y 40 minutos. En esta misión, un sol es un turno."
+      "body": "Un día solar marciano se llama sol. Dura cerca de 24 horas y 40 minutos. En esta misión, un sol es un turno.",
+      "realLife": "Un día solar en Marte, o sol, dura en promedio 24 horas 39 minutos 35 segundos, cerca de un 3 % más que un día en la Tierra."
     },
     "marsDust": {
       "title": "Energía durante una tormenta de polvo",
-      "body": "Durante una tormenta regional, la energía solar de InSight bajó de 425 a 275 vatios-hora por sol. Para representar esa caída, los paneles del juego rinden al 65 % durante una tormenta regional."
+      "body": "Durante una tormenta regional, la energía solar de InSight bajó de 425 a 275 vatios-hora por sol. Para representar esa caída, los paneles del juego rinden al 65 % durante una tormenta regional.",
+      "realLife": "En 2022, una tormenta de polvo en Marte bajó la energía del módulo InSight de la NASA de 425 a 275 vatios-hora por sol. Sus paneles ya estaban cubiertos de polvo."
     },
     "sameStormMars": {
       "title": "Una tormenta solar llega a Marte",
-      "body": "Durante la tormenta solar de septiembre de 2017, Curiosity midió en la superficie marciana más del doble de su récord anterior de radiación. La misión usa su propia escala de exposición."
+      "body": "Durante la tormenta solar de septiembre de 2017, Curiosity midió en la superficie marciana más del doble de su récord anterior de radiación. La misión usa su propia escala de exposición.",
+      "realLife": "La tormenta solar de septiembre de 2017 duplicó con creces la radiación más alta que el rover Curiosity de la NASA había medido en la superficie de Marte desde que llegó en 2012."
     }
   },
   "tutorial": {
+    "reserves": "Pulsa R para mostrar u ocultar tus reservas. De arriba abajo, los iconos muestran oxígeno, agua, alimentos, energía y materiales. Los números indican cuánto te queda.",
     "t01": "Esta es tu base. Arriba ves energía, soporte vital y protección.",
-    "t02": "Sin electricidad nada funciona. Construye un panel solar.",
-    "t03": "Hay mineral cerca de la nave. Recógelo para tener más materiales.",
-    "t04": "Los sensores detectan hielo al sureste. Explora hacia allí.",
+    "t02": "Sin electricidad nada funciona. Ponte frente a una casilla libre y pulsa Q para instalar un panel solar.",
+    "t03": "Hay mineral cerca de la nave. Ponte frente al depósito y pulsa E para recogerlo.",
+    "t04": "Los sensores detectan hielo al sureste. Ponte frente al terreno en sombra y pulsa E para explorarlo.",
     "t05": "Pulsa Finalizar día para ver qué pasó.",
     "t06": "Pon un extractor sobre el hielo y un reciclador. Así tendrás agua.",
     "t07": "El generador saca oxígeno del agua. El invernadero da comida cada 4 días.",
@@ -210,6 +217,83 @@
     "lang": "English"
   },
   "map": {
+    "walk": {
+      "mapEdge": "Este es el límite de la zona cartografiada.",
+      "fogAhead": "Terreno sin explorar delante. Pulsa E para explorarlo ({ap} PA).",
+      "fogNoAp": "Terreno sin explorar delante. No quedan puntos de acción: finaliza el día para seguir explorando.",
+      "controls": "WASD · Toca para girar, mantén para caminar",
+      "actionsShortcut": "Q · Acciones",
+      "actionsTitle": "Acciones de campo",
+      "baseShortcut": "B · Base",
+      "requiresRole": "Esta acción es exclusiva de {role}. Cambia de tripulante con Q.",
+      "roleUnavailable": "{role} no está disponible para esta acción.",
+      "noActions": "Gira hacia una casilla libre, un recurso o un equipo.",
+      "goal": "Recoge minerales o elige un panel solar para construir. Ponte frente al objetivo y pulsa E.",
+      "none": "Ponte frente a un depósito, una zona sin explorar o un lugar de trabajo.",
+      "BUILD": "E · Construir",
+      "BUILD_NAME": "Instalar {name}",
+      "COLLECT": "Recolectar mineral",
+      "EXPLORE": "Explorar casilla",
+      "SCAN": "Escanear casilla",
+      "REPAIR": "Reparar equipo",
+      "REPAIR_NAME": "Reparar {name}",
+      "costMaterialsAp": "{cost} materiales, {ap} PA",
+      "costApOnly": "{ap} PA",
+      "promptWithCost": "E: {action} · {cost}",
+      "readyOnDay": "Listo en el día {day}",
+      "yieldMaterials": "+{n} materiales",
+      "blocked": "No disponible: {reason}",
+      "done": {
+        "BUILD": "Construcción iniciada.",
+        "BUILD_DETAIL": "{name} en construcción. Listo en el día {day}.",
+        "COLLECT": "Minerales guardados en el almacén.",
+        "COLLECT_DETAIL": "Recolectados +{n} materiales.",
+        "EXPLORE": "Terreno explorado.",
+        "SCAN": "Escaneo completado.",
+        "REPAIR": "Equipo reparado."
+      }
+    },
+    "journal": {
+      "title": "Diario de misión",
+      "shortcut": "M · Diario",
+      "activeObjective": "Objetivo activo",
+      "deadlines": "Plazos",
+      "progress": "Progreso de la misión",
+      "window": "Día {day} de {limit} (quedan {remaining} días de ventana)",
+      "windowOpen": "Día {day} (plazo de la Tierra)",
+      "windowSol": "Sol {day} de {limit} (quedan {remaining} soles de ventana)",
+      "windowOpenSol": "Sol {day} (plazo de la Tierra)",
+      "earthDeadline": "Cuenta regresiva de la Tierra: quedan {days} días",
+      "streakProgress": "Racha de estabilidad: {current} / {target} días",
+      "allMet": "Todos los objetivos de la misión están cumplidos. Mantén la base hasta cerrar el día.",
+      "decisionHint": "Instala un panel solar para producir energía a partir de mañana o recoge minerales para ampliar tus reservas.",
+      "exploredTiles": "Casillas exploradas: {explored} / {total}",
+      "buildingsCount": "Estructuras operativas: {ready} / {total}",
+      "closeHint": "Pulsa M o Esc para volver a la misión.",
+      "activeHeading": "Objetivo activo",
+      "deadlineHeading": "Plazos",
+      "progressHeading": "Progreso",
+      "close": "Cerrar (M / Esc)",
+      "activeSortieTitle": "Primera salida: energía o materiales",
+      "activeSortieDetail": "Sal de la nave y decide en qué invertir tus puntos de acción: construir un panel solar en suelo llano para energía o recoger el depósito mineral en (3, 7) para materiales.",
+      "activeRepairTitle": "Reparar {name}",
+      "activeRepairDetail": "Equipo con avería en ({x}, {y}). Ponte frente a él y pulsa E para repararlo ({cost} materiales, 1 PA).",
+      "activeAllMetTitle": "Todos los objetivos cumplidos",
+      "activeAllMetDetail": "Finaliza el día para completar la misión.",
+      "progressSummary": "Objetivos cumplidos: {met} / {total} · Racha: {streak} / {streakTarget}",
+      "resourcesSummary": "Energía {energy} / {cap} · Materiales {materials} · Puntos de acción {ap}",
+      "pendingHeading": "En construcción",
+      "goalDesc": {
+        "soporte": "Haz funcionar el extractor de hielo, el reciclador de agua y el generador de oxígeno el mismo día.",
+        "energia": "Mantén la energía guardada en el umbral o por encima y genera suficiente para los módulos activos.",
+        "alimentos": "Completa al menos una cosecha y mantén el invernadero en marcha.",
+        "reservas": "Mantén oxígeno, agua y alimentos en el umbral de reserva o por encima.",
+        "proteccion": "Ten un refugio operativo con plaza para toda la tripulación y supera la tormenta solar.",
+        "racha": "Mantén días estables seguidos sin escasez ni tormentas sin refugio.",
+        "comunicaciones": "Mantén la antena de comunicaciones con energía durante los soles seguidos requeridos.",
+        "autonomia": "Sostén el soporte vital, los alimentos y las reservas en Marte."
+      }
+    },
     "readyDay": "Listo el día {day}",
     "rejectPrefix": "No se puede:",
     "collectedPlus": "+{n}",
@@ -226,7 +310,61 @@
     },
     "fog": "Sin explorar",
     "free": "Libre",
-    "occupied": "Ocupado"
+    "occupied": "Ocupado",
+    "look": {
+      "prefix": "Delante: {what}",
+      "edge": "el límite del mapa.",
+      "fog": "terreno sin explorar. Pulsa E para explorarlo.",
+      "ship": "{name}. El almacén de la base y punto de partida. Aquí no se puede construir.",
+      "building": {
+        "scaffold": "{name}, en construcción. Listo el día {day}.",
+        "damaged": "{name}, averiado. Pulsa E para repararlo.",
+        "off": "{name}, apagado. Enciéndelo en el panel de base (B).",
+        "unpowered": "{name}. Ayer se quedó sin electricidad.",
+        "working": "{name}, en funcionamiento. {desc}"
+      },
+      "terrain": {
+        "llano": "suelo llano. Aquí puedes construir.",
+        "roca": "roca. No se puede caminar ni construir aquí.",
+        "crater": "un cráter. No se puede caminar ni construir aquí.",
+        "hielo": "hielo lunar. Aquí solo se puede construir el extractor de hielo.",
+        "mineral": "un depósito de mineral. Pulsa E para recoger {n} materiales.",
+        "collected": "suelo llano donde recogiste mineral. Aquí puedes construir.",
+        "misterio": "una señal extraña. No se puede construir encima. Quizá haya algo oculto cerca.",
+        "nave": "la nave de aterrizaje. Aquí no se puede construir."
+      }
+    },
+    "advisor": {
+      "res": {
+        "oxigeno": "Oxígeno",
+        "agua": "Agua",
+        "alimentos": "Comida"
+      },
+      "resLower": {
+        "oxigeno": "oxígeno",
+        "agua": "agua",
+        "alimentos": "comida"
+      },
+      "unit": {
+        "day": "día",
+        "days": "días",
+        "sol": "sol",
+        "sols": "soles"
+      },
+      "bubble": "{resource}: quedan {count} {unit}",
+      "bubbleNone": "{resource}: ¡se acaba!",
+      "tip": {
+        "build": "Control de misión: reserva baja de {res}. Construye el {building}: {why}",
+        "fix": "Control de misión: el {building} no funciona. Enciéndelo en el panel Base (B) o ponte delante y pulsa E para repararlo.",
+        "power": "Control de misión: el soporte vital se quedó sin energía. Añade un panel solar o una batería antes de terminar el día."
+      },
+      "why": {
+        "generador": "convierte agua en oxígeno respirable.",
+        "extractor": "colócalo sobre hielo para sacar agua.",
+        "reciclador": "recupera el agua que usa la tripulación.",
+        "invernadero": "cultiva comida mientras tenga energía."
+      }
+    }
   },
   "earth": {
     "error": {

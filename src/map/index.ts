@@ -1,11 +1,34 @@
 // AI-assisted: Cursor (Composer) and OpenAI Codex. Team review pending.
 import type { AppContext } from '../app/context';
 import type { GameState, MapView } from '../core/types';
-import { BUILDING_PX, drawAtlasFrame, drawMapEffect, drawTerrainAccent, EFFECT_DURATION, loadMapArt, TILE_PX } from './art';
+import { BUILDING_PX, drawAtlasFrame, drawLunarLander, drawMapEffect, drawTerrainAccent, EFFECT_DURATION, loadMapArt, makeLunarBackdrop, TILE_PX } from './art';
 import type { MapEffect } from './art';
-import { dispatchToolAction, previewAt } from './map-input';
+import { createMapAmbience } from './ambience';
+import { actionForTool, dispatchToolAction, previewAt } from './map-input';
 import { STRUCTURE_SPRITE, TERRAIN_FALLBACK, TERRAIN_SPRITE } from './tiles';
+import { createLunarWalk, supportsFieldWalk, type LunarWalkController } from './walk';
 import './map.css';
+
+export {
+  buildMissionJournalData,
+  canWalk,
+  createLunarWalk,
+  inspectWalkTarget,
+  describeWalkTarget,
+  type LunarWalkController,
+  type MissionJournalData,
+  type MissionJournalObjective,
+  type WalkActionOption,
+  type WalkActionOutcome,
+  type WalkDirection,
+  type WalkPosition,
+  type WalkSnapshot,
+  type WalkTargetInfo,
+} from './walk';
+
+export interface LunarMapView extends MapView {
+  walk: LunarWalkController;
+}
 
 interface Position {
   x: number;
@@ -19,7 +42,7 @@ const arrowSteps: Record<string, Position> = {
   ArrowDown: { x: 0, y: 1 },
 };
 
-function describeCell(ctx: AppContext, state: GameState, { x, y }: Position): string {
+function describeCell(ctx: AppContext, state: GameState, { x, y }: Position, withPreview = true): string {
   const tile = state.mission.map.tiles[y * state.mission.map.width + x];
   if (!tile) return '';
   const building = state.mission.buildings.find((b) => b.x === x && b.y === y);
@@ -36,7 +59,7 @@ function describeCell(ctx: AppContext, state: GameState, { x, y }: Position): st
       }
     } else if (terrain !== 'nave') parts.push(ctx.t('content.map.free'));
   }
-  if (ctx.uiStore.get().tool.kind !== 'inspect') {
+  if (withPreview && ctx.uiStore.get().tool.kind !== 'inspect') {
     const { error, readyDay } = previewAt(ctx, state, x, y);
     if (error) parts.push(ctx.t(error.messageKey, error.params));
     else if (readyDay !== undefined) parts.push(ctx.t('content.map.readyDay', { day: readyDay }));
@@ -44,7 +67,7 @@ function describeCell(ctx: AppContext, state: GameState, { x, y }: Position): st
   return parts.filter(Boolean).map((part) => part.replace(/[. ]+$/u, '')).join('. ') + '.';
 }
 
-export function createMapView(parent: HTMLElement, ctx: AppContext): MapView {
+export function createMapView(parent: HTMLElement, ctx: AppContext): LunarMapView {
   parent.classList.add('mission-map');
   parent.tabIndex = -1;
 
@@ -60,19 +83,39 @@ export function createMapView(parent: HTMLElement, ctx: AppContext): MapView {
   const status = document.createElement('div');
   status.className = 'map-status sr-only';
   status.setAttribute('aria-live', 'polite');
-  parent.replaceChildren(ground, bursts, grid, status);
+  const world = document.createElement('div');
+  world.className = 'map-world';
+  const ambienceLayer = document.createElement('canvas');
+  world.append(ground, bursts, ambienceLayer, grid);
+  parent.replaceChildren(world, status);
+  const walk = createLunarWalk(parent, world, ctx, (position) => startEffect('collect', [position]));
 
-  const art = loadMapArt(drawGround);
+  let backdropReady = false;
+  const art = loadMapArt(() => {
+    if (!backdropReady) {
+      const texture = makeLunarBackdrop(art);
+      if (texture) {
+        parent.style.setProperty('--lunar-backdrop', `url("${texture}")`);
+        backdropReady = true;
+      }
+    }
+    drawGround();
+  });
   const groundContext = ground.getContext('2d');
   const burstContext = bursts.getContext('2d');
   const buttons: HTMLButtonElement[] = [];
   const prefersStill = window.matchMedia('(prefers-reduced-motion: reduce)');
   const reducedMotion = () => ctx.options.get().reducedMotion || prefersStill.matches;
+  const ambience = createMapAmbience(ambienceLayer, world, ctx,
+    () => (supportsFieldWalk(level) ? walk.getSnapshot().position : null), reducedMotion);
 
   let visible = true;
   let width = 0;
   let height = 0;
+  let level: GameState['mission']['level'] | undefined;
   let cursor = { x: 0, y: 0 };
+  let selectedIndex = -1;
+  let markedCells = new Set<number>();
   let previousMap = ctx.store.getState()?.mission.map;
   let currentDust = '';
   let animation = 0;
@@ -83,6 +126,8 @@ export function createMapView(parent: HTMLElement, ctx: AppContext): MapView {
     if (!visible || ctx.flow.current().scene !== 'mision' || state?.mission.phase !== 'planning'
       || document.querySelector('[role="dialog"][aria-modal="true"]')) return;
     ctx.uiStore.setHover({ x, y });
+    const action = actionForTool(ctx.uiStore.get().tool, x, y);
+    if (action && walk.fieldActionBlock(state, action, true)) return;
     const result = dispatchToolAction(ctx, x, y);
     if (result?.ok && result.events.some((event) => event.type === 'resource/collected')) {
       // The collection event contains the amount but not the cell. Use the accepted action's origin.
@@ -94,10 +139,15 @@ export function createMapView(parent: HTMLElement, ctx: AppContext): MapView {
   function buildGrid(state: GameState): void {
     width = state.mission.map.width;
     height = state.mission.map.height;
+    level = state.mission.level;
     cursor = ctx.data.levels[state.mission.level]?.ship ?? { x: 0, y: 0 };
+    walk.reset(state, cursor);
     ground.width = bursts.width = width * TILE_PX;
     ground.height = bursts.height = height * TILE_PX;
+    ambience.resize(width, height);
     buttons.length = 0;
+    selectedIndex = -1;
+    markedCells = new Set();
     grid.setAttribute('aria-rowcount', String(height));
     grid.setAttribute('aria-colcount', String(width));
     grid.replaceChildren();
@@ -115,7 +165,10 @@ export function createMapView(parent: HTMLElement, ctx: AppContext): MapView {
         button.setAttribute('role', 'gridcell');
         button.dataset.x = String(x);
         button.dataset.y = String(y);
-        button.addEventListener('mouseenter', () => ctx.uiStore.setHover(position));
+        button.addEventListener('pointermove', () => {
+          delete parent.dataset.walkInput;
+          if (cursor.x !== x || cursor.y !== y) ctx.uiStore.setHover(position);
+        });
         button.addEventListener('focus', () => ctx.uiStore.setHover(position));
         button.addEventListener('click', () => activateCell(position));
         row.append(button);
@@ -140,6 +193,16 @@ export function createMapView(parent: HTMLElement, ctx: AppContext): MapView {
       if (!tile.explored) {
         g.fillStyle = martian ? '#2c1b24' : '#20283c';
         g.fillRect(x * TILE_PX, y * TILE_PX, TILE_PX, TILE_PX);
+        if (supportsFieldWalk(mission.level)) {
+          // Use the same terrain under every shadow so it never reveals resource locations.
+          // It stays visible enough to show that the map continues past the explored area.
+          g.globalAlpha = 0.42;
+          drawAtlasFrame(g, art, tiles, TERRAIN_SPRITE.llano, x, y);
+          g.globalAlpha = 1;
+          g.fillStyle = 'rgba(11, 16, 38, .35)';
+          g.fillRect(x * TILE_PX, y * TILE_PX, TILE_PX, 1);
+          g.fillRect(x * TILE_PX, y * TILE_PX, 1, TILE_PX);
+        }
         continue;
       }
       const terrain = tile.collected && tile.terrain === 'mineral' ? 'llano' : tile.terrain;
@@ -155,6 +218,10 @@ export function createMapView(parent: HTMLElement, ctx: AppContext): MapView {
     for (const building of [...mission.buildings].sort((a, b) => a.y - b.y)) {
       const { x, y } = building;
       if (!mission.map.tiles[y * width + x]?.explored) continue;
+      if (supportsFieldWalk(mission.level) && building.type === 'nave') {
+        drawLunarLander(g, x, y);
+        continue;
+      }
       const scaffold = mission.day < building.operationalFromDay;
       const sprite = STRUCTURE_SPRITE[building.type];
       g.globalAlpha = building.enabled ? 1 : 0.62;
@@ -168,7 +235,7 @@ export function createMapView(parent: HTMLElement, ctx: AppContext): MapView {
     }
   }
 
-  function updateControls(): void {
+  function updateControls(refreshLabels = false): void {
     const state = ctx.store.getState();
     if (!state || !visible || width === 0) return;
     const tool = ctx.uiStore.get().tool.kind;
@@ -176,36 +243,73 @@ export function createMapView(parent: HTMLElement, ctx: AppContext): MapView {
     const hover = previewAt(ctx, state, cursor.x, cursor.y);
     const previewEnabled = state.mission.phase === 'planning' && tool !== 'inspect';
 
-    buttons.forEach((button, index) => {
-      const tile = state.mission.map.tiles[index];
-      if (!tile) return;
-      const position = { x: tile.x, y: tile.y };
-      const isSelected = index === selected;
-      button.tabIndex = isSelected ? 0 : -1;
-      button.setAttribute('aria-selected', String(isSelected));
-      button.toggleAttribute('data-fog', !tile.explored);
-      const label = describeCell(ctx, state, position);
-      button.setAttribute('aria-label', label);
-      button.title = label;
-      const inReveal = tool === 'explore' && !tile.explored
-        && hover.revealCells?.some(({ x, y }) => x === tile.x && y === tile.y);
-      const candidate = previewEnabled && (isSelected || (tool === 'collect' && tile.terrain === 'mineral' && tile.explored && !tile.collected));
-      if (candidate) button.dataset.mark = previewAt(ctx, state, tile.x, tile.y).error ? 'bad' : 'ok';
-      else if (previewEnabled && inReveal) button.dataset.mark = 'hint';
-      else delete button.dataset.mark;
-    });
-    status.textContent = describeCell(ctx, state, cursor);
+    if (refreshLabels) {
+      buttons.forEach((button, index) => {
+        const tile = state.mission.map.tiles[index];
+        if (!tile) return;
+        button.toggleAttribute('data-fog', !tile.explored);
+        const label = describeCell(ctx, state, tile, false);
+        button.setAttribute('aria-label', label);
+        button.title = label;
+        button.tabIndex = -1;
+        button.setAttribute('aria-selected', 'false');
+      });
+    }
+    if (refreshLabels || selectedIndex !== selected) {
+      const previous = buttons[selectedIndex];
+      if (previous) {
+        previous.tabIndex = -1;
+        previous.setAttribute('aria-selected', 'false');
+        const label = describeCell(ctx, state, state.mission.map.tiles[selectedIndex], false);
+        previous.setAttribute('aria-label', label);
+        previous.title = label;
+      }
+      buttons[selected].tabIndex = 0;
+      buttons[selected].setAttribute('aria-selected', 'true');
+      selectedIndex = selected;
+    }
+
+    const marked = new Set<number>();
+    if (previewEnabled) {
+      const candidates = tool === 'collect'
+        ? state.mission.map.tiles.filter((tile) => tile.terrain === 'mineral' && tile.explored && !tile.collected)
+        : [];
+      candidates.push(state.mission.map.tiles[selected]);
+      for (const tile of candidates) {
+        const index = tile.y * width + tile.x;
+        const action = actionForTool(ctx.uiStore.get().tool, tile.x, tile.y);
+        const blocked = action && walk.fieldActionBlock(state, action);
+        buttons[index].dataset.mark = blocked || previewAt(ctx, state, tile.x, tile.y).error ? 'bad' : 'ok';
+        marked.add(index);
+      }
+      for (const { x, y } of hover.revealCells ?? []) {
+        const index = y * width + x;
+        if (marked.has(index) || state.mission.map.tiles[index].explored) continue;
+        buttons[index].dataset.mark = 'hint';
+        marked.add(index);
+      }
+    }
+    for (const index of markedCells) {
+      if (!marked.has(index)) delete buttons[index].dataset.mark;
+    }
+    markedCells = marked;
+    const label = describeCell(ctx, state, cursor);
+    buttons[selected].setAttribute('aria-label', label);
+    buttons[selected].title = label;
+    status.textContent = label;
+    walk.refresh(state);
   }
 
   function sync(state = ctx.store.getState(), animateDust = false): void {
     if (!state) return;
     const map = state.mission.map;
-    if (map.width !== width || map.height !== height || (state.mission.day === 1 && previousMap && map !== previousMap
-      && state.mission.apSpentToday === 0 && ctx.flow.current().scene !== 'mision')) buildGrid(state);
+    if (state.mission.level !== level || map.width !== width || map.height !== height || (state.mission.day === 1 && previousMap && map !== previousMap
+      && state.mission.apSpentToday === 0 && state.mission.buildings.length <= 1)) buildGrid(state);
     previousMap = map;
     parent.dataset.level = state.mission.level;
+    parent.toggleAttribute('data-walk-world', supportsFieldWalk(state.mission.level));
     drawGround();
-    updateControls();
+    updateControls(true);
 
     const storm = state.mission.level === 'marte' && state.mission.schedule.find((event) =>
       event.type === 'tormenta-polvo' && event.startDay <= state.mission.day
@@ -248,7 +352,7 @@ export function createMapView(parent: HTMLElement, ctx: AppContext): MapView {
       || ctx.flow.current().scene !== 'mision'
       || document.querySelector('[role="dialog"][aria-modal="true"]')) return;
     const step = arrowSteps[event.key];
-    if (step && width && height) {
+    if (step && width && height && !supportsFieldWalk(level)) {
       event.preventDefault();
       const next = {
         x: Math.max(0, Math.min(width - 1, cursor.x + step.x)),
@@ -272,7 +376,7 @@ export function createMapView(parent: HTMLElement, ctx: AppContext): MapView {
     }),
     ctx.options.subscribe(() => {
       parent.classList.toggle('map-still', reducedMotion());
-      updateControls();
+      updateControls(true);
     }),
   ];
   parent.addEventListener('keydown', onKey);
@@ -280,11 +384,16 @@ export function createMapView(parent: HTMLElement, ctx: AppContext): MapView {
   sync();
 
   return {
+    walk,
     setVisible(show) {
       visible = show;
       parent.hidden = !show;
       if (show) sync();
       else {
+        walk.setJournalOpen(false);
+        if (ctx.uiStore.get().openPanel === 'walk-actions') ctx.uiStore.openPanel(null);
+        const state = ctx.store.getState();
+        if (state) walk.refresh(state);
         cancelAnimationFrame(animation);
         active = undefined;
         delete parent.dataset.effect;
@@ -293,6 +402,8 @@ export function createMapView(parent: HTMLElement, ctx: AppContext): MapView {
     },
     destroy() {
       visible = false;
+      walk.destroy();
+      ambience.destroy();
       cancelAnimationFrame(animation);
       for (const unsubscribe of unsubscribers) unsubscribe();
       parent.removeEventListener('keydown', onKey);

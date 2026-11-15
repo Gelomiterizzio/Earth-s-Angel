@@ -5,6 +5,8 @@ import { button } from '../components/button';
 import { openDialog } from '../components/dialog';
 import { bindChrome, demoSeed, press, showNarrow } from '../chrome';
 import { cleaner, el, on } from '../dom';
+import { mountTitleCrew } from './title-crew';
+import { spaceAppsEntry } from '../components/space-apps';
 
 let cleanup: (() => void) | null = null;
 
@@ -30,12 +32,22 @@ function mountTitle(root: HTMLElement, ctx: AppContext): () => void {
   bg.alt = '';
   bg.src = 'assets/ui/menu-bg.png';
   bg.addEventListener('error', () => bg.remove(), { once: true });
+  const landscape = el('div', 'title-landscape');
+  landscape.setAttribute('aria-hidden', 'true');
+  landscape.append(bg);
+  const beacon = el('div', 'title-beacon');
+  beacon.setAttribute('aria-hidden', 'true');
   const body = el('div', 'title-content');
-  screen.append(bg, body);
+  screen.append(landscape, beacon, body);
+  bag.add(mountTitleCrew(landscape, ctx));
 
   const paint = (): void => {
     const focusId = document.activeElement instanceof HTMLElement ? document.activeElement.dataset.action : undefined;
+    screen.classList.toggle('title-still', ctx.options.get().reducedMotion);
     body.replaceChildren();
+    screen.querySelector('.space-apps-entry')?.remove();
+    screen.append(spaceAppsEntry(ctx));
+    const brand = el('div', 'title-brand');
     const logo = el('img', 'logo');
     logo.alt = '';
     const heading = el('h1', 'game-title', ctx.t('ui.title.name'));
@@ -49,7 +61,7 @@ function mountTitle(root: HTMLElement, ctx: AppContext): () => void {
 
     if (demoSeed()) {
       const flag = el('p', 'demo-flag', ctx.t('ui.title.demoSeed'));
-      body.append(flag);
+      brand.append(flag);
     }
 
     const actions = el('div', 'menu-actions');
@@ -107,7 +119,10 @@ function mountTitle(root: HTMLElement, ctx: AppContext): () => void {
     langs.append(en, es);
 
     const foot = el('p', 'affiliation', ctx.t('ui.title.affiliation'));
-    body.append(logo, heading, actions, langs, foot);
+    brand.append(logo, heading, foot);
+    const menu = el('div', 'title-menu');
+    menu.append(actions, langs);
+    body.append(brand, menu);
 
     const target =
       screen.querySelector<HTMLButtonElement>(`[data-action="${focusId ?? ''}"]`) ??

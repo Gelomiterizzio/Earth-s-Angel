@@ -10,7 +10,7 @@ const data = loadGameData();
 describe('planning actions on the media day-1 fixture', () => {
   it('builds a panel, collects the nearby mineral, and reveals southeast ice', () => {
     let state = fixtureState('media-dia-1');
-    const build = applyAction(state, { type: 'BUILD', building: 'panel', x: 4, y: 4 }, data);
+    const build = applyAction(state, { type: 'BUILD', building: 'panel', x: 24, y: 24 }, data);
     expect(build.ok).toBe(true);
     if (!build.ok) return;
     expect(build.state).not.toBe(state);
@@ -19,30 +19,30 @@ describe('planning actions on the media day-1 fixture', () => {
     expect(build.state.mission.buildings.at(-1)?.operationalFromDay).toBe(2);
 
     state = build.state;
-    const collect = applyAction(state, { type: 'COLLECT', x: 3, y: 7 }, data);
+    const collect = applyAction(state, { type: 'COLLECT', x: 23, y: 27 }, data);
     expect(collect.ok).toBe(true);
     if (!collect.ok) return;
     expect(collect.state.mission.resources.materiales).toBe(49);
 
     state = collect.state;
-    const explore = applyAction(state, { type: 'EXPLORE', x: 8, y: 8 }, data);
+    const explore = applyAction(state, { type: 'EXPLORE', x: 28, y: 28 }, data);
     expect(explore.ok).toBe(true);
     if (!explore.ok) return;
     const ice = explore.state.mission.map.tiles.filter(
       (tile) => tile.explored && tile.terrain === 'hielo',
     );
-    expect(ice.some((tile) => tile.x === 9 && tile.y === 8)).toBe(true);
-    expect(ice.some((tile) => tile.x === 9 && tile.y === 9)).toBe(true);
+    expect(ice.some((tile) => tile.x === 29 && tile.y === 28)).toBe(true);
+    expect(ice.some((tile) => tile.x === 29 && tile.y === 29)).toBe(true);
   });
 
   it('rejects an extractor on flat ground and keeps the same state object', () => {
     const state = fixtureState('media-dia-1');
-    const result = applyAction(state, { type: 'BUILD', building: 'extractor', x: 4, y: 4 }, data);
+    const result = applyAction(state, { type: 'BUILD', building: 'extractor', x: 24, y: 24 }, data);
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.state).toBe(state);
     expect(result.error.code).toBe('WRONG_TERRAIN');
-    expect(previewAction(state, { type: 'BUILD', building: 'extractor', x: 9, y: 8 }, data)?.code).toBe(
+    expect(previewAction(state, { type: 'BUILD', building: 'extractor', x: 29, y: 28 }, data)?.code).toBe(
       'TILE_UNEXPLORED',
     );
   });

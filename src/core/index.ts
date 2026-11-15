@@ -26,6 +26,7 @@ export {
 } from './events';
 export { applyTransition, portalRequirements } from './progression';
 export { validateState } from './validate';
+export { buildTerrain } from './terrain';
 export { deserialize, serialize } from './save';
 export { fixtureGameData, fixtureReport, fixtureState } from './fixtures';
 

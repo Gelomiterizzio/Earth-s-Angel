@@ -1,0 +1,68 @@
+/* AI-assisted: Claude Code (claude-opus-5-5). Human review by C pending. */
+/* Presentation mode (key X): a caption bar and a transparent shield that keeps clicks out. */
+
+.presentation-shield {
+  position: absolute;
+  inset: 0;
+  z-index: 900;
+  cursor: progress;
+}
+
+.presentation-caption {
+  position: absolute;
+  z-index: 901;
+  left: 50%;
+  top: calc(100cqh * 64 / 720);
+  transform: translateX(-50%);
+  width: min(92%, calc(100cqw * 860 / 1280));
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: .8em;
+  padding: .6em .9em;
+  background: color-mix(in srgb, var(--panel) 94%, transparent);
+  border: 2px solid var(--accent);
+  border-radius: .5em;
+  box-shadow: 0 .4em 1.4em color-mix(in srgb, var(--bg) 70%, transparent);
+  color: var(--text);
+  font-size: calc(100cqw * 17 / 1280);
+  animation: presentation-in .35s ease-out;
+}
+
+.presentation-badge {
+  padding: .2em .55em;
+  border-radius: .3em;
+  background: var(--accent);
+  color: var(--bg);
+  font-family: var(--font-title);
+  white-space: nowrap;
+}
+
+.presentation-text {
+  margin: 0;
+  line-height: 1.35;
+}
+
+.presentation-stop {
+  padding: .3em .6em;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: .35em;
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.presentation-stop:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+@keyframes presentation-in {
+  from { opacity: 0; translate: 0 -8px; }
+  to { opacity: 1; translate: 0 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .presentation-caption { animation: none; }
+}
+.reduced-motion .presentation-caption { animation: none;
+}

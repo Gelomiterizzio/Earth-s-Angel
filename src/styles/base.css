@@ -27,6 +27,9 @@ body {
   color: var(--text);
   font-family: var(--font-body);
   font-size: 16px;
+  /* The pixel font draws its "fi" ligature as a wrong glyph ("conArm"): turn ligatures off. */
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "clig" 0;
 }
 
 #stage {
@@ -36,6 +39,16 @@ body {
   overflow: hidden;
   background: var(--bg);
   container-type: size;
+}
+
+#stage:has(.title-screen, #map[data-walk-world]:not([hidden])) {
+  width: 100vw;
+  height: 100dvh;
+  aspect-ratio: auto;
+}
+
+#stage:has(.title-screen, #map[data-walk-world]:not([hidden])) #ui {
+  --px: min(100cqw / 1280, 100cqh / 720);
 }
 
 #map {

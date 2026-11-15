@@ -1,6 +1,6 @@
 # Nivel 2 · Marte, la nueva frontera
 
-Marte se abre tras la victoria lunar. La cuadrícula usa el atlas marciano, efectos de polvo y un tema propio de Web Audio. Los controles del HUD permiten limpiar paneles y reparar módulos.
+Marte se abre tras la victoria lunar. Se explora a pie con WASD o flechas, con E para interactuar, Q para las acciones de cada tripulante y B para consultar la base, limpiar el polvo de los paneles o hacer reparaciones. La cuadrícula usa el atlas marciano, efectos de polvo y un tema propio de Web Audio.
 
 | Campo | Valor |
 | --- | --- |
@@ -15,7 +15,7 @@ Marte reutiliza mapa, construcción y simulación de la Luna. Añade distancia, 
 
 | Tema | Luna | Marte |
 | --- | --- | --- |
-| Mapa | 12 × 12 | 20 × 20, con cuadrícula navegable mediante ratón y flechas |
+| Mapa | [Sector lunar y ampliación](luna.md#mapa) | 81 × 81, con cámara para exploración a pie |
 | Tripulación | 4 | 6 |
 | Unidad de tiempo | Día | **Sol** |
 | Límite de tiempo | Ventana local y plazo terrestre | Solo el plazo terrestre que quede, más el bono |
@@ -27,11 +27,13 @@ Marte reutiliza mapa, construcción y simulación de la Luna. Añade distancia, 
 
 ## El sol
 
+La animación de cada pisada marciana usa una trayectoria corta aproximada con la gravedad superficial media de 3,73 m/s². La altura visual del sprite está amplificada para hacerla legible. El uso de puntos de acción y el movimiento por casillas se rigen por las reglas del juego. [Ficha de Marte de NASA NSSDC](https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html?level=1)
+
 El HUD dice "Sol 5". Al llegar aparece la tarjeta `sol`: un sol es el día marciano y dura cerca de 24 horas y 40 minutos (`dato NASA`, Mars24). **Un sol del juego es un turno de la misión; no dura lo mismo que un sol real.**
 
 ## Mapa
 
-Cuadrícula de 20 × 20. Mismos caracteres que la Luna. Archivo previsto: `src/data/content/levels/marte.json`.
+Cuadrícula de 81 × 81, con 73 casillas de hielo y 87 depósitos de mineral. La [configuración actual](../../src/data/content/levels/marte.json) mantiene el sector original de 20 × 20 al noroeste. El resto del terreno se extiende hacia el este y el sur. Debajo se conserva ese sector para ubicar los recorridos de prueba.
 
 ```json
 {

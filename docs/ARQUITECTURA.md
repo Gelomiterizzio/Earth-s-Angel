@@ -604,7 +604,7 @@ stateDiagram-v2
 
 ## 14. Rendimiento y compatibilidad
 
-- Mapa lunar: 144 casillas. Mapa marciano: 400. Un solo `Phaser.Scene`, sin física. El mapa se redibuja solo cuando cambia el estado.
+- [Escalas de los mapas](componentes/mapa.md). El mapa se redibuja cuando cambia el estado. Los efectos se dibujan en un lienzo separado.
 - Presupuesto orientativo: compilación por debajo de 5 MB sin audio, primera pantalla interactiva en menos de 3 s en una laptop del evento. Son objetivos, no mediciones. Se miden en [T-P0-X1](agentes/tareas/T-P0-X1-integracion-y-publicacion.md).
 - `vite.config.ts` usa `base: './'` para que el sitio funcione en cualquier subruta de GitHub Pages.
 

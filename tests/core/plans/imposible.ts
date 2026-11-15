@@ -6,45 +6,45 @@ export const IMPOSIBLE_PLAN: DayPlan[] = [
   {
     day: 1,
     actions: [
-      { type: 'COLLECT', x: 3, y: 7 },
-      { type: 'BUILD', building: 'panel', x: 4, y: 4 },
-      { type: 'BUILD', building: 'panel', x: 5, y: 4 },
-      { type: 'EXPLORE', x: 8, y: 8 },
+      { type: 'COLLECT', x: 23, y: 27 },
+      { type: 'BUILD', building: 'panel', x: 24, y: 24 },
+      { type: 'BUILD', building: 'panel', x: 25, y: 24 },
+      { type: 'EXPLORE', x: 28, y: 28 },
     ],
   },
   {
     day: 2,
     actions: [
-      { type: 'BUILD', building: 'extractor', x: 9, y: 8 },
-      { type: 'BUILD', building: 'invernadero', x: 6, y: 6 },
+      { type: 'BUILD', building: 'extractor', x: 29, y: 28 },
+      { type: 'BUILD', building: 'invernadero', x: 26, y: 26 },
     ],
   },
   {
     day: 3,
     actions: [
-      { type: 'BUILD', building: 'reciclador', x: 6, y: 4 },
-      { type: 'BUILD', building: 'generador', x: 4, y: 5 },
+      { type: 'BUILD', building: 'reciclador', x: 26, y: 24 },
+      { type: 'BUILD', building: 'generador', x: 24, y: 25 },
     ],
   },
   {
     day: 4,
     actions: [
-      { type: 'EXPLORE', x: 2, y: 8 },
-      { type: 'COLLECT', x: 1, y: 8 },
-      { type: 'EXPLORE', x: 3, y: 2 },
-      { type: 'COLLECT', x: 3, y: 1 },
+      { type: 'EXPLORE', x: 22, y: 28 },
+      { type: 'COLLECT', x: 21, y: 28 },
+      { type: 'EXPLORE', x: 23, y: 22 },
+      { type: 'COLLECT', x: 23, y: 21 },
     ],
   },
   {
     day: 5,
     actions: [
-      { type: 'BUILD', building: 'refugio', x: 6, y: 5 },
-      { type: 'BUILD', building: 'panel', x: 3, y: 4 },
+      { type: 'BUILD', building: 'refugio', x: 26, y: 25 },
+      { type: 'BUILD', building: 'panel', x: 23, y: 24 },
     ],
   },
   {
     day: 6,
-    actions: [{ type: 'BUILD', building: 'bateria', x: 4, y: 6 }],
+    actions: [{ type: 'BUILD', building: 'bateria', x: 24, y: 26 }],
   },
   { day: 7, actions: [] },
   { day: 8, shelter: true, actions: [] },

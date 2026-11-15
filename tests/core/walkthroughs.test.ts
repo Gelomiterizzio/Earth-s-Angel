@@ -35,15 +35,15 @@ describe('Golden Walkthroughs & Variants (I-REC-*, I-DER-01..05, I-BOR-01..03)',
     expect(res.finalState.campaign.earthDaysRemaining).toBe(31);
   });
 
-  it('I-REC-MEDIA-B: Media working on Day 8 (invernadero at (7,6), explore (8,4) and (10,4)) -> Day 8 exposure 58, streak 0; 2 AP from Day 9; victory Day 11, exposure 61, materials 4, earthDays 43', () => {
+  it('I-REC-MEDIA-B: Media working on Day 8 (invernadero at (27, 26), explore (28, 24) and (30, 24)) -> Day 8 exposure 58, streak 0; 2 AP from Day 9; victory Day 11, exposure 61, materials 4, earthDays 43', () => {
     const planB: DayPlan[] = MEDIA_PLAN.slice(0, 7).concat([
       {
         day: 8,
         shelter: false,
         actions: [
-          { type: 'BUILD', building: 'invernadero', x: 7, y: 6 },
-          { type: 'EXPLORE', x: 8, y: 4 },
-          { type: 'EXPLORE', x: 10, y: 4 },
+          { type: 'BUILD', building: 'invernadero', x: 27, y: 26 },
+          { type: 'EXPLORE', x: 28, y: 24 },
+          { type: 'EXPLORE', x: 30, y: 24 },
         ],
       },
     ]);

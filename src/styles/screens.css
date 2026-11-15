@@ -24,16 +24,69 @@
 
 .title-content {
   position: relative;
-  width: min(calc(390 * var(--px)), 90%);
+  width: min(calc(1160 * var(--px)), 94%);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, calc(344 * var(--px)));
+  align-items: center;
+  gap: calc(38 * var(--px));
+}
+
+.title-brand, .title-menu {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: calc(16 * var(--px));
-  padding: calc(22 * var(--px)) calc(28 * var(--px));
-  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  gap: calc(14 * var(--px));
+}
+.title-brand { filter: drop-shadow(0 4px 10px #0b1026); }
+.title-brand .logo { width: min(100%, calc(490 * var(--px))); height: auto; }
+.title-menu {
+  padding: calc(18 * var(--px));
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
   border: calc(2 * var(--px)) solid var(--border);
-  box-shadow: 0 calc(16 * var(--px)) calc(56 * var(--px)) var(--bg);
-  border-radius: calc(12 * var(--px));
+  border-radius: calc(9 * var(--px));
+}
+.title-menu .menu-actions .btn {
+  font-family: var(--font-title);
+  font-size: calc(22 * var(--px));
+  text-align: start;
+}
+.title-landscape {
+  /* Fit the full 16:9 scene to the screen width and rest it on the bottom edge.
+     Wider screens only lose some sky at the top; taller screens get extra sky,
+     which matches var(--bg), the sky colour of the artwork. */
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: calc(100cqw * 9 / 16);
+  transform-origin: 50% 100%;
+  animation: lunar-title-pan 24s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+.title-beacon {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 12% 19%, #effcff 0 2px, transparent 3px),
+    radial-gradient(circle at 45% 24%, #94e7ff 0 2px, transparent 3px),
+    radial-gradient(circle at 75% 13%, #fff2d2 0 2px, transparent 3px);
+  animation: lunar-title-stars 4.5s ease-in-out infinite alternate;
+}
+@keyframes lunar-title-pan { from { transform: scale(1); } to { transform: scale(1.025) translate(-.4%, 0); } }
+@keyframes lunar-title-stars { from { opacity: .22; } to { opacity: .9; } }
+.title-crew { position: absolute; inset: 0; pointer-events: none; }
+.title-crew-member {
+  position: absolute;
+  width: 5.7%;
+  height: auto;
+  image-rendering: pixelated;
+  transform-origin: center bottom;
+}
+.title-crew-member[data-role="medic"] { transform-origin: center; }
+.title-still .title-landscape, .title-still .title-beacon { animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  .title-screen .title-landscape, .title-screen .title-beacon { animation: none; }
 }
 
 .title-content .menu-actions {
@@ -42,6 +95,8 @@
 
 .title-content .affiliation {
   font-size: calc(14 * var(--px));
+  max-width: calc(430 * var(--px));
+  text-shadow: 0 1px 4px #080c1c, 0 1px 4px #080c1c;
 }
 
 .logo {
@@ -207,6 +262,11 @@
   font-size: calc(28 * var(--px));
 }
 
+#day-report-title {
+  font-family: var(--font-body);
+  font-variant-numeric: tabular-nums;
+}
+
 .panel-decision {
   width: min(calc(650 * var(--px)), 90%);
 }
@@ -295,6 +355,32 @@
   background: var(--panel);
 }
 
+.lunar-celebration { text-align: center; }
+
+.lunar-celebration p {
+  margin: 0;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.lunar-celebration-crew { display: flex; justify-content: center; }
+
+.lunar-celebration-crew canvas {
+  width: calc(58 * var(--px));
+  image-rendering: pixelated;
+  animation: lunar-cheer .72s var(--jump-delay) ease-in-out 3;
+}
+
+.lunar-celebration.is-still canvas { animation: none; }
+
+@keyframes lunar-cheer {
+  50% { transform: translateY(calc(-13 * var(--px))); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lunar-celebration canvas { animation: none; }
+}
+
 .cine {
   display: grid;
   grid-template-rows: minmax(0, 1fr) auto;
@@ -369,6 +455,58 @@
   font-size: clamp(9px, calc(14 * var(--px)), 24px);
 }
 
+.space-apps-entry {
+  display: flex;
+  align-items: center;
+  gap: .55em;
+  margin: 0;
+  padding: .45em .65em;
+  border: 1px solid #53638b;
+  border-radius: .45em;
+  color: #e6efff;
+  background: #10192be8;
+  font-size: clamp(9px, calc(12 * var(--px)), 16px);
+  line-height: 1.15;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.space-apps-entry small {
+  display: block;
+  margin-block-start: .18em;
+  color: #a8bfda;
+  font-size: .86em;
+  font-weight: 400;
+}
+
+.space-apps-patch {
+  display: block;
+  flex: none;
+  width: min(34px, calc(31 * var(--px)));
+  height: auto;
+  image-rendering: pixelated;
+}
+
+.title-screen > .space-apps-entry,
+.cine-art > .space-apps-entry {
+  position: absolute;
+  inset: calc(13 * var(--px)) auto auto calc(13 * var(--px));
+  z-index: 2;
+}
+
+.title-screen .space-apps-patch,
+.cine-art .space-apps-patch {
+  width: clamp(40px, calc(62 * var(--px)), 80px);
+}
+
+.manifest-sky {
+  background:
+    radial-gradient(circle at 18% 17%, #bdd5ff 1px, transparent 2px),
+    radial-gradient(circle at 81% 68%, #637aa2 1px, transparent 2px),
+    radial-gradient(ellipse at 50% 30%, #233951, #0b1022 68%);
+  background-size: 97px 89px, 127px 111px, 100% 100%;
+}
+
 .cine-briefing {
   position: absolute;
   width: min(calc(740 * var(--px)), 88%);
@@ -378,8 +516,8 @@
   gap: calc(12 * var(--px));
   padding: calc(24 * var(--px));
   border: calc(2 * var(--px)) solid var(--border);
-  background: var(--panel);
-  font-size: clamp(12px, calc(22 * var(--px)), 28px);
+  background: #10182e;
+  font-size: clamp(12px, calc(17 * var(--px)), 23px);
 }
 
 .cine-briefing h1 {
@@ -397,6 +535,82 @@
   justify-self: start;
 }
 
+.manifest-route {
+  position: relative;
+  height: clamp(48px, calc(79 * var(--px)), 104px);
+  overflow: hidden;
+  border-radius: .5em;
+  background: linear-gradient(120deg, #232f4b, #161e34 56%, #472540);
+}
+
+.manifest-route::before {
+  position: absolute;
+  content: '';
+  inset: 24% 15% -22%;
+  border-top: 1px dashed #879ec9;
+  border-radius: 50%;
+}
+
+.manifest-moon, .manifest-mars {
+  position: absolute;
+  top: 50%;
+  width: 2.2em;
+  height: 2.2em;
+  border-radius: 50%;
+  transform: translateY(-50%);
+}
+
+.manifest-moon {
+  inset-inline-start: 8%;
+  background: radial-gradient(circle at 32% 39%, #758099 13%, transparent 15%),
+    radial-gradient(circle at 36% 31%, #dce4f7, #718198 72%);
+}
+
+.manifest-mars {
+  inset-inline-end: 8%;
+  background: radial-gradient(ellipse at 38% 33%, #ebab7b, #a74c3c 66%, #502039);
+}
+
+.manifest-ship {
+  position: absolute;
+  left: 49%;
+  top: 12%;
+  width: 2.2em;
+  image-rendering: pixelated;
+  transform: rotate(60deg);
+  animation: manifest-flight 4.8s ease-in-out infinite;
+}
+
+@keyframes manifest-flight {
+  0% { left: 16%; top: 37%; opacity: 0; }
+  14% { opacity: 1; }
+  45% { top: -2%; }
+  82% { opacity: 1; }
+  100% { left: 80%; top: 30%; opacity: 0; }
+}
+
+.manifest-still .manifest-ship { animation: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .manifest-ship { animation: none; }
+}
+
+.manifest-summary, .manifest-note { color: var(--text-dim); }
+
+.manifest-stocks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65em; }
+
+.manifest-stock {
+  padding: .65em .8em;
+  border: 1px solid var(--border);
+  border-radius: .5em;
+  background: var(--bg);
+}
+
+.manifest-stock h2 { margin: 0 0 .4em; font-size: 1em; color: var(--focus); }
+.manifest-stock dl { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .23em .3em; margin: 0; }
+.manifest-stock dt { display: flex; align-items: center; gap: .35em; }
+.manifest-stock dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; }
+
 @container (max-width: 600px) {
   .cine-dock {
     min-height: 82px;
@@ -406,12 +620,65 @@
 .bubble {
   position: absolute;
   z-index: 15;
-  width: min(calc(360 * var(--px)), 40%);
+  box-sizing: border-box;
+  width: min(calc(350 * var(--px)), calc(100% - 24px));
   padding: calc(12 * var(--px));
   background: var(--panel);
   border: calc(3 * var(--px)) solid var(--focus);
   border-radius: calc(8 * var(--px));
   pointer-events: auto;
+}
+
+.bubble p { margin: 0 0 .85em; }
+.bubble-actions { justify-content: start; }
+.bubble[data-modal-tip] { z-index: 21; }
+#stage:has([role="dialog"][aria-modal="true"]) .bubble:not([data-modal-tip]) {
+  visibility: hidden;
+  pointer-events: none;
+}
+.bubble[data-arrow="top"]::before,
+.bubble[data-arrow="bottom"]::before,
+.bubble[data-arrow="left"]::before,
+.bubble[data-arrow="right"]::before {
+  content: "";
+  position: absolute;
+  left: var(--tutorial-arrow-x);
+  width: 12px;
+  height: 12px;
+  transform: translateX(-50%) rotate(45deg);
+  background: var(--panel);
+  pointer-events: none;
+}
+.bubble[data-arrow="top"]::before {
+  top: -8px;
+  border-top: 2px solid var(--focus);
+  border-left: 2px solid var(--focus);
+}
+.bubble[data-arrow="bottom"]::before {
+  bottom: -8px;
+  border-bottom: 2px solid var(--focus);
+  border-right: 2px solid var(--focus);
+}
+.bubble[data-arrow="left"]::before,
+.bubble[data-arrow="right"]::before {
+  top: var(--tutorial-arrow-y);
+  transform: translateY(-50%) rotate(45deg);
+}
+.bubble[data-arrow="left"]::before {
+  left: -8px;
+  border-bottom: 2px solid var(--focus);
+  border-left: 2px solid var(--focus);
+}
+.bubble[data-arrow="right"]::before {
+  left: auto;
+  right: -8px;
+  border-top: 2px solid var(--focus);
+  border-right: 2px solid var(--focus);
+}
+
+.veil > .dialog {
+  box-sizing: border-box;
+  max-height: min(calc(640 * var(--px)), calc(100cqh - 24px));
 }
 
 .card-list {
@@ -598,6 +865,64 @@
   gap: calc(8 * var(--px));
 }
 
+.science-practice {
+  margin-block: .7em;
+}
+
+.science-practice summary {
+  color: var(--focus);
+  cursor: pointer;
+}
+
+.science-feedback {
+  display: grid;
+  grid-template-columns: clamp(44px, 6em, 108px) minmax(0, 1fr);
+  align-items: center;
+  column-gap: 1em;
+  text-align: start;
+}
+
+.science-astronaut {
+  width: 100%;
+  image-rendering: pixelated;
+}
+
+.science-crew {
+  display: flex;
+  align-items: center;
+}
+
+.science-crew:has(canvas + canvas) canvas {
+  width: 58%;
+}
+
+.science-crew canvas + canvas { margin-inline-start: -16%; }
+
+.science-speech {
+  position: relative;
+  margin: .35em 0;
+  padding: .8em 1em;
+  border: 2px solid var(--focus);
+  border-radius: .65em;
+  background: var(--bg);
+}
+
+.science-speech::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: -.4em;
+  top: calc(50% - .35em);
+  width: .7em;
+  height: .7em;
+  border-inline-start: inherit;
+  border-bottom: inherit;
+  background: inherit;
+  transform: rotate(45deg);
+}
+
+.science-speech strong { color: var(--focus); }
+.science-speech p { margin: .45em 0 0; }
+
 .credits {
   align-items: stretch;
   justify-content: flex-start;
@@ -618,3 +943,111 @@
 .credits a {
   color: var(--focus);
 }
+
+/* Shelter scene shown after sheltering the crew from a solar storm. */
+.shelter-scene {
+  width: min(calc(720 * var(--px)), 92%);
+  display: grid;
+  gap: calc(10 * var(--px));
+}
+.shelter-canvas {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  image-rendering: pixelated;
+  border: calc(2 * var(--px)) solid var(--border);
+  border-radius: calc(6 * var(--px));
+  background: #1a2236;
+}
+.shelter-scene h2 { font-family: var(--font-title); margin: 0; }
+.shelter-scene p { margin: 0; }
+
+/* Day report balance chart (AI-assisted: Claude Code). */
+.report-chart { display: grid; gap: .35em; }
+.report-chart-legend { display: flex; gap: 1.2em; margin: 0; color: var(--text-dim); font-size: .85em; }
+.report-chart-key::before {
+  content: "";
+  display: inline-block;
+  width: .9em;
+  height: .55em;
+  margin-right: .4em;
+  border-radius: 2px;
+}
+.report-chart-key-made::before { background: var(--safe); }
+.report-chart-key-used::before { background: var(--warn); }
+.report-chart-row {
+  display: grid;
+  grid-template-columns: 6.5em 1fr 3em 8.5em;
+  align-items: center;
+  gap: .6em;
+}
+.report-chart-name { font-weight: 700; }
+.report-chart-bars { display: grid; gap: 3px; }
+.report-chart-bar {
+  display: block;
+  height: .5em;
+  width: calc(var(--share, 0) * 100%);
+  min-width: 2px;
+  border-radius: 2px;
+  transform-origin: left;
+  animation: report-bar-grow .6s ease-out both;
+}
+.report-chart-made { background: var(--safe); }
+.report-chart-used { background: var(--warn); animation-delay: .12s; }
+.report-chart-net { font-family: var(--font-title); text-align: end; }
+.report-chart-row[data-trend="up"] .report-chart-net { color: var(--safe); }
+.report-chart-row[data-trend="down"] .report-chart-net { color: var(--crit); }
+.report-chart-stock { font-size: .85em; color: var(--text-dim); }
+.report-chart-stock[data-level="warn"] { color: var(--warn); }
+.report-chart-stock[data-level="crit"] { color: var(--crit); font-weight: 700; }
+@keyframes report-bar-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@media (prefers-reduced-motion: reduce) { .report-chart-bar { animation: none; } }
+.reduced-motion .report-chart-bar { animation: none; }
+
+/* Learning badges on the result screen (AI-assisted: Claude Code). */
+.badge-shelf { width: min(100%, 52em); }
+.badge-shelf-title { margin: .2em 0 .5em; font-family: var(--font-title); font-size: 1.1em; color: var(--accent); }
+.badge-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10.5em, 1fr));
+  gap: .5em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.badge {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  column-gap: .5em;
+  padding: .45em .6em;
+  border: 1px solid var(--border);
+  border-radius: .45em;
+  background: color-mix(in srgb, var(--panel) 92%, transparent);
+  font-size: .82em;
+  text-align: start;
+}
+.badge-icon { grid-row: 1 / 3; font-size: 1.7em; line-height: 1; align-self: center; }
+.badge-name { font-family: var(--font-title); }
+.badge-desc { color: var(--text-dim); }
+.badge-earned {
+  border-color: var(--accent);
+  box-shadow: 0 0 .7em color-mix(in srgb, var(--accent) 35%, transparent);
+  animation: badge-pop .45s cubic-bezier(.3, 1.6, .5, 1) both;
+  animation-delay: var(--badge-delay, 0ms);
+}
+.badge-locked { opacity: .6; }
+.badge-locked .badge-icon { filter: grayscale(1); opacity: .55; }
+@keyframes badge-pop { from { transform: scale(.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .badge-earned { animation: none; } }
+.reduced-motion .badge-earned { animation: none; }
+
+/* "In real life" box on science cards (AI-assisted: Claude Code). */
+.science-real {
+  margin: .6em 0;
+  padding: .5em .7em;
+  border-left: 3px solid var(--ocean);
+  border-radius: .3em;
+  background: color-mix(in srgb, var(--ocean) 16%, transparent);
+}
+.science-real strong { display: block; margin-bottom: .2em; color: var(--focus); }
+.science-real p { margin: 0 0 .3em; }

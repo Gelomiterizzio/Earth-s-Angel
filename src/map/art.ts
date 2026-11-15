@@ -29,6 +29,72 @@ export function loadMapArt(onLoad: () => void) {
 
 export type MapArt = ReturnType<typeof loadMapArt>;
 
+export function makeLunarBackdrop(art: MapArt): string | null {
+  const moon = art.get('moon');
+  if (!moon?.complete || !moon.naturalWidth) return null;
+  const canvas = document.createElement('canvas');
+  const size = 6;
+  canvas.width = canvas.height = size * TILE_PX;
+  const g = canvas.getContext('2d');
+  if (!g) return null;
+  g.fillStyle = '#20283c';
+  g.fillRect(0, 0, canvas.width, canvas.height);
+  g.globalAlpha = .14;
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      const relief = (x * 13 + y * 7 + x * y) % 23;
+      const tile = relief === 17 ? 2 : relief === 7 || relief === 21 ? 1 : 0;
+      drawAtlasFrame(g, art, 'moon', tile, x, y);
+    }
+  }
+  return canvas.toDataURL();
+}
+
+export function drawLunarLander(g: CanvasRenderingContext2D, x: number, y: number): void {
+  const cx = x * TILE_PX + 12;
+  const base = (y + 1) * TILE_PX - 2;
+  const pixels = (color: string, dx: number, dy: number, width: number, height: number) => {
+    g.fillStyle = color;
+    g.fillRect(cx + dx, base + dy, width, height);
+  };
+  // The feet mark the occupied tile. The cabin extends up into the scenery.
+  pixels('#26344872', -15, -3, 30, 6);
+  pixels('#26344852', -11, 3, 22, 1);
+  pixels('#152238', -16, -2, 9, 3);
+  pixels('#152238', 7, -2, 9, 3);
+  pixels('#253d58', -14, -9, 3, 8);
+  pixels('#253d58', 11, -9, 3, 8);
+  pixels('#495c70', -13, -10, 4, 7);
+  pixels('#495c70', 9, -10, 4, 7);
+  pixels('#a3b4c7', -15, -2, 6, 1);
+  pixels('#a3b4c7', 10, -2, 5, 1);
+  pixels('#132039', -13, -17, 26, 10);
+  pixels('#435a72', -12, -15, 24, 8);
+  pixels('#c7d2d3', -11, -16, 22, 4);
+  pixels('#d49b59', -11, -12, 22, 2);
+  pixels('#9a613a', -10, -10, 20, 2);
+  pixels('#152238', -6, -8, 12, 5);
+  pixels('#41576b', -5, -7, 10, 2);
+  pixels('#132039', -5, -32, 10, 2);
+  pixels('#132039', -8, -30, 16, 3);
+  pixels('#132039', -10, -27, 20, 12);
+  pixels('#7288a1', -9, -26, 18, 10);
+  pixels('#b9cad5', -8, -27, 14, 9);
+  pixels('#fcf2d5', -5, -31, 9, 3);
+  pixels('#f2ebd3', -7, -28, 12, 2);
+  pixels('#203853', -5, -25, 11, 5);
+  pixels('#4a93b5', -4, -24, 9, 3);
+  pixels('#a7f1f3', -4, -24, 4, 1);
+  pixels('#506981', -2, -19, 5, 5);
+  pixels('#92a8b9', -1, -18, 3, 3);
+  pixels('#20324b', 6, -15, 4, 9);
+  for (const rung of [-13, -11, -9]) pixels('#b9c9d3', 7, rung, 3, 1);
+  pixels('#21314b', -5, -36, 1, 5);
+  pixels('#cbd7e5', -7, -37, 5, 1);
+  pixels('#91e0d9', -12, -14, 2, 1);
+  pixels('#ffbf62', 10, -14, 2, 1);
+}
+
 export function drawAtlasFrame(
   g: CanvasRenderingContext2D,
   art: MapArt,

@@ -16,6 +16,7 @@ import { getRadiationForDay } from './events';
 import { applyEarth, previewEarth } from './earth';
 import { portalRequirements, restartMars } from './progression';
 import { createMission } from './mission';
+import { buildTerrain } from './terrain';
 import { previewEnergy } from './objectives';
 import { getOperationalShelterSeats } from './radiation';
 
@@ -136,7 +137,7 @@ export function previewAction(
       ) {
         return makeError('TILE_OCCUPIED');
       }
-      if (tile.terrain !== def.requiresTerrain) {
+      if (buildTerrain(tile) !== def.requiresTerrain) {
         return makeError('WRONG_TERRAIN');
       }
       if (mission.resources.materiales < def.cost) {

@@ -75,6 +75,8 @@ flowchart TD
 
 Tabla `migrations[version]`: función pura que lleva un estado de la versión `n` a la `n + 1`. Se aplican en cadena. Una versión mayor que la actual es incompatible.
 
+**Mapas ampliados.** `migrateSurveyMap` en `src/app/persistence.ts` incorpora al terreno actual las casillas exploradas y recolectadas. Conserva las coordenadas de los guardados lunares de 51 × 51 y marcianos de 20 × 20. Los guardados lunares de 12 × 12 o 30 × 28 se trasladan (20, 20), incluidas las construcciones, los identificadores `misterio-x-y` y la señal de la baliza. El resultado pasa la validación del guardado.
+
 ## 3. Datos y uso
 
 ### Continuar, Reiniciar misión y Nueva partida

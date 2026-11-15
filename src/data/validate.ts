@@ -138,35 +138,35 @@ export function validateBuildings(
 }
 
 export function validateLunaMap(level: LevelConfig): void {
-  validateBaseMap(level, 'luna', 12, { S: 1, i: 3, m: 5, '?': 1 }, { x: 5, y: 5 });
+  validateBaseMap(level, 'luna', [73, 73], { S: 1, i: 52, m: 62, '?': 1 }, { x: 25, y: 25 });
 }
 
 export function validateMarsMap(level: LevelConfig): void {
-  validateBaseMap(level, 'marte', 20, { S: 1, i: 9, m: 8, '?': 1 }, { x: 9, y: 8 });
+  validateBaseMap(level, 'marte', [81, 81], { S: 1, i: 73, m: 87, '?': 1 }, { x: 9, y: 8 });
 }
 
 function validateBaseMap(
   level: LevelConfig,
   id: 'luna' | 'marte',
-  size: number,
+  [width, height]: readonly [number, number],
   counts: Record<string, number>,
   ship: LevelConfig['ship'],
 ): void {
   const file = `content/levels/${id}.json`;
   if (level.id !== id) throw dataError(file, 'id', `must be ${id}`);
-  if (level.width !== size || level.height !== size) {
-    throw dataError(file, 'width/height', `must be ${size}×${size}`);
+  if (level.width !== width || level.height !== height) {
+    throw dataError(file, 'width/height', `must be ${width}×${height}`);
   }
-  if (level.rows.length !== size) {
-    throw dataError(file, 'rows', `expected ${size} rows, got ${level.rows.length}`);
+  if (level.rows.length !== height) {
+    throw dataError(file, 'rows', `expected ${height} rows, got ${level.rows.length}`);
   }
   const tiles: Record<string, number> = {};
-  for (let y = 0; y < size; y++) {
+  for (let y = 0; y < height; y++) {
     const row = level.rows[y];
-    if (row.length !== size) {
-      throw dataError(file, `rows[${y}]`, `expected ${size} chars, got ${row.length}`);
+    if (row.length !== width) {
+      throw dataError(file, `rows[${y}]`, `expected ${width} chars, got ${row.length}`);
     }
-    for (let x = 0; x < size; x++) {
+    for (let x = 0; x < width; x++) {
       const ch = row[x];
       if (!(ch in TERRAIN_CHARS)) {
         throw dataError(file, `rows[${y}][${x}]`, `invalid char '${ch}'`);
@@ -184,8 +184,8 @@ function validateBaseMap(
   }
   if (level.secret) {
     const { x, y } = level.secret.beacon;
-    assertRange(file, 'secret.beacon.x', x, 0, size - 1);
-    assertRange(file, 'secret.beacon.y', y, 0, size - 1);
+    assertRange(file, 'secret.beacon.x', x, 0, width - 1);
+    assertRange(file, 'secret.beacon.y', y, 0, height - 1);
     if (level.rows[y][x] !== '.') throw dataError(file, 'secret.beacon', 'must be on flat ground');
   }
   assertNonNeg(file, 'initialExploredRadius', level.initialExploredRadius);

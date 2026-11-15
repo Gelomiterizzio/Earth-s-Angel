@@ -40,13 +40,17 @@ Los atajos globales se ignoran si el foco está en un campo de texto o un desliz
 | Enter · Espacio | Control con foco | Activar |
 | Esc | Misión | Soltar herramienta; si no hay, abrir pausa |
 | Esc | Pausa, opciones, panel | Cerrar o volver |
-| Flechas | Tablero con foco | Mover el cursor |
+| Flechas | Luna y Marte | Igual que WASD |
+| WASD | Luna y Marte | Al pulsar una dirección nueva, girar en el sitio. Mantener la tecla o pulsar otra vez en la misma dirección para caminar |
+| Q | Luna y Marte | Elegir al tripulante y abrir las acciones que puede realizar en la casilla de enfrente. Las construcciones, la reparación y el escaneo se asignan por cargo |
+| E | Luna y Marte | Ejecutar la acción rápida para la casilla de enfrente |
 | Enter | Tablero con foco | Acción de la herramienta |
 | **Enter** | Cinemática | **Saltar** |
-| B | Misión | Foco a la paleta de construcción |
-| X | Misión | Herramienta explorar |
+| B | Luna y Marte | Abrir o cerrar el panel de la base |
+| **X** | **Cualquier pantalla** | **Modo presentación: el juego se juega solo (Luna, tormenta, Marte y final). X otra vez lo detiene.** En la Luna y Marte se explora con E |
 | C | Misión | Herramienta recolectar |
-| M | Misión | Foco al tablero |
+| M | Misión | Abrir el diario de misión |
+| R | Misión | Mostrar u ocultar las reservas actuales |
 | F | Misión | Finalizar día |
 | H o ? | Misión | Ayuda y tarjetas científicas |
 | 1 a 7 | Misión | Elegir el edificio de esa posición |
@@ -67,7 +71,7 @@ Fuera del alcance de P0. Los botones del HUD responden al toque por ser botones 
 
 ### Casos límite
 
-- Tecla mantenida: las flechas repiten; F, Enter y las letras no.
+- Tecla mantenida: los movimientos repiten. Q, E, F y Enter se ejecutan una vez por pulsación.
 - Enter con el foco en el botón Finalizar día: avanza un día, una vez.
 - Distribución de teclado distinta: los atajos usan `event.key`, así que siguen la letra impresa.
 - Foco perdido tras cerrar un diálogo: vuelve al control que lo abrió.

@@ -2,9 +2,12 @@
 // Controls and subtitle layout updated with Codex.
 import type { AppContext, Screen } from '../app-bridge';
 import { button } from '../components/button';
+import { spaceAppsEntry } from '../components/space-apps';
+import { drawLunarLander } from '../../map/art';
 import { bindChrome, press } from '../chrome';
 import { cleaner, el } from '../dom';
 import { mountPlayer } from '../cinematics/player';
+import { mountBoarding } from '../cinematics/boarding';
 import { getScript } from '../cinematics/scripts';
 
 let cleanup: (() => void) | null = null;
@@ -45,7 +48,7 @@ function mountCinematic(root: HTMLElement, ctx: AppContext): () => void {
     ctx.flow.completeCinematic(id);
   };
   const skip = button({
-    label: ctx.t('ui.cine.skip'),
+    label: ctx.t(id === 'moonToMars' ? 'ui.cine.skipTravel' : 'ui.cine.skip'),
     className: 'skip',
     onClick: press(ctx, finish, 'sfx-confirm'),
   });
@@ -63,10 +66,9 @@ function mountCinematic(root: HTMLElement, ctx: AppContext): () => void {
   const campaign = ctx.store.getState()?.campaign;
   const manifest = id === 'moonToMars' ? campaign?.manifest : null;
   const bonus = manifest?.bonusDaysApplied ?? ctx.data.difficulty[campaign?.difficulty ?? 'media']?.bonusDays ?? 0;
-  const start = (): void => {
-    skip.focus();
+  const playScript = (scenes = script.scenes): void => {
     stopPlayer = mountPlayer(stage, caption, {
-      script,
+      script: { ...script, scenes },
       reducedMotion: ctx.options.get().reducedMotion,
       showSubtitles: () => ctx.options.get().subtitles,
       caption: (key) => {
@@ -78,6 +80,19 @@ function mountCinematic(root: HTMLElement, ctx: AppContext): () => void {
       onFinish: finish,
       playSfx: (sfx) => ctx.audio.playSfx(sfx),
     });
+  };
+  const start = (): void => {
+    skip.focus();
+    if (id !== 'moonToMars' || ctx.options.get().reducedMotion
+      || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      playScript();
+      return;
+    }
+    stopPlayer = mountBoarding(stage, (beat) => {
+      caption.hidden = !ctx.options.get().subtitles;
+      caption.textContent = ctx.t(`ui.cine.boarding.${beat}`);
+      if (beat === 'launch') ctx.audio.playSfx('sfx-launch');
+    }, () => playScript(script.scenes.slice(2)));
   };
   const openedAt = performance.now();
   let continueManifest: HTMLButtonElement | undefined;
@@ -101,7 +116,7 @@ function mountCinematic(root: HTMLElement, ctx: AppContext): () => void {
     continueManifest.focus();
   } else start();
   bag.add(ctx.options.subscribe(() => {
-    skip.textContent = ctx.t('ui.cine.skip');
+    skip.textContent = ctx.t(id === 'moonToMars' ? 'ui.cine.skipTravel' : 'ui.cine.skip');
     if (banner && bannerKey) banner.textContent = ctx.t(bannerKey);
   }));
   return () => bag.run();
@@ -111,28 +126,61 @@ type Manifest = NonNullable<NonNullable<ReturnType<AppContext['store']['getState
 
 function showManifest(art: HTMLElement, ctx: AppContext, manifest: Manifest, then: () => void): HTMLButtonElement {
   const briefing = el('div', 'cine-briefing');
+  const eventBadge = spaceAppsEntry(ctx);
+  const route = el('div', 'manifest-route');
+  route.setAttribute('aria-hidden', 'true');
+  const ship = el('canvas', 'manifest-ship');
+  ship.width = 36;
+  ship.height = 42;
+  const g = ship.getContext('2d');
+  if (g) {
+    g.translate(6, 17);
+    drawLunarLander(g, 0, 0);
+  }
+  route.append(el('span', 'manifest-moon'), el('span', 'manifest-mars'), ship);
+  art.classList.add('manifest-sky');
+  art.classList.toggle('manifest-still', ctx.options.get().reducedMotion);
+  const cargo = el('div', 'manifest-stocks');
+  const landed = ctx.store.getState()?.mission.resources;
+  cargo.append(manifestResources(ctx, 'ui.manifest.cargo', manifest.supplies));
+  if (landed) cargo.append(manifestResources(ctx, 'ui.manifest.landed', landed));
+  const summary = el('p', 'manifest-summary');
+  summary.textContent = [
+    ctx.t('ui.manifest.crew', { n: manifest.crew.length }),
+    ctx.t('ui.manifest.clues', { n: manifest.clues.length }),
+    ctx.t('ui.manifest.bonus', { n: manifest.bonusDaysApplied }),
+  ].join(' · ');
   briefing.append(
+    route,
     el('h1', undefined, ctx.t('ui.manifest.heading')),
-    el('p', undefined, ctx.t('ui.manifest.crew', { n: manifest.crew.length })),
-    el('p', undefined, ctx.t('ui.manifest.supplies', {
-      power: manifest.supplies.energia,
-      oxygen: manifest.supplies.oxigeno,
-      water: manifest.supplies.agua,
-      food: manifest.supplies.alimentos,
-      materials: manifest.supplies.materiales,
-    })),
-    el('p', undefined, ctx.t('ui.manifest.clues', { n: manifest.clues.length })),
-    el('p', undefined, ctx.t('ui.manifest.bonus', { n: manifest.bonusDaysApplied })),
+    summary,
+    cargo,
+    el('p', 'manifest-note', ctx.t('ui.manifest.arrivalNote')),
   );
   const go = button({
     label: ctx.t('ui.manifest.continue'),
     className: 'btn-primary',
     onClick: press(ctx, () => {
       briefing.remove();
+      art.classList.remove('manifest-sky');
       then();
     }, 'sfx-confirm'),
   });
   briefing.append(go);
-  art.append(briefing);
+  art.append(briefing, eventBadge);
   return go;
+}
+
+function manifestResources(ctx: AppContext, titleKey: string, supplies: Manifest['supplies']): HTMLElement {
+  const block = el('section', 'manifest-stock');
+  const values = el('dl');
+  for (const resource of ['energia', 'oxigeno', 'agua', 'alimentos', 'materiales'] as const) {
+    const label = el('dt', undefined, ctx.t(`ui.resource.${resource}`));
+    const icon = el('span', `icon icon-${resource === 'energia' ? 'energy' : resource}`);
+    icon.setAttribute('aria-hidden', 'true');
+    label.prepend(icon);
+    values.append(label, el('dd', undefined, String(supplies[resource])));
+  }
+  block.append(el('h2', undefined, ctx.t(titleKey)), values);
+  return block;
 }

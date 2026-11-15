@@ -12,8 +12,8 @@ function shelterBuilding(operationalFromDay = 1): Building {
   return {
     id: 10,
     type: 'refugio',
-    x: 6,
-    y: 5,
+    x: 26,
+    y: 25,
     placedDay: 1,
     operationalFromDay,
     enabled: true,

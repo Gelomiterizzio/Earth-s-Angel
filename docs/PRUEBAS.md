@@ -49,14 +49,14 @@ Toda prueba de rechazo comprueba además que **el estado devuelto es el mismo ob
 
 | ID | Acción | Esperado |
 | --- | --- | --- |
-| U-CON-01 | `BUILD panel (4,4)` | Aceptada. Materiales 34, puntos de acción 3, `operationalFromDay` 2 |
+| U-CON-01 | `BUILD panel (24,24)` | Aceptada. Materiales 34, puntos de acción 3, `operationalFromDay` 2 |
 | U-CON-02 | `BUILD` con la fase en `report` | `WRONG_PHASE` |
 | U-CON-03 | `BUILD` de un tipo que no existe | `UNKNOWN_BUILDING` |
-| U-CON-04 | `BUILD deposito (4,4)` en la Luna | `NOT_AVAILABLE_IN_LEVEL` |
-| U-CON-05 | `BUILD panel (12,0)` | `TILE_OUT_OF_BOUNDS` |
-| U-CON-06 | `BUILD panel (0,2)` | `TILE_UNEXPLORED` |
-| U-CON-07 | `BUILD extractor (4,4)` · `BUILD panel (5,5)` | `WRONG_TERRAIN` · `TILE_BLOCKED` |
-| U-CON-08 | `BUILD panel (4,4)` dos veces | La segunda: `TILE_OCCUPIED` |
+| U-CON-04 | `BUILD deposito (24,24)` en la Luna | `NOT_AVAILABLE_IN_LEVEL` |
+| U-CON-05 | `BUILD panel (51,20)` | `TILE_OUT_OF_BOUNDS` |
+| U-CON-06 | `BUILD panel (20,22)` | `TILE_UNEXPLORED` |
+| U-CON-07 | `BUILD extractor (24,24)` · `BUILD panel (25,25)` | `WRONG_TERRAIN` · `TILE_BLOCKED` |
+| U-CON-08 | `BUILD panel (24,24)` dos veces | La segunda: `TILE_OCCUPIED` |
 | U-CON-09 | Materiales 5 y `BUILD panel` · materiales 6 y `BUILD panel` | `NO_MATERIALS` · aceptada, materiales 0 |
 | U-CON-10 | Puntos de acción 0 y `BUILD panel` | `NO_AP` |
 
@@ -64,11 +64,11 @@ Toda prueba de rechazo comprueba además que **el estado devuelto es el mismo ob
 
 | ID | Acción | Esperado |
 | --- | --- | --- |
-| U-EXP-01 | `EXPLORE (8,8)` | Aceptada. Puntos de acción 3. Se revelan 9 casillas, entre ellas hielo en (9,8) y (9,9) |
-| U-EXP-02 | `EXPLORE (4,4)` | `ALREADY_EXPLORED` |
-| U-EXP-03 | `EXPLORE (10,10)` | `NOT_ADJACENT` |
-| U-EXP-04 | Con (1,5) explorada, `EXPLORE (0,5)` | Aceptada. Solo se revelan casillas dentro del mapa |
-| U-EXP-05 | `COLLECT (3,7)` · otra vez · `COLLECT (4,4)` · `COLLECT (1,8)` | Materiales 55 y puntos de acción 3 · `NOTHING_TO_COLLECT` · `NOTHING_TO_COLLECT` · `TILE_UNEXPLORED` |
+| U-EXP-01 | `EXPLORE (28,28)` | Aceptada. Puntos de acción 3. Se revelan 9 casillas, entre ellas hielo en (29,28) y (29,29) |
+| U-EXP-02 | `EXPLORE (24,24)` | `ALREADY_EXPLORED` |
+| U-EXP-03 | `EXPLORE (30,30)` | `NOT_ADJACENT` |
+| U-EXP-04 | Con (1,25) explorada, `EXPLORE (0,25)` en el borde oeste | Aceptada. Solo se revelan 6 casillas, todas dentro del mapa |
+| U-EXP-05 | `COLLECT (23,27)` · otra vez · `COLLECT (24,24)` · `COLLECT (21,28)` | Materiales 55 y puntos de acción 3 · `NOTHING_TO_COLLECT` · `NOTHING_TO_COLLECT` · `TILE_UNEXPLORED` |
 
 ### Energía
 
@@ -215,7 +215,7 @@ Partidas completas en modo canónico. Las tablas día a día están en [niveles/
 | I-REC-FACIL | Recorrido de Fácil | Victoria el día 9. Final: energía 18/20, oxígeno 32, agua 35, alimentos 28, materiales 10, exposición 11. Plazo terrestre 55 |
 | I-REC-MEDIA | Recorrido de Media | Victoria el día 9. Final: energía 38/40, oxígeno 24, agua 27, alimentos 20, materiales 14, exposición 14. Plazo terrestre 45 |
 | I-REC-IMPOSIBLE | Recorrido de Imposible | Victoria el día 13. Final: energía 40/40, oxígeno 28, agua 22, alimentos 20, materiales 8, exposición 23. Plazo terrestre 31 |
-| I-REC-MEDIA-B | Media; el día 8 trabajar, invernadero en (7,6), explorar (8,4) y (10,4) | Día 8: exposición 58, racha 0. Desde el día 9: 2 puntos de acción. Victoria el día 11, exposición 61, materiales 4, plazo 43 |
+| I-REC-MEDIA-B | Media; el día 8 trabajar, invernadero en (27,26), explorar (28,24) y (30,24) | Día 8: exposición 58, racha 0. Desde el día 9: 2 puntos de acción. Victoria el día 11, exposición 61, materiales 4, plazo 43 |
 | I-REC-MEDIA-C | Media; invernadero apagado el día 4 y encendido el día 5 | Alimentos 4 el día 7 y 18 el día 8. Victoria el día 14 |
 | I-REC-FACIL-B | Fácil sin refugiarse el día 9 | Victoria el día 11, exposición 36 |
 | I-DER-01 | Fácil sin ninguna acción | Primera falta el día 9. Derrota `soporte-vital` el día 10 |
@@ -263,7 +263,7 @@ Ruta mínima: **Nueva partida → dificultad → introducción → Luna → info
 | M-MEN-04 | Los tres volúmenes actúan por separado; silencio los anula sin perderlos |
 | M-MEN-05 | Cambiar el idioma cambia todos los textos sin recargar |
 | M-MEN-06 | Las opciones siguen tras recargar; cambiarlas en mitad de una misión no altera la partida |
-| M-MAP-01 | Día 1: zona de 5 × 5 explorada, nave en (5,5), mineral en (3,7) |
+| M-MAP-01 | Día 1: zona de 5 × 5 explorada, nave en (25,25), mineral en (23,27) |
 | M-MAP-02 | Día 8: todos los edificios del recorrido en su casilla |
 | M-MAP-03 | El tablero cambia al cambiar el estado, sin recargar |
 | M-MAP-04 | Las flechas mueven el cursor y la etiqueta accesible describe la casilla |
@@ -272,9 +272,9 @@ Ruta mínima: **Nueva partida → dificultad → introducción → Luna → info
 | M-CON-02 | Colocar sobre roca o sin materiales: ✖ con el motivo y nada cambia |
 | M-CON-03 | El extractor solo se acepta sobre hielo |
 | M-CON-04 | Todo lo anterior solo con teclado |
-| M-EXP-01 | Explorar (8,8) revela el hielo |
+| M-EXP-01 | Explorar (28,28) revela el hielo |
 | M-EXP-02 | Explorar una casilla no adyacente muestra el motivo |
-| M-EXP-03 | Recolectar (3,7) suma los materiales de la dificultad y el mineral desaparece |
+| M-EXP-03 | Recolectar (23,27) suma los materiales de la dificultad y el mineral desaparece |
 | M-DEC-01 | Día 8 en Media: el panel muestra identificador, X8.2, región 12673, GOES13 y 50 minutos |
 | M-DEC-02 | El enlace abre el registro en DONKI |
 | M-DEC-03 | Las cifras de costo y exposición coinciden con el balance |

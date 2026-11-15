@@ -7,6 +7,10 @@ import { bindChrome, press, showNarrow } from '../chrome';
 import { cleaner, el } from '../dom';
 import { earthNotices, earthReport } from '../panels/earth-report';
 import { mountLearningCheck, shouldAskPost } from '../panels/learning-check';
+import { mountDefeatSequence } from '../cinematics/defeat';
+import { drawAstronaut, type SuitRole } from '../../map/astronaut-art';
+import { TILE_PX } from '../../map/art';
+import { badgeShelf } from './badges';
 
 let cleanup: (() => void) | null = null;
 
@@ -28,6 +32,7 @@ function mountResult(root: HTMLElement, ctx: AppContext): () => void {
   bag.add(showNarrow(screen, ctx));
   bag.add(() => screen.remove());
   const result = readMissionResult(ctx.store.getState());
+  const cinematicDefeat = result?.outcome === 'defeat' && result.level !== 'tierra';
   if (result?.outcome === 'victory') ctx.audio.playMusic('music-victory');
   if (result?.outcome === 'defeat') ctx.audio.playMusic('music-defeat');
 
@@ -40,9 +45,13 @@ function mountResult(root: HTMLElement, ctx: AppContext): () => void {
       return;
     }
     const victory = current.outcome === 'victory';
-    const heading = el('h1', 'screen-title', ctx.t(titleKey(current)));
+    const showGameOver = !victory && current.level !== 'tierra';
+    const heading = el('h1', showGameOver ? 'screen-title defeat-heading' : 'screen-title',
+      ctx.t(showGameOver ? 'ui.result.gameOver' : titleKey(current)));
     heading.tabIndex = -1;
     screen.append(heading);
+    if (victory && current.level === 'luna') screen.append(lunarCelebration(ctx));
+    if (showGameOver) screen.append(el('p', 'defeat-advice', ctx.t('ui.result.defeatAdvice')));
     if (current.level === 'tierra') {
       paintEarthResult(screen, ctx, current, state);
       heading.focus({ preventScroll: true });
@@ -50,6 +59,8 @@ function mountResult(root: HTMLElement, ctx: AppContext): () => void {
     }
     if (!victory && current.cause) screen.append(el('p', undefined, ctx.t(`ui.result.cause.${current.cause}`)));
     screen.append(figures(ctx, current));
+    const badges = badgeShelf(ctx, state);
+    if (badges) screen.append(badges);
     screen.append(el('p', undefined, ctx.t(current.principleKey)));
     if (!victory) screen.append(el('p', 'suggestion', ctx.t(current.suggestionKey)));
     if (current.incidents.length > 0) {
@@ -125,13 +136,44 @@ function mountResult(root: HTMLElement, ctx: AppContext): () => void {
       label: ctx.t('ui.result.copy'),
       onClick: press(ctx, () => void navigator.clipboard?.writeText(summaryText(ctx, current))),
     }));
+    if (current.level === 'luna' && shouldAskPost(ctx)) {
+      const review = button({
+        label: ctx.t('ui.learn.review'),
+        onClick: () => {
+          bag.add(mountLearningCheck(screen, ctx, 'post'));
+          review.hidden = true;
+        },
+      });
+      actions.append(review);
+    }
     screen.append(actions);
     heading.focus({ preventScroll: true });
   };
-  paint();
-  bag.add(ctx.options.subscribe(paint));
-  if (result?.level !== 'tierra' && shouldAskPost(ctx)) bag.add(mountLearningCheck(screen, ctx, 'post'));
+  const showReport = () => {
+    paint();
+    bag.add(ctx.options.subscribe(paint));
+  };
+  if (cinematicDefeat) bag.add(mountDefeatSequence(screen, ctx, showReport));
+  else showReport();
   return () => bag.run();
+}
+
+function lunarCelebration(ctx: AppContext): HTMLElement {
+  const scene = el('div', 'lunar-celebration');
+  scene.classList.toggle('is-still', ctx.options.get().reducedMotion);
+  const crew = el('div', 'lunar-celebration-crew');
+  crew.setAttribute('aria-hidden', 'true');
+  const roles: readonly SuitRole[] = ['commander', 'engineer', 'botanist', 'medic'];
+  roles.forEach((role, index) => {
+    const sprite = el('canvas');
+    sprite.width = sprite.height = TILE_PX;
+    sprite.style.setProperty('--jump-delay', `${index * .13}s`);
+    const context = sprite.getContext('2d');
+    if (context) drawAstronaut(context, { x: 0, y: 1 }, index % 2 ? 2 : 0, role);
+    crew.append(sprite);
+  });
+  scene.append(crew, el('p', undefined, ctx.t('ui.result.lunarCheers')));
+  return scene;
 }
 
 function titleKey(result: MissionResult): string {

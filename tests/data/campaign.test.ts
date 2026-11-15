@@ -10,24 +10,25 @@ import { actionForTool } from '../../src/map/map-input';
 const data = loadGameData();
 
 describe('D-BAL-06/07 Mars data and campaign content', () => {
-  it('loads the 20×20 board, deposits, clues and expanded building catalog', () => {
+  it('loads the 81×81 board and preserves the original landing sector and clues', () => {
     const { marte, luna } = data.levels;
     expect(marte).toMatchObject({
-      width: 20, height: 20, ship: { x: 9, y: 8 },
+      width: 81, height: 81, ship: { x: 9, y: 8 },
       forecastHorizonDays: 1, forecastHorizonWithComms: 3,
       secret: { beacon: { x: 17, y: 12 } },
     });
     if (!marte) throw new Error('Missing Mars data');
-    expect(marte.rows).toHaveLength(20);
-    expect(marte.rows.every((row) => row.length === 20)).toBe(true);
+    expect(marte.rows).toHaveLength(81);
+    expect(marte.rows.every((row) => row.length === 81)).toBe(true);
     expect(marte.rows[3][16]).toBe('?');
     expect(marte.rows[12][17]).toBe('.');
     expect([[10, 5], [9, 6], [10, 6]].map(([x, y]) => marte.rows[y][x])).toEqual(['i', 'i', 'i']);
-    expect(marte.rows.join('').match(/m/g)).toHaveLength(8);
+    expect(marte.rows.slice(0, 20).map((row) => row.slice(0, 20)).join('').match(/m/g)).toHaveLength(8);
+    expect(marte.rows.join('').match(/m/g)).toHaveLength(87);
     expect(marte.objectives).toEqual(['soporte', 'energia', 'alimentos', 'reservas', 'proteccion', 'comunicaciones', 'autonomia']);
     expect(marte.availableBuildings).toHaveLength(11);
-    expect(luna.secret?.beacon).toEqual({ x: 10, y: 2 });
-    expect(luna.rows[2][10]).toBe('.');
+    expect(luna.secret?.beacon).toEqual({ x: 30, y: 22 });
+    expect(luna.rows[22][30]).toBe('.');
     expect(luna.availableBuildings).toContain('laboratorio');
     expect(data.buildings.extractor.levels).toContain('marte');
     expect(data.buildings.deposito).toMatchObject({ cost: 8, apCost: 1, buildDays: 1, energyPerDay: 0, capacity: 30 });

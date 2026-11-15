@@ -51,8 +51,8 @@ describe('Resource conservation and caps (U-REC-01..04)', () => {
     s.mission.buildings.push({
       id: 2,
       type: 'invernadero',
-      x: 4,
-      y: 4,
+      x: 24,
+      y: 24,
       placedDay: 1,
       operationalFromDay: 1,
       enabled: true,
@@ -69,7 +69,7 @@ describe('Resource conservation and caps (U-REC-01..04)', () => {
 
   it('U-REC-03: any rejected action leaves state identical', () => {
     const s = createCampaign('media', 'EA-DEMO', data, { canonical: true });
-    const res = applyAction(s, { type: 'COLLECT', x: 5, y: 5 }, data);
+    const res = applyAction(s, { type: 'COLLECT', x: 25, y: 25 }, data);
     expect(res.ok).toBe(false);
     expect(res.state).toBe(s);
   });

@@ -4,7 +4,16 @@ Juego educativo 2D por turnos para navegador. Entrada del equipo al NASA Space A
 
 ## Estado del proyecto
 
+- **15-nov-2026.** El servidor local reproduce en bucle la pista ambiental aportada por el usuario a través de los controles de audio existentes.
+
 - **14-nov-2026.** Luna, Marte y Tierra están integrados y verificados en la compilación local. [Comandos y verificación](docs/DESPLIEGUE.md).
+- **14-nov-2026.** El primer hito del RPG lunar está integrado en la compilación local. Incluye exploración a pie, interacciones de proximidad, diario de misión y un informe de fin de día con materiales y construcciones. [Alcance del RPG](docs/agentes/tareas/T-RPG-A1-mecanicas-de-campana.md).
+- **14-nov-2026.** El mapa lunar ocupa la ventana y permite girar en el sitio. El menú Q permite elegir a un tripulante y limita sus acciones de especialidad según el cargo.
+- **15-nov-2026.** La [Luna](docs/niveles/luna.md#mapa) mide 73 × 73 y [Marte](docs/niveles/marte.md#mapa), 81 × 81. La cámara deja visibles las casillas junto al HUD en los bordes. Los guardados anteriores conservan el progreso al abrir los mapas ampliados.
+- **15-nov-2026.** En las derrotas de Luna y Marte, la Tierra se agrieta y estalla, la tripulación se pierde a la deriva y aparece GAME OVER antes del informe.
+- **15-nov-2026.** El HUD de misión permite consultar las reservas con R. La guía del primer día explica el panel.
+- **15-nov-2026.** La guía y las tarjetas ofrecen preguntas rápidas sobre energía, agua, oxígeno y protección. Un astronauta explica la respuesta.
+- **15-nov-2026.** La victoria lunar celebra con los cuatro tripulantes. El viaje muestra su embarque y despegue. Marte usa la misma exploración a pie y conserva sus objetivos de colonia autónoma.
 - Entrega local: **domingo 15-nov a las 12:00** (envío) y **14:00** (defensa), hora de Bolivia. Congelación interna de código: domingo 09:30.
 - La demo mínima del reto usa la Luna. La campaña publicada incluye Marte y la ruta opcional de Tierra cuando se complete el despliegue.
 

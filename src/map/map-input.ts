@@ -1,12 +1,99 @@
-// AI-assisted: Cursor (Composer) and OpenAI Codex. Team review pending.
+// AI-assisted: Cursor (Composer), OpenAI Codex, and Antigravity (Gemini). Team review pending.
 import type { AppContext } from '../app/context';
 import { previewAction } from '../core/index';
-import type { Action, ActionError, ActionResult, BuildingType, GameState, Tool } from '../core/types';
+import type { Action, ActionError, ActionResult, BuildingType, GameData, GameState, Tool } from '../core/types';
 
 export interface PreviewInfo {
   error: ActionError | null;
   readyDay?: number;
   revealCells?: { x: number; y: number }[];
+}
+
+export interface WalkActionOption {
+  action: Action;
+  label: string;
+  costAp: number;
+  costMaterials: number;
+  readyDay?: number;
+  yieldMaterials?: number;
+  error: ActionError | null;
+  blockedReason: string | null;
+}
+
+export function actionApCost(
+  _state: GameState,
+  data: GameData,
+  action: Action,
+): number {
+  if (action.type === 'BUILD') return data.buildings[action.building]?.apCost ?? 1;
+  if (
+    action.type === 'EXPLORE' ||
+    action.type === 'COLLECT' ||
+    action.type === 'SCAN' ||
+    action.type === 'REPAIR' ||
+    action.type === 'CLEAN_PANELS'
+  ) {
+    return 1;
+  }
+  return 0;
+}
+
+export function actionMaterialsCost(
+  data: GameData,
+  action: Action,
+): number {
+  if (action.type === 'BUILD') return data.buildings[action.building]?.cost ?? 0;
+  if (action.type === 'REPAIR') return data.constants.repairCost ?? 0;
+  return 0;
+}
+
+export function describeActionOption(
+  ctx: AppContext,
+  state: GameState,
+  action: Action,
+): WalkActionOption {
+  const error = previewAction(state, action, ctx.data);
+  const blockedReason = error ? ctx.t(error.messageKey, error.params) : null;
+  // Ask the existing validation rule for the total, including Mars logistics.
+  const withoutAp = state.mission.level === 'marte' && !error
+    ? previewAction({ ...state, mission: { ...state.mission, ap: 0 } }, action, ctx.data)
+    : error;
+  const requiredAp = withoutAp?.code === 'NO_AP' ? withoutAp.params?.need : undefined;
+  const costAp = typeof requiredAp === 'number' ? requiredAp : actionApCost(state, ctx.data, action);
+  const costMaterials = actionMaterialsCost(ctx.data, action);
+
+  let label = ctx.t(action.type === 'CLEAN_PANELS' ? 'ui.hud.clean' : `content.map.walk.${action.type}`);
+  let readyDay: number | undefined;
+  let yieldMaterials: number | undefined;
+
+  if (action.type === 'BUILD') {
+    const def = ctx.data.buildings[action.building];
+    const name = def ? ctx.t(def.nameKey) : action.building;
+    label = ctx.t('content.map.walk.BUILD_NAME', { name });
+    readyDay = state.mission.day + (def?.buildDays ?? 1);
+  } else if (action.type === 'REPAIR') {
+    const found = state.mission.buildings.find((b) => b.id === action.buildingId);
+    if (found) {
+      const def = ctx.data.buildings[found.type];
+      const name = def ? ctx.t(def.nameKey) : found.type;
+      label = ctx.t('content.map.walk.REPAIR_NAME', { name });
+    }
+  } else if (action.type === 'COLLECT') {
+    const diffCfg = ctx.data.difficulty[state.campaign.difficulty]?.levels[state.mission.level];
+    const freeSpace = Math.max(0, state.mission.caps.materiales - state.mission.resources.materiales);
+    yieldMaterials = Math.min(freeSpace, diffCfg?.mineralYield ?? 0);
+  }
+
+  return {
+    action,
+    label,
+    costAp,
+    costMaterials,
+    readyDay,
+    yieldMaterials,
+    error,
+    blockedReason,
+  };
 }
 
 export function actionForTool(

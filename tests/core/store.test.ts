@@ -35,8 +35,8 @@ describe('Store and UiStore (U-ALM-01..03)', () => {
     const res = store.dispatch({
       type: 'BUILD',
       building: 'extractor',
-      x: 4,
-      y: 4,
+      x: 24,
+      y: 24,
     });
 
     expect(res.ok).toBe(false);
@@ -55,7 +55,7 @@ describe('Store and UiStore (U-ALM-01..03)', () => {
     store.on('tile/explored', (e) => eventsOrder.push(e.type));
     store.on('discovery/found', (e) => eventsOrder.push(e.type));
 
-    const res = store.dispatch({ type: 'EXPLORE', x: 8, y: 2 });
+    const res = store.dispatch({ type: 'EXPLORE', x: 28, y: 22 });
     expect(res.ok).toBe(true);
     expect(sub).toHaveBeenCalledTimes(1);
     expect(eventsOrder).toEqual(['tile/explored', 'discovery/found']);
@@ -69,9 +69,9 @@ describe('Store and UiStore (U-ALM-01..03)', () => {
     expect(uiSub).toHaveBeenCalledTimes(1);
     expect(uiStore.getState().tool).toEqual({ kind: 'explore' });
 
-    uiStore.setHover({ x: 3, y: 4 });
+    uiStore.setHover({ x: 23, y: 24 });
     expect(uiSub).toHaveBeenCalledTimes(2);
-    expect(uiStore.getState().hover).toEqual({ x: 3, y: 4 });
+    expect(uiStore.getState().hover).toEqual({ x: 23, y: 24 });
 
     unsubUi();
   });

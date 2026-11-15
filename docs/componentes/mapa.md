@@ -47,7 +47,9 @@ Efecto: resta 1 punto de acción y marca como exploradas la casilla y sus vecina
 | 4 | Terreno `mineral` y `collected === false` | `NOTHING_TO_COLLECT` |
 | 5 | Al menos 1 punto de acción | `NO_AP` |
 
-Efecto: resta 1 punto de acción, suma `mineralYield` a los materiales hasta la capacidad, marca `collected = true` y emite `resource/collected`. Una casilla mineral recolectada sigue sin ser construible.
+Efecto: resta 1 punto de acción, suma `mineralYield` a los materiales hasta la capacidad, marca `collected = true` y emite `resource/collected`. Una casilla mineral recolectada pasa a contar como suelo llano para construir (`buildTerrain` en `src/core/terrain.ts`): se puede construir encima y caminar por ella.
+
+**Lo que tiene delante el astronauta.** En la Luna, el panel inferior muestra una línea «Delante» (`describeWalkTarget` en `src/map/walk.ts`) con el terreno o el edificio de la casilla objetivo: su nombre, si está en construcción, averiado, apagado o sin electricidad, y por qué no se puede construir cuando es roca, cráter, hielo, señal misteriosa o la nave. Los textos están en `content.map.look.*` en inglés y español.
 
 ### Capas de dibujo
 
@@ -65,8 +67,8 @@ export interface MapView { setVisible(visible: boolean): void; destroy(): void; 
 | Dato | Valor |
 | --- | --- |
 | Tamaño de casilla | 24 × 24 píxeles lógicos |
-| Luna | 12 × 12, lienzo de 288 × 288, sin cámara |
-| Marte | 20 × 20, lienzo de 288 × 288 con cámara desplazable y vista general (P1) |
+| Luna | [Mapa ampliado y sector inicial](../niveles/luna.md#mapa), con cámara de seguimiento |
+| Marte | [Mapa ampliado y sector de aterrizaje](../niveles/marte.md#mapa), con cámara de seguimiento |
 | Caracteres del mapa | `.` llano · `#` roca · `o` cráter · `i` hielo · `m` mineral · `?` misterio · `S` nave |
 
 ### Controles
@@ -94,13 +96,29 @@ export interface MapView { setVisible(visible: boolean): void; destroy(): void; 
 
 ### Rendimiento
 
-P0 renderiza las 144 casillas lunares al cambiar el estado. Los efectos usan un lienzo separado, sin redibujar el terreno en cada fotograma. La vista de arte marciana muestra un recorte de 12 × 12.
+El mapa lunar renderiza las casillas al cambiar el estado. Los efectos usan un lienzo separado, sin redibujar el terreno en cada fotograma. La vista de arte marciana muestra un recorte de 12 × 12.
 
 ### Casos límite
 
 - Explorar en el borde del mapa: revela solo las casillas que existen.
 - Explorar una casilla cuyo bloque ya estaba revelado en parte: no hay costo extra ni reembolso.
 - Recolectar con los materiales al máximo: se acepta, el exceso se pierde y el informe lo anota.
+
+### Control de misión y ambiente del mapa
+
+Las dos capas son solo visuales: leen el estado y nunca lo cambian.
+
+- **Aviso de soporte vital** (`src/map/advisor.ts`). Cuando la reserva de oxígeno, agua o comida cubre 3 días o menos (soles en Marte), aparece un globo sobre el astronauta con lo que queda. Con 1 día o menos el aviso pasa a crítico. Si falta el edificio que produce esa reserva, o está apagado, averiado o sin energía, la línea «Control de misión» del panel inferior dice qué hacer. No da consejo mientras el edificio está en obra. Pruebas: `tests/core/advisor.test.ts`.
+- **Ambiente** (`src/map/ambience.ts`, capa `.map-ambience`):
+  - polvo que levantan las botas al caminar (cae más lento en la Luna);
+  - destellos en los paneles solares que funcionan con luz de al menos 50 %;
+  - brillos en el hielo explorado;
+  - remolinos de polvo en Marte, y polvo arrastrado por el viento los días de tormenta de polvo.
+
+  - chispas de soldadura sobre los andamios y un destello cuando el edificio empieza a funcionar.
+
+  Se apaga con «Reducir movimiento». Solo dibuja la zona que rodea al astronauta.
+- En Marte el indicador del HUD dice «soles de margen».
 
 ## 4. Implementación delegable
 

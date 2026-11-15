@@ -86,9 +86,12 @@ describe('D-BAL-03 luna + difficulty', () => {
 });
 
 describe('D-BAL-04 luna map', () => {
-  it('has 12×12 with S/i/m/? counts', () => {
+  it('keeps the original 12×12 sector, shifted by (20, 20), with its S/i/m/? counts', () => {
     validateLunaMap(lunaLevel as unknown as LevelConfig);
-    const joined = lunaLevel.rows.join('');
+    expect([lunaLevel.width, lunaLevel.height]).toEqual([73, 73]);
+    expect(lunaLevel.ship).toEqual({ x: 25, y: 25 });
+    const original = lunaLevel.rows.slice(20, 32).map((row) => row.slice(20, 32));
+    const joined = original.join('');
     expect(joined.match(/S/g)?.length).toBe(1);
     expect(joined.match(/i/g)?.length).toBe(3);
     expect(joined.match(/m/g)?.length).toBe(5);
@@ -106,7 +109,7 @@ describe('D-BAL-05 broken data names file and key', () => {
 
   it('loadGameData succeeds for packaged data', () => {
     const data = loadGameData();
-    expect(data.levels.luna.width).toBe(12);
+    expect(data.levels.luna.width).toBe(lunaLevel.width);
     expect(data.nasa.sep.length).toBeGreaterThanOrEqual(2);
   });
 

@@ -6,7 +6,13 @@
   box-shadow: 0 0 0 max(1px, calc(100cqw / 640)) var(--border);
 }
 
-.mission-map > canvas,
+.mission-map:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+}
+
+.map-world,
+.map-world > canvas,
 .map-grid {
   position: absolute;
   inset: 0;
@@ -14,10 +20,261 @@
   height: 100%;
 }
 
-.mission-map > canvas {
+.map-world > canvas {
   image-rendering: pixelated;
   pointer-events: none;
 }
+
+#map[data-walk-world] {
+  --walk-tile: min(100cqh / 14, 100cqw / 16);
+  --walk-inset: calc(var(--walk-tile) * .12);
+  --walk-transition: 132ms cubic-bezier(.25, .5, .5, 1);
+  --walk-ui-px: min(100cqw / 1280, 100cqh / 720);
+  --walk-hint-bottom: calc(54 * var(--walk-ui-px));
+  --walk-edge-x: calc(var(--walk-tile) * 1.2);
+  --walk-edge-top: calc(72 * var(--walk-ui-px) + var(--walk-tile) * .35);
+  --walk-edge-bottom: calc(var(--walk-hint-bottom) + var(--walk-hint-height, 110px) + var(--walk-tile) * .55);
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(ellipse at 50% 48%, transparent 35%, #10182a5c),
+    #070b16;
+  image-rendering: pixelated;
+  overflow: clip;
+}
+
+#map[data-walk-world][data-level="marte"] { background: #2c1b24; }
+
+[data-walk-world] .map-world {
+  --world-width: calc(var(--walk-width) * var(--walk-tile));
+  --world-height: calc(var(--walk-height) * var(--walk-tile));
+  inset: auto;
+  width: var(--world-width);
+  height: var(--world-height);
+  left: clamp(min(var(--walk-edge-x), 100% - var(--world-width) - var(--walk-edge-x)),
+    50% - (var(--walk-x) + .5) * var(--walk-tile), var(--walk-edge-x));
+  top: clamp(min(var(--walk-edge-top), 100% - var(--world-height) - var(--walk-edge-bottom)),
+    50% - (var(--walk-y) + .5) * var(--walk-tile), var(--walk-edge-top));
+  transition: left var(--walk-transition), top var(--walk-transition);
+}
+
+[data-walk-world] .walk-avatar {
+  z-index: 2;
+  inset: auto;
+  width: calc(var(--walk-tile) * .76);
+  height: calc(var(--walk-tile) * .76);
+  left: calc(var(--walk-x) * var(--walk-tile) + var(--walk-inset));
+  top: calc(var(--walk-y) * var(--walk-tile) + var(--walk-inset));
+  transition: left var(--walk-transition), top var(--walk-transition);
+}
+
+.map-still .map-world,
+.map-still .walk-avatar {
+  transition: none;
+}
+
+[data-walk-world] .map-cell:not([data-walk-target]):not([data-mark]):not(:focus-visible) {
+  outline: none;
+  box-shadow: none;
+}
+
+[data-walk-world] .map-cell[data-walk-target] {
+  outline: 2px solid var(--focus);
+  outline-offset: -3px;
+}
+
+[data-walk-world][data-walk-input] .map-cell:not([data-walk-target]):not(:focus-visible) {
+  outline: none;
+}
+
+[data-walk-world][data-walk-input] .map-cell:not([data-walk-target])::after {
+  display: none;
+}
+
+.walk-hint {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: calc(100cqw * 7 / 1280) calc(100cqw * 14 / 1280);
+  position: absolute;
+  z-index: 3;
+  bottom: var(--walk-hint-bottom);
+  left: calc(100cqw * 12 / 1280);
+  width: min(96%, calc(100cqw * 565 / 1280));
+  padding: calc(100cqw * 8 / 1280) calc(100cqw * 12 / 1280);
+  background: color-mix(in srgb, var(--panel) 94%, transparent);
+  border: 1px solid var(--border);
+  border-radius: calc(100cqw * 8 / 1280);
+  color: var(--text);
+  font-size: calc(100cqw * 15 / 1280);
+  pointer-events: none;
+}
+
+.walk-hint[hidden] { display: none; }
+
+.walk-hint button {
+  pointer-events: auto;
+  padding: .35em .6em;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: .35em;
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.walk-hint-controls,
+.walk-hint-status,
+.walk-hint-action small { color: var(--text-dim); }
+.walk-hint-status { grid-column: 1 / -1; }
+.walk-hint-status:empty { display: none; }
+.walk-hint-look {
+  grid-column: 1 / -1;
+  color: var(--text);
+  border-left: 3px solid var(--focus);
+  padding-left: .6em;
+}
+.walk-hint-look[hidden], .walk-hint-look:empty { display: none; }
+
+.walk-hint .walk-hint-action {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: .65em;
+  align-items: center;
+  flex-wrap: wrap;
+  text-align: start;
+}
+
+.walk-hint .walk-hint-action[hidden] { display: none; }
+.walk-hint-action kbd {
+  border-radius: .2em;
+  padding: .08em .4em;
+  background: var(--focus);
+  color: var(--bg);
+  font: inherit;
+}
+
+.walk-hint-action small { margin-inline-start: auto; }
+.walk-hint button:not([data-blocked]):hover { border-color: var(--focus); }
+
+.walk-hint button[data-blocked="true"] {
+  background: var(--panel);
+  border-color: var(--crit);
+  color: var(--crit);
+  cursor: not-allowed;
+}
+
+[data-walk-world] .map-cell[data-walk-target][data-walk-blocked="true"] {
+  outline-color: var(--crit);
+}
+
+.walk-journal-veil {
+  --px: calc(100cqw / 1280);
+  position: absolute;
+  inset: 0;
+  z-index: 18;
+  display: grid;
+  place-items: center;
+  padding: calc(100cqw * 16 / 1280);
+  background: color-mix(in srgb, var(--bg) 76%, transparent);
+  pointer-events: auto;
+}
+
+.walk-journal-veil .walk-journal {
+  width: min(calc(100cqw * 608 / 1280), 96%);
+  max-height: calc(100cqh - 32px);
+  overflow: auto;
+  padding: calc(100cqw * 18 / 1280);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-top: calc(100cqw * 3 / 1280) solid var(--focus);
+  border-radius: calc(100cqw * 8 / 1280);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  gap: calc(100cqw * 10 / 1280);
+  font-size: calc(100cqw * 14 / 1280);
+}
+
+.walk-journal h2,
+.walk-journal h3 {
+  margin: 0;
+  font-family: var(--font-title);
+}
+
+.walk-journal-veil .walk-journal h2 {
+  font-size: calc(100cqw * 24 / 1280);
+  color: var(--focus);
+}
+
+.walk-journal-veil .walk-journal h3 {
+  font-size: calc(100cqw * 16 / 1280);
+  color: var(--accent);
+}
+
+.walk-journal section {
+  display: flex;
+  flex-direction: column;
+  gap: calc(100cqw * 4 / 1280);
+  padding-top: calc(100cqw * 6 / 1280);
+  border-top: 1px solid var(--border);
+}
+
+.walk-journal p {
+  margin: 0;
+}
+
+.walk-journal [data-journal-active-objective] { font-weight: 700; }
+.walk-journal .goal-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .3em .75em;
+  margin: .25em 0;
+}
+.walk-journal [data-objective-met="true"] { color: var(--safe); }
+.walk-journal-close-hint { font-size: .9em; }
+.walk-journal [data-journal-close] { align-self: end; }
+.walk-journal [data-journal-close]:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.walk-journal-hint,
+.walk-journal-close-hint {
+  color: var(--text-dim);
+}
+
+.walk-crew, .walk-action-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .55em;
+}
+
+.walk-crew { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.walk-crew button {
+  display: grid;
+  justify-items: center;
+  gap: .2em;
+  padding: .25em .2em .5em;
+}
+.walk-crew canvas {
+  width: calc(43 * var(--px));
+  height: calc(43 * var(--px));
+  image-rendering: pixelated;
+}
+.walk-actions .walk-action-option {
+  display: grid;
+  text-align: start;
+  gap: .2em;
+  min-width: 0;
+}
+.walk-action-option small,
+.walk-action-option span { color: var(--text-dim); }
+.walk-action-option span:empty { display: none; }
+.walk-action-option:disabled { opacity: .62; }
+.walk-actions button:focus-visible { outline: 2px solid var(--focus); }
+.walk-actions-close { align-self: end; }
 
 .map-grid,
 .map-row {
@@ -103,9 +360,69 @@
 
 @media (prefers-reduced-motion: reduce) {
   .map-dust::before { animation: none; }
+  [data-walk-world] .map-world,
+  [data-walk-world] .walk-avatar { transition: none; }
 }
 
 @keyframes map-dust {
   from { background-position: -56px 48px; opacity: .14; }
   to { background-position: 56px -48px; opacity: .34; }
+}
+
+/* Mission control advice and the warning bubble over the astronaut (AI-assisted: Claude Code). */
+.walk-hint-advice {
+  grid-column: 1 / -1;
+  padding: .3em .6em;
+  border-left: 3px solid var(--warn);
+  background: color-mix(in srgb, var(--warn) 12%, transparent);
+  color: var(--text);
+}
+.walk-hint-advice[data-severity="critico"] {
+  border-left-color: var(--crit);
+  background: color-mix(in srgb, var(--crit) 16%, transparent);
+}
+.walk-hint-advice[hidden], .walk-hint-advice:empty { display: none; }
+
+[data-walk-world] .walk-alert {
+  position: absolute;
+  z-index: 4;
+  left: calc((var(--walk-x) + .5) * var(--walk-tile));
+  top: calc(var(--walk-y) * var(--walk-tile) - .15 * var(--walk-tile));
+  transform: translate(-50%, -100%);
+  padding: .2em .55em;
+  border: 2px solid var(--warn);
+  border-radius: .3em;
+  background: var(--panel);
+  color: var(--accent);
+  font-family: var(--font-title);
+  font-size: calc(var(--walk-tile) * .3);
+  white-space: nowrap;
+  pointer-events: none;
+  transition: left var(--walk-transition), top var(--walk-transition);
+  animation: walk-alert-bob 1.6s ease-in-out infinite;
+}
+[data-walk-world] .walk-alert::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  margin-left: -4px;
+  border: 4px solid transparent;
+  border-top-color: inherit;
+  border-bottom: 0;
+}
+[data-walk-world] .walk-alert[data-severity="critico"] {
+  border-color: var(--crit);
+  color: var(--text);
+  background: color-mix(in srgb, var(--crit) 35%, var(--panel));
+  animation-duration: .9s;
+}
+.walk-alert[hidden] { display: none; }
+.map-still .walk-alert { animation: none; transition: none; }
+@media (prefers-reduced-motion: reduce) {
+  [data-walk-world] .walk-alert { animation: none; transition: none; }
+}
+@keyframes walk-alert-bob {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -3px; }
 }

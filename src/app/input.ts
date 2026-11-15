@@ -53,11 +53,21 @@ export function bindGlobalInput(ctx: AppContext): () => void {
 
   function onKeyDown(e: KeyboardEvent): void {
     ctx.audio.unlock();
-    if (e.ctrlKey || e.altKey || e.metaKey) return;
+    if (e.defaultPrevented || e.ctrlKey || e.altKey || e.metaKey) return;
     if (e.repeat) return;
     if (isTextOrSliderFocused(e.target)) return;
 
     const scene = ctx.flow.current().scene;
+
+    if (
+      scene === 'mision' &&
+      ctx.uiStore.getState().openPanel === 'journal' &&
+      (e.key === 'Escape' || e.key.toLowerCase() === 'm')
+    ) {
+      ctx.uiStore.openPanel(null);
+      e.preventDefault();
+      return;
+    }
 
     if (scene === 'cinematica' && e.key === 'Enter') {
       const id = String(ctx.flow.current().params.id ?? 'opening');
@@ -101,9 +111,6 @@ export function bindGlobalInput(ctx: AppContext): () => void {
     if (key === 'p') {
       ctx.flow.go('pausa');
       e.preventDefault();
-    } else if (key === 'x') {
-      ctx.uiStore.setTool({ kind: 'explore' });
-      e.preventDefault();
     } else if (key === 'c') {
       ctx.uiStore.setTool({ kind: 'collect' });
       e.preventDefault();
@@ -112,12 +119,15 @@ export function bindGlobalInput(ctx: AppContext): () => void {
       ctx.uiStore.openPanel(currentPanel === 'help' ? null : 'help');
       e.preventDefault();
     } else if (key === 'b') {
-      const firstBuildBtn = document.querySelector<HTMLElement>('[data-build-palette] button');
-      firstBuildBtn?.focus();
+      if (state.mission.level === 'luna' || state.mission.level === 'marte') {
+        ctx.uiStore.openPanel(ctx.uiStore.getState().openPanel === 'base' ? null : 'base');
+      } else {
+        document.querySelector<HTMLElement>('[data-build-palette] button')?.focus();
+      }
       e.preventDefault();
     } else if (key === 'm') {
-      const mapCell = document.querySelector<HTMLElement>('#map button');
-      mapCell?.focus();
+      const currentPanel = ctx.uiStore.getState().openPanel;
+      ctx.uiStore.openPanel(currentPanel === 'journal' ? null : 'journal');
       e.preventDefault();
     } else if (key === 'f') {
       const endDayBtn = document.querySelector<HTMLButtonElement>('[data-action="end-day"]');

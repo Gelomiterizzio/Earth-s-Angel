@@ -96,11 +96,13 @@
     },
     "waterLoop": {
       "title": "Water that returns",
-      "body": "In space, water is recycled. On the Space Station nearly 90% comes back. Your base recovers 75%: that number is a game value."
+      "body": "In space, water is recycled. On the Space Station nearly 90% comes back. Your base recovers 75%: that number is a game value.",
+      "realLife": "The Space Station's life support system has shown that it can recover about 98% of the water the crew brings, which is the goal for long journeys."
     },
     "airFromWater": {
       "title": "Air from water",
-      "body": "Water holds oxygen. With electricity you can split it. That process is electrolysis. The Space Station makes oxygen this way."
+      "body": "Water holds oxygen. With electricity you can split it. That process is electrolysis. The Space Station makes oxygen this way.",
+      "realLife": "On the Space Station, the Oxygen Generation System breaks water apart with electricity (electrolysis). It makes oxygen for the crew and hydrogen as a by-product."
     },
     "growFood": {
       "title": "Food that grows",
@@ -112,7 +114,8 @@
     },
     "solarStorm": {
       "title": "Solar storm",
-      "body": "Sometimes the Sun throws fast particles. NASA records those events. The one you see here was real. Base radiation numbers are game values."
+      "body": "Sometimes the Sun throws fast particles. NASA records those events. The one you see here was real. Base radiation numbers are game values.",
+      "realLife": "The storm in this game is based on a real event: a solar particle storm that NASA's DONKI database recorded on 10 September 2017."
     },
     "moonIce": {
       "title": "Lunar ice",
@@ -124,22 +127,26 @@
     },
     "sol": {
       "title": "A day on Mars",
-      "body": "A Martian solar day is called a sol. It lasts about 24 hours and 40 minutes. In this mission, a sol is one turn."
+      "body": "A Martian solar day is called a sol. It lasts about 24 hours and 40 minutes. In this mission, a sol is one turn.",
+      "realLife": "A Mars solar day, or sol, lasts on average 24 hours 39 minutes 35 seconds, about 3% longer than a day on Earth."
     },
     "marsDust": {
       "title": "Power in a dust storm",
-      "body": "During a regional storm, InSight’s solar energy fell from 425 to 275 watt-hours per sol. The game models that drop by setting panel output to 65% during a regional storm."
+      "body": "During a regional storm, InSight’s solar energy fell from 425 to 275 watt-hours per sol. The game models that drop by setting panel output to 65% during a regional storm.",
+      "realLife": "In 2022, a dust storm on Mars cut the energy of NASA's InSight lander from 425 to 275 watt-hours per sol. Its panels were already covered in dust."
     },
     "sameStormMars": {
       "title": "A solar storm reaches Mars",
-      "body": "During the September 2017 solar storm, Curiosity measured more than twice its previous record radiation level on the Martian surface. The mission uses its own exposure scale."
+      "body": "During the September 2017 solar storm, Curiosity measured more than twice its previous record radiation level on the Martian surface. The mission uses its own exposure scale.",
+      "realLife": "The September 2017 solar storm more than doubled the highest radiation that NASA's Curiosity rover had measured on the surface of Mars since it landed in 2012."
     }
   },
   "tutorial": {
+    "reserves": "Press R to show or hide your reserves. From top to bottom, the icons show oxygen, water, food, power, and materials. The numbers tell you how much is left.",
     "t01": "This is your base. Above you see energy, life support, and protection.",
-    "t02": "Without power nothing works. Build a solar panel.",
-    "t03": "There is mineral near the ship. Collect it for more materials.",
-    "t04": "Sensors detect ice to the southeast. Explore that way.",
+    "t02": "Without power nothing works. Face an open tile and press Q to install a solar panel.",
+    "t03": "There is a mineral deposit near the ship. Face it and press E to collect it.",
+    "t04": "Sensors detect ice to the southeast. Face the terrain in shadow and press E to survey it.",
     "t05": "Press End day to see what happened.",
     "t06": "Place an extractor on ice and a recycler. That gives you water.",
     "t07": "The generator makes oxygen from water. The greenhouse grows food every 4 days.",
@@ -210,6 +217,83 @@
     "lang": "Español"
   },
   "map": {
+    "walk": {
+      "mapEdge": "This is the edge of the mapped area.",
+      "fogAhead": "Unexplored ground ahead. Press E to explore it ({ap} AP).",
+      "fogNoAp": "Unexplored ground ahead. No action points left: end the day to keep exploring.",
+      "controls": "WASD · Tap to turn, hold to walk",
+      "actionsShortcut": "Q · Actions",
+      "actionsTitle": "Field actions",
+      "baseShortcut": "B · Base",
+      "requiresRole": "Only {role} can do this. Switch crew with Q.",
+      "roleUnavailable": "{role} is unavailable for this action.",
+      "noActions": "Face free ground, a resource, or a piece of equipment.",
+      "goal": "Collect minerals or select a solar panel to build. Press E when facing the target.",
+      "none": "Face a mineral deposit, unexplored ground, or a work site to interact.",
+      "BUILD": "E · Build",
+      "BUILD_NAME": "Install {name}",
+      "COLLECT": "Collect mineral",
+      "EXPLORE": "Explore tile",
+      "SCAN": "Scan tile",
+      "REPAIR": "Repair equipment",
+      "REPAIR_NAME": "Repair {name}",
+      "costMaterialsAp": "{cost} materials, {ap} AP",
+      "costApOnly": "{ap} AP",
+      "promptWithCost": "E: {action} · {cost}",
+      "readyOnDay": "Ready on day {day}",
+      "yieldMaterials": "+{n} materials",
+      "blocked": "Cannot: {reason}",
+      "done": {
+        "BUILD": "Construction started.",
+        "BUILD_DETAIL": "{name} under construction. Ready on day {day}.",
+        "COLLECT": "Minerals added to storage.",
+        "COLLECT_DETAIL": "Collected +{n} materials.",
+        "EXPLORE": "Terrain surveyed.",
+        "SCAN": "Scan complete.",
+        "REPAIR": "Equipment repaired."
+      }
+    },
+    "journal": {
+      "title": "Mission journal",
+      "shortcut": "M · Journal",
+      "activeObjective": "Active objective",
+      "deadlines": "Deadlines",
+      "progress": "Mission progress",
+      "window": "Day {day} of {limit} ({remaining} days left in window)",
+      "windowOpen": "Day {day} (Earth countdown window)",
+      "windowSol": "Sol {day} of {limit} ({remaining} sols left in window)",
+      "windowOpenSol": "Sol {day} (Earth countdown window)",
+      "earthDeadline": "Earth countdown: {days} days remaining",
+      "streakProgress": "Stability streak: {current} / {target} days",
+      "allMet": "All mission objectives complete. Hold the base until the day ends.",
+      "decisionHint": "Install a solar panel to generate power starting tomorrow, or collect minerals to build up your supplies.",
+      "exploredTiles": "Explored tiles: {explored} / {total}",
+      "buildingsCount": "Operational structures: {ready} / {total}",
+      "closeHint": "Press M or Esc to return to the mission.",
+      "activeHeading": "Active objective",
+      "deadlineHeading": "Deadlines",
+      "progressHeading": "Progress",
+      "close": "Close (M / Esc)",
+      "activeSortieTitle": "First sortie: Energy or Materials",
+      "activeSortieDetail": "Step out of the ship and choose how to invest your action points: build a solar panel on flat ground for power, or collect the mineral deposit at (3, 7) for materials.",
+      "activeRepairTitle": "Repair {name}",
+      "activeRepairDetail": "Damaged equipment at ({x}, {y}). Face it and press E to repair ({cost} materials, 1 AP).",
+      "activeAllMetTitle": "All mission goals met",
+      "activeAllMetDetail": "End the day to complete the mission.",
+      "progressSummary": "Goals completed: {met} / {total} · Streak: {streak} / {streakTarget}",
+      "resourcesSummary": "Power {energy} / {cap} · Materials {materials} · Action points {ap}",
+      "pendingHeading": "Under construction",
+      "goalDesc": {
+        "soporte": "Operate the ice extractor, water recycler, and oxygen generator on the same day.",
+        "energia": "Keep stored power at or above the threshold and generate enough power for all active modules.",
+        "alimentos": "Complete at least one harvest and keep the greenhouse running.",
+        "reservas": "Keep oxygen, water, and food at or above the reserve threshold.",
+        "proteccion": "Have an operational shelter with room for the crew and survive the solar storm.",
+        "racha": "Maintain consecutive stable days without shortages or unshielded storms.",
+        "comunicaciones": "Keep the communications antenna powered for the required consecutive sols.",
+        "autonomia": "Sustain full life support, food, and reserves on Mars."
+      }
+    },
     "readyDay": "Ready on day {day}",
     "rejectPrefix": "Cannot:",
     "collectedPlus": "+{n}",
@@ -226,7 +310,61 @@
     },
     "fog": "Unexplored",
     "free": "Free",
-    "occupied": "Occupied"
+    "occupied": "Occupied",
+    "look": {
+      "prefix": "Ahead: {what}",
+      "edge": "the edge of the map.",
+      "fog": "unexplored ground. Press E to explore it.",
+      "ship": "{name}. Your base storage and starting point. You cannot build here.",
+      "building": {
+        "scaffold": "{name}, under construction. Ready on day {day}.",
+        "damaged": "{name}, damaged. Press E to repair it.",
+        "off": "{name}, switched off. Turn it on in the Base panel (B).",
+        "unpowered": "{name}. It had no power yesterday.",
+        "working": "{name}, working. {desc}"
+      },
+      "terrain": {
+        "llano": "flat ground. You can build here.",
+        "roca": "rock. You cannot walk or build here.",
+        "crater": "a crater. You cannot walk or build here.",
+        "hielo": "lunar ice. Only the ice extractor can be built here.",
+        "mineral": "a mineral deposit. Press E to collect {n} materials.",
+        "collected": "flat ground where you collected minerals. You can build here.",
+        "misterio": "a strange signal. You cannot build on it. Something may be hidden nearby.",
+        "nave": "the landing ship. You cannot build here."
+      }
+    },
+    "advisor": {
+      "res": {
+        "oxigeno": "Oxygen",
+        "agua": "Water",
+        "alimentos": "Food"
+      },
+      "resLower": {
+        "oxigeno": "oxygen",
+        "agua": "water",
+        "alimentos": "food"
+      },
+      "unit": {
+        "day": "day",
+        "days": "days",
+        "sol": "sol",
+        "sols": "sols"
+      },
+      "bubble": "{resource}: {count} {unit} left",
+      "bubbleNone": "{resource}: running out!",
+      "tip": {
+        "build": "Mission control: low {res} reserve. Build the {building}: {why}",
+        "fix": "Mission control: the {building} is not working. Switch it on in the Base panel (B) or face it and press E to repair it.",
+        "power": "Mission control: life support is out of power. Add a solar panel or a battery before ending the day."
+      },
+      "why": {
+        "generador": "it turns water into breathable oxygen.",
+        "extractor": "place it on ice to get water.",
+        "reciclador": "it recovers the water the crew has used.",
+        "invernadero": "it grows food while it has power."
+      }
+    }
   },
   "earth": {
     "error": {

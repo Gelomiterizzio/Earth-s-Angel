@@ -1,5 +1,11 @@
 [
   {
+    "id": "reserves",
+    "trigger": { "event": "day/started", "day": 1 },
+    "highlight": "hud-reserves",
+    "textKey": "content.tutorial.reserves"
+  },
+  {
     "id": "t01",
     "trigger": { "event": "day/started", "day": 1 },
     "highlight": "hud-meters",

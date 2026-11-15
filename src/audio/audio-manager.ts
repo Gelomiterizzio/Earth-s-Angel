@@ -6,6 +6,7 @@ import { playSfx, startBed, type Playback } from './synth';
 
 const MAX_VOICES = 8;
 const FADE_SECONDS = 0.8;
+const LOCAL_SOUNDTRACK = './src/audio/soundtrack.local/interstellar.mp3';
 
 interface Music {
   id: string;
@@ -24,6 +25,8 @@ export function createManager(options: OptionsService): ManagedAudio {
   let sfxGain: GainNode | null = null;
   let wantedMusic: string | null = null;
   let activeMusic: Music | null = null;
+  let localMusic: HTMLAudioElement | undefined;
+  let localMusicUnavailable = false;
   const voices = new Set<Playback>();
   const packaged = new Map<string, Promise<AudioBuffer | null>>();
 
@@ -74,7 +77,31 @@ export function createManager(options: OptionsService): ManagedAudio {
 
   async function startMusic(id: string): Promise<void> {
     const ctx = context;
-    if (!ctx || !musicGain || activeMusic?.id === id) return;
+    if (!ctx || !musicGain) return;
+    if (import.meta.env.DEV && !localMusicUnavailable && !document.hidden) {
+      if (!localMusic) {
+        // Stream the user-provided track. Decoding the entire recording would use far more memory.
+        const player = new Audio(new URL(LOCAL_SOUNDTRACK, document.baseURI).href);
+        player.loop = true;
+        player.preload = 'none';
+        const source = ctx.createMediaElementSource(player);
+        source.connect(musicGain);
+        player.addEventListener('error', () => {
+          localMusicUnavailable = true;
+          source.disconnect();
+          if (wantedMusic) void startMusic(wantedMusic);
+        }, { once: true });
+        localMusic = player;
+      }
+      try {
+        await localMusic.play();
+        if (wantedMusic) fadeOut();
+        return;
+      } catch {
+        if (wantedMusic !== id || document.hidden) return;
+      }
+    }
+    if (activeMusic?.id === id) return;
     const file = PACKAGED_AUDIO.includes(id) ? MUSIC_FILE[id] : undefined;
     const buffer = file ? await loadPackaged(ctx, id, file) : null;
     if (wantedMusic !== id || activeMusic?.id === id) return;
@@ -113,6 +140,8 @@ export function createManager(options: OptionsService): ManagedAudio {
         master.connect(context.destination);
         applyGains(true);
         if (wantedMusic) void startMusic(wantedMusic);
+      } else if (wantedMusic && localMusic?.paused && !localMusicUnavailable) {
+        void startMusic(wantedMusic);
       }
       if (context.state === 'suspended') void context.resume().catch(() => {});
     },
@@ -123,6 +152,7 @@ export function createManager(options: OptionsService): ManagedAudio {
     },
     stopMusic() {
       wantedMusic = null;
+      localMusic?.pause();
       fadeOut();
     },
     playSfx(id) {
@@ -166,6 +196,8 @@ export function createManager(options: OptionsService): ManagedAudio {
   options.subscribe(() => applyGains());
   document.addEventListener('visibilitychange', () => {
     if (!context) return;
+    if (document.hidden) localMusic?.pause();
+    else if (wantedMusic && localMusic && !localMusicUnavailable) void startMusic(wantedMusic);
     const work = document.hidden ? context.suspend() : context.resume();
     void work.catch(() => {});
   });

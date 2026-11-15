@@ -72,7 +72,7 @@ Lo que no cabe se pierde y se anota en `DayReport.wasted`. El informe lo convier
 
 ### Rendimiento
 
-El estado se copia de forma superficial por acción. Con 400 casillas en Marte sigue siendo inmediato. Las casillas solo se copian cuando cambia alguna.
+El estado se copia de forma superficial por acción. Las casillas solo se copian cuando cambia alguna. [Tamaño del mapa marciano](../niveles/marte.md#mapa)
 
 ## 4. Implementación delegable
 

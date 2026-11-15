@@ -11,11 +11,14 @@ import type {
 } from '../core-bridge';
 import { computeForecast, previewAction, summarizeHud } from '../core-bridge';
 import { button } from '../components/button';
+import { spaceAppsEntry } from '../components/space-apps';
 import { statusBadge } from '../components/status-badge';
 import { bindChrome, press, showNarrow } from '../chrome';
 import { cleaner, el, hasModal, isTypingTarget, on } from '../dom';
 import { mountDayReport } from '../panels/day-report';
 import { mountDecisionPanel } from '../panels/decision';
+import { openShelterScene } from '../panels/shelter-scene';
+import { mountDayQuiz } from '../panels/day-quiz';
 import { mountLearningCheck, shouldAskPre } from '../panels/learning-check';
 import { openCards } from '../panels/science-card';
 import { mountTutorial } from '../panels/tutorial';
@@ -27,6 +30,13 @@ const BUILDING_ART = {
   deposito: 0, comunicaciones: 1, laboratorio: 2, habitat: 3,
 } as const;
 const MARS_BUILDINGS = new Set(['deposito', 'comunicaciones', 'laboratorio', 'habitat']);
+const RESERVE_RESOURCES = [
+  ['oxigeno', 'oxigeno'],
+  ['agua', 'agua'],
+  ['alimentos', 'alimentos'],
+  ['energia', 'energy'],
+  ['materiales', 'materiales'],
+] as const;
 
 export function mountMissionHud(root: HTMLElement, ctx: AppContext): () => void {
   const bag = cleaner();
@@ -39,6 +49,32 @@ export function mountMissionHud(root: HTMLElement, ctx: AppContext): () => void 
   const top = el('header', 'hud-zone hud-top');
   const side = el('aside', 'hud-zone hud-side');
   const bottom = el('footer', 'hud-zone hud-bottom');
+  const reserves = el('aside', 'hud-reserves');
+  const reserveList = el('ul', 'hud-reserve-list');
+  reserveList.id = 'mission-reserve-list';
+  reserveList.hidden = true;
+  const reserveToggle = button({
+    label: ctx.t('ui.hud.reservesShortcut'),
+    onClick: () => {
+      reserveList.hidden = !reserveList.hidden;
+      reserveToggle.setAttribute('aria-expanded', String(!reserveList.hidden));
+    },
+  });
+  reserveToggle.dataset.tutorial = 'hud-reserves';
+  reserveToggle.setAttribute('aria-controls', reserveList.id);
+  reserveToggle.setAttribute('aria-expanded', 'false');
+  reserveToggle.setAttribute('aria-keyshortcuts', 'R');
+  const reserveRows = RESERVE_RESOURCES.map(([id, icon]) => {
+    const row = el('li');
+    const glyph = el('span', `icon icon-${icon}`);
+    glyph.setAttribute('aria-hidden', 'true');
+    const label = el('span', 'sr-only');
+    const amount = el('span');
+    row.append(glyph, label, amount);
+    reserveList.append(row);
+    return { id, row, label, amount };
+  });
+  reserves.append(reserveToggle, reserveList);
   const polite = el('div', 'sr-only');
   polite.setAttribute('aria-live', 'polite');
   const assertive = el('div', 'sr-only');
@@ -47,7 +83,9 @@ export function mountMissionHud(root: HTMLElement, ctx: AppContext): () => void 
   const endDay = button({ label: '', className: 'btn-primary end-day', onClick: () => endDayNow() });
   endDay.dataset.tutorial = 'btn-end-day';
   bottom.append(messages, endDay);
-  screen.append(top, side, bottom, polite, assertive);
+  let eventBadge = spaceAppsEntry(ctx);
+  bottom.insertBefore(eventBadge, endDay);
+  screen.append(top, side, bottom, reserves, polite, assertive);
 
   let openMeter: 'energia' | 'soporte' | 'proteccion' | null = null;
   let pending = false;
@@ -77,6 +115,21 @@ export function mountMissionHud(root: HTMLElement, ctx: AppContext): () => void 
       draw();
     }, showCards);
     paintSide(side, ctx, state, tool);
+    side.hidden = (state?.mission.level === 'luna' || state?.mission.level === 'marte')
+      && ctx.uiStore.get().openPanel !== 'base';
+    reserves.hidden = !state;
+    const reservesName = ctx.t('ui.hud.reserves');
+    reserveToggle.textContent = ctx.t('ui.hud.reservesShortcut');
+    reserveToggle.title = reservesName;
+    reserveList.setAttribute('aria-label', reservesName);
+    if (state) {
+      for (const { id, row, label, amount } of reserveRows) {
+        const name = ctx.t(`ui.resource.${id}`);
+        row.title = name;
+        label.textContent = `${name}: `;
+        amount.textContent = String(state.mission.resources[id]);
+      }
+    }
     if (focusKey) {
       screen.querySelector<HTMLElement>(`[data-hud-focus="${CSS.escape(focusKey)}"]`)?.focus({ preventScroll: true });
     }
@@ -140,11 +193,20 @@ export function mountMissionHud(root: HTMLElement, ctx: AppContext): () => void 
     draw();
   }));
   bag.add(ctx.options.subscribe(() => {
+    const translatedBadge = spaceAppsEntry(ctx);
+    eventBadge.replaceWith(translatedBadge);
+    eventBadge = translatedBadge;
     signature = '';
     draw();
   }));
   bag.add(ctx.store.on('action/rejected', (event) => {
     say(ctx.t(event.error.messageKey, event.error.params));
+  }));
+  bag.add(ctx.store.on('decision/made', (event) => {
+    if (!event.shelter) return;
+    const crew = ctx.store.getState()?.mission.crew.length ?? 4;
+    // Opens after the decision panel has closed, so the scene owns the focus.
+    queueMicrotask(() => bag.add(openShelterScene(screen, ctx, crew)));
   }));
   bag.add(ctx.store.on('alert/shortage', (event) => {
     say(ctx.t('ui.hud.shortage', { resource: ctx.t(`ui.resource.${event.resource}`), n: event.crewAffected }), true);
@@ -172,9 +234,10 @@ export function mountMissionHud(root: HTMLElement, ctx: AppContext): () => void 
         return;
       }
     }
-    onKey(event, ctx, endDayNow, showCards);
+    onKey(event, ctx, endDayNow, showCards, () => reserveToggle.click());
   }));
   bag.add(mountTutorial(screen, ctx, (text) => say(text)));
+  bag.add(mountDayQuiz(screen, ctx));
 
   if (shouldAskPre(ctx)) bag.add(mountLearningCheck(screen, ctx, 'pre'));
   ctx.audio.playMusic(musicFor(ctx.store.getState()?.mission.level));
@@ -198,23 +261,42 @@ function onKey(
   ctx: AppContext,
   endDay: () => void,
   help: () => void,
+  toggleReserves: () => void,
 ): void {
   if (event.defaultPrevented || event.repeat || event.ctrlKey || event.altKey || event.metaKey
     || hasModal() || isTypingTarget(event.target)) return;
   const key = event.key.toLowerCase();
   if (event.key === 'Escape') {
+    if (ctx.uiStore.get().openPanel === 'base') {
+      ctx.uiStore.openPanel(null);
+      return;
+    }
     const tool = ctx.uiStore.getState().tool;
     if (tool.kind !== 'inspect') ctx.uiStore.setTool({ kind: 'inspect' });
     else ctx.flow.go('pausa');
     return;
   }
   if (key === 'f') endDay();
+  else if (key === 'r') {
+    event.preventDefault();
+    toggleReserves();
+  }
   else if (key === 'p') ctx.flow.go('pausa');
   else if (key === 'h' || event.key === '?') help();
-  else if (key === 'b') document.querySelector<HTMLElement>('.palette button:not(:disabled)')?.focus();
-  else if (key === 'x') ctx.uiStore.setTool({ kind: 'explore' });
+  else if (key === 'b') {
+    const level = ctx.store.getState()?.mission.level;
+    if (level === 'luna' || level === 'marte') {
+      ctx.uiStore.openPanel(ctx.uiStore.get().openPanel === 'base' ? null : 'base');
+    } else {
+      document.querySelector<HTMLElement>('.palette button:not(:disabled)')?.focus();
+    }
+  }
   else if (key === 'c') ctx.uiStore.setTool({ kind: 'collect' });
-  else if (key === 'm') (document.querySelector<HTMLElement>('#map button[tabindex="0"]') ?? document.getElementById('map'))?.focus();
+  else if (key === 'm') {
+    event.preventDefault();
+    const currentPanel = ctx.uiStore.getState().openPanel;
+    ctx.uiStore.openPanel(currentPanel === 'journal' ? null : 'journal');
+  }
   else if (/^[1-7]$/.test(event.key)) pickBuilding(ctx, Number(event.key) - 1);
 }
 
@@ -242,10 +324,15 @@ function paintTop(
   const summary = readSummary(state, ctx);
   const level = ctx.data.difficulty[state.campaign.difficulty]?.levels[state.mission.level];
   const unit = state.mission.level === 'marte' ? 'sol' : 'day';
+  const displayDay = state.mission.phase === 'report'
+    ? state.mission.lastReport?.day ?? state.mission.day
+    : state.mission.day;
   const clock = el('p', 'hud-clock', ctx.t(`ui.hud.${unit}${level?.dayLimit == null ? 'Open' : ''}`, {
-    day: state.mission.day, limit: level?.dayLimit ?? '',
+    day: displayDay, limit: level?.dayLimit ?? '',
   }));
-  if (state.mission.level === 'marte') clock.title = ctx.t('ui.hud.solHint');
+  if (state.mission.level === 'marte') {
+    clock.title = `${ctx.t('ui.hud.solHint')} ${ctx.t('ui.hud.marsGravity')}`;
+  }
   const earth = el('p', 'hud-stat');
   earth.append(el('span', 'icon icon-earth'), el('span', undefined, ctx.t('ui.hud.earth', { days: state.campaign.earthDaysRemaining })));
   const meters = el('div', 'hud-meters');
@@ -263,6 +350,15 @@ function paintTop(
   const options = button({ label: ctx.t('ui.hud.options'), onClick: press(ctx, () => ctx.flow.go('opciones')) });
   const pause = button({ label: ctx.t('ui.hud.pause'), onClick: press(ctx, () => ctx.flow.go('pausa')) });
   const actions = el('div', 'hud-actions');
+  if (state.mission.level === 'luna' || state.mission.level === 'marte') {
+    const base = button({ label: ctx.t('content.map.walk.baseShortcut'), onClick: () => {
+      ctx.uiStore.openPanel(ctx.uiStore.get().openPanel === 'base' ? null : 'base');
+    } });
+    base.dataset.hudFocus = 'base';
+    base.dataset.tutorial = 'btn-base';
+    base.setAttribute('aria-expanded', String(ctx.uiStore.get().openPanel === 'base'));
+    actions.append(base);
+  }
   actions.append(help, options, pause);
   top.append(clock, earth, meters, materials, ap, actions);
 }
@@ -282,7 +378,7 @@ function meterButton(
   const status = summary ? summary[id].status : null;
   main.append(el('span', `icon icon-${id === 'energia' ? 'energy' : id === 'soporte' ? 'agua' : 'radiation'}`));
   main.append(el('span', undefined, ctx.t(`ui.hud.${id === 'energia' ? 'energy' : id === 'soporte' ? 'life' : 'shield'}`)));
-  const value = el('span', 'meter-reading', meterValue(ctx, id, summary));
+  const value = el('span', 'meter-reading', meterValue(ctx, id, summary, state.mission.level === 'marte'));
   if (status) value.append(statusBadge(status, ctx.t(`ui.status.${status}`), ctx.t(`ui.status.mark.${status}`)));
   node.append(main, value);
   const item = el('div', 'meter-slot');
@@ -296,10 +392,10 @@ function meterButton(
   return item;
 }
 
-function meterValue(ctx: AppContext, id: 'energia' | 'soporte' | 'proteccion', summary: HudSummary | null): string {
+function meterValue(ctx: AppContext, id: 'energia' | 'soporte' | 'proteccion', summary: HudSummary | null, sols = false): string {
   if (!summary) return ctx.t('ui.hud.summaryUnavailable');
   if (id === 'energia') return ctx.t('ui.hud.stored', { stored: summary.energia.stored, cap: summary.energia.cap });
-  if (id === 'soporte') return ctx.t('ui.hud.margin', { days: summary.soporte.marginDays });
+  if (id === 'soporte') return ctx.t(sols ? 'ui.hud.marginSols' : 'ui.hud.margin', { days: summary.soporte.marginDays });
   return ctx.t('ui.hud.exposure', { n: summary.proteccion.maxExposure });
 }
 

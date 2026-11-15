@@ -6,29 +6,29 @@ export const FACIL_PLAN: DayPlan[] = [
   {
     day: 1,
     actions: [
-      { type: 'BUILD', building: 'panel', x: 4, y: 4 },
-      { type: 'BUILD', building: 'panel', x: 5, y: 4 },
-      { type: 'COLLECT', x: 3, y: 7 },
-      { type: 'EXPLORE', x: 8, y: 8 },
+      { type: 'BUILD', building: 'panel', x: 24, y: 24 },
+      { type: 'BUILD', building: 'panel', x: 25, y: 24 },
+      { type: 'COLLECT', x: 23, y: 27 },
+      { type: 'EXPLORE', x: 28, y: 28 },
     ],
   },
   {
     day: 2,
     actions: [
-      { type: 'BUILD', building: 'extractor', x: 9, y: 8 },
-      { type: 'BUILD', building: 'reciclador', x: 6, y: 4 },
+      { type: 'BUILD', building: 'extractor', x: 29, y: 28 },
+      { type: 'BUILD', building: 'reciclador', x: 26, y: 24 },
     ],
   },
   {
     day: 3,
     actions: [
-      { type: 'BUILD', building: 'generador', x: 4, y: 5 },
-      { type: 'BUILD', building: 'invernadero', x: 6, y: 6 },
+      { type: 'BUILD', building: 'generador', x: 24, y: 25 },
+      { type: 'BUILD', building: 'invernadero', x: 26, y: 26 },
     ],
   },
   {
     day: 4,
-    actions: [{ type: 'BUILD', building: 'refugio', x: 6, y: 5 }],
+    actions: [{ type: 'BUILD', building: 'refugio', x: 26, y: 25 }],
   },
   { day: 5, actions: [] },
   { day: 6, actions: [] },

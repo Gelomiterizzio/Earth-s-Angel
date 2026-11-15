@@ -1,6 +1,7 @@
 // AI-assisted: Antigravity (Gemini), reviewed by A
 
 import type { GameData, GameState, ResourceId } from './types';
+import { buildTerrain } from './terrain';
 
 const RESOURCES: ResourceId[] = [
   'energia',
@@ -82,7 +83,7 @@ export function validateState(state: GameState, data: GameData): string[] {
       if (!tile?.explored) {
         issues.push(`building ${b.type}: placed on unexplored tile (${posKey})`);
       }
-      if (tile && tile.terrain !== def.requiresTerrain) {
+      if (tile && buildTerrain(tile) !== def.requiresTerrain) {
         issues.push(
           `building ${b.type}: invalid terrain ${tile.terrain} at (${posKey}), requires ${def.requiresTerrain}`,
         );

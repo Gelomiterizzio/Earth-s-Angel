@@ -36,8 +36,8 @@ function buildTiles(exploredRadius: number): Tile[] {
   const rows = lunaLevelJson.rows as string[];
   const ship = lunaLevelJson.ship as { x: number; y: number };
   const tiles: Tile[] = [];
-  for (let y = 0; y < 12; y++) {
-    for (let x = 0; x < 12; x++) {
+  for (let y = 0; y < lunaLevelJson.height; y++) {
+    for (let x = 0; x < lunaLevelJson.width; x++) {
       const ch = rows[y][x];
       const dx = Math.abs(x - ship.x);
       const dy = Math.abs(y - ship.y);
@@ -164,13 +164,13 @@ function baseState(day: number, phase: 'planning' | 'decision'): GameState {
         alimentos: 40,
         materiales: 60,
       },
-      map: { width: 12, height: 12, tiles: buildTiles(2) },
+      map: { width: lunaLevelJson.width, height: lunaLevelJson.height, tiles: buildTiles(2) },
       buildings: [
         {
           id: 1,
           type: 'nave',
-          x: 5,
-          y: 5,
+          x: 25,
+          y: 25,
           placedDay: 1,
           operationalFromDay: 1,
           enabled: true,
@@ -275,9 +275,9 @@ export function fixtureState(
 
   for (const t of s.mission.map.tiles) {
     if (t.x >= 1 && t.x <= 9 && t.y >= 1 && t.y <= 9) t.explored = true;
-    if (t.x === 3 && t.y === 7) t.collected = true;
-    if (t.x === 1 && t.y === 8) t.collected = true;
-    if (t.x === 3 && t.y === 1) t.collected = true;
+    if (t.x === 23 && t.y === 27) t.collected = true;
+    if (t.x === 21 && t.y === 28) t.collected = true;
+    if (t.x === 23 && t.y === 21) t.collected = true;
   }
 
   s.mission.buildings = [

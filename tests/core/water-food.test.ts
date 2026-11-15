@@ -22,8 +22,8 @@ function mod(id: number, type: Building['type']): Building {
   return {
     id,
     type,
-    x: 4,
-    y: 4,
+    x: 24,
+    y: 24,
     placedDay: 1,
     operationalFromDay: 1,
     enabled: true,

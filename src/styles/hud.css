@@ -37,6 +37,22 @@
   scrollbar-color: var(--border) var(--panel);
 }
 
+#stage:has(#map[data-walk-world]:not([hidden])) .hud-side {
+  z-index: 4;
+  left: auto;
+  right: calc(12 * var(--px));
+  top: calc(80 * var(--px));
+  bottom: calc(56 * var(--px));
+  height: auto;
+  width: calc(408 * var(--px));
+  box-shadow: 0 0 calc(32 * var(--px)) var(--bg);
+}
+
+.hud-side[hidden] { display: none; }
+#stage:has(#map[data-walk-world]:not([hidden])) .hud-top,
+#stage:has(#map[data-walk-world]:not([hidden])) .hud-bottom { width: 100%; }
+#stage:has(#map[data-walk-world]:not([hidden])) .hud-bottom { top: auto; bottom: 0; }
+
 .hud-bottom {
   position: absolute;
   left: 0;
@@ -125,6 +141,42 @@
 
 .hud-actions { display: flex; gap: calc(4 * var(--px)); }
 .hud-actions .btn { padding-inline: calc(8 * var(--px)); }
+
+.hud-reserves {
+  position: absolute;
+  z-index: 3;
+  inset: calc(80 * var(--px)) auto auto calc(8 * var(--px));
+  font-size: max(12px, calc(14 * var(--px)));
+}
+
+.hud-reserves .btn {
+  min-width: 28px;
+  min-height: 28px;
+  padding: 0 .4em;
+  pointer-events: auto;
+}
+
+.hud-reserve-list {
+  display: grid;
+  inline-size: max-content;
+  gap: .2em;
+  margin: 4px 0 0;
+  padding: .35em .5em;
+  list-style: none;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-variant-numeric: tabular-nums;
+  pointer-events: auto;
+}
+
+.hud-reserve-list[hidden] { display: none; }
+
+.hud-reserve-list li {
+  display: flex;
+  align-items: center;
+  gap: .5em;
+}
 
 .icon {
   width: calc(16 * var(--px));

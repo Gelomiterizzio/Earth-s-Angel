@@ -15,7 +15,13 @@
       "label": "NASA ECLSS",
       "url": "https://www.nasa.gov/reference/environmental-control-and-life-support-systems-eclss/"
     },
-    "level": "all"
+    "level": "all",
+    "realLife": {
+      "source": {
+        "label": "NASA: water recovery milestone on the ISS",
+        "url": "https://www.nasa.gov/missions/station/iss-research/nasa-achieves-water-recovery-milestone-on-international-space-station/"
+      }
+    }
   },
   {
     "id": "airFromWater",
@@ -26,7 +32,8 @@
       "label": "NASA ECLSS",
       "url": "https://www.nasa.gov/reference/environmental-control-and-life-support-systems-eclss/"
     },
-    "level": "all"
+    "level": "all",
+    "realLife": {}
   },
   {
     "id": "growFood",
@@ -51,7 +58,8 @@
       "label": "NASA CCMC DONKI",
       "url": "https://ccmc.gsfc.nasa.gov/tools/DONKI/"
     },
-    "level": "all"
+    "level": "all",
+    "realLife": {}
   },
   {
     "id": "moonIce",
@@ -76,7 +84,8 @@
       "label": "NASA GISS Mars24",
       "url": "https://www.giss.nasa.gov/tools/mars24/help/notes.html"
     },
-    "level": "marte"
+    "level": "marte",
+    "realLife": {}
   },
   {
     "id": "marsDust",
@@ -87,7 +96,8 @@
       "label": "NASA/JPL InSight",
       "url": "https://www.jpl.nasa.gov/news/nasas-insight-waits-out-dust-storm/"
     },
-    "level": "marte"
+    "level": "marte",
+    "realLife": {}
   },
   {
     "id": "sameStormMars",
@@ -98,6 +108,7 @@
       "label": "NASA/JPL Curiosity and MAVEN",
       "url": "https://www.jpl.nasa.gov/news/large-solar-storm-sparks-global-aurora-and-doubles-radiation-levels-on-the-martian-surface/"
     },
-    "level": "marte"
+    "level": "marte",
+    "realLife": {}
   }
 ]

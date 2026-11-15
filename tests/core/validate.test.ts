@@ -23,13 +23,13 @@ describe('State validation (U-VAL-01..04)', () => {
 
   it('U-VAL-03: building placed on rock produces an issue naming the building', () => {
     const s = createCampaign('media', 'EA-DEMO', data, { canonical: true });
-    // (2,3) is '#' (roca) inside explored radius? Wait: ship is (5,5), radius 2 is 3..7. Let's mark (2,3) explored and put panel on it.
+    // (22, 23) is '#' (roca) inside explored radius? Wait: ship is (25, 25), radius 2 is 3..7. Let's mark (22, 23) explored and put panel on it.
     s.mission.map.tiles[3 * 12 + 2].explored = true;
     s.mission.buildings.push({
       id: 99,
       type: 'panel',
-      x: 2,
-      y: 3,
+      x: 22,
+      y: 23,
       placedDay: 1,
       operationalFromDay: 2,
       enabled: true,

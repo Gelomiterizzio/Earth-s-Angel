@@ -72,7 +72,12 @@ describe('D-CON-03 tutorial steps', () => {
         expect(cardIds.has(id), id).toBe(true);
       }
     }
-    expect(tutorial.length).toBe(11);
+    expect(tutorial.length).toBe(12);
+    expect(tutorial[0]).toMatchObject({
+      id: 'reserves',
+      trigger: { event: 'day/started', day: 1 },
+      highlight: 'hud-reserves',
+    });
     expect(cards.length).toBeGreaterThanOrEqual(6);
   });
 });

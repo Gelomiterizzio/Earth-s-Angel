@@ -10,53 +10,50 @@ Diseño del nivel, mapa, condiciones iniciales, eventos, objetivos y **recorrido
 
 ## Mapa
 
-Cuadrícula de 12 × 12. Origen `(0,0)` arriba a la izquierda. `x` crece hacia la derecha, `y` hacia abajo. Archivo previsto: `src/data/content/levels/luna.json`.
+La [cuadrícula lunar](../../src/data/content/levels/luna.json) mide **73 × 73** casillas. La nave sigue en **(25,25)** y las regiones nuevas se extienden al este y al sur. Varios pasos conectan el sector anterior con nuevos cráteres de hielo y depósitos de mineral. Origen `(0,0)` arriba a la izquierda. `x` crece hacia la derecha, `y` hacia abajo.
+
+El sector original de 12 × 12, con el que se validaron los recorridos de P0, ocupa ahora `x` 20 a 31 e `y` 20 a 31. Es el mismo terreno desplazado (20, 20): todas las coordenadas de este documento ya incluyen ese desplazamiento. Los guardados del mapa de 12 × 12 o de 30 × 28 se trasladan al cargar ([persistencia](../componentes/persistencia.md)).
+
+| Valor | Antes | Ahora |
+| --- | --- | --- |
+| Tamaño | 12 × 12, 30 × 28 y 51 × 51 | 73 × 73 |
+| Nave | (5,5) | (25,25) |
+| Baliza secreta | (10,2) | (30,22) |
+| Hielo · mineral · misterio | 14 · 15 · 1 (P0) | 52 · 62 · 1 |
+
+### Sector inicial P0
 
 ```text
-      x→ 0 1 2 3 4 5 6 7 8 9 10 11
- y=0     # # . . . o o . . . #  #
- y=1     # . . m . o o . . ? .  #
- y=2     . . . . . . . . . . .  .
- y=3     . . # . . . . . # . .  .
- y=4     . . . . . . . . . . m  .
- y=5     o . . . . S . . . . .  .
- y=6     o o . . . . . . # . .  .
- y=7     . . . m . . . . . . .  .
- y=8     . m . . # . . . . i i  .
- y=9     . . . . . . . . . i o  o
- y=10    # . . . . . m . . . o  o
- y=11    # # . . . . . . . . #  #
-```
-
-```json
-{
-  "id": "luna", "width": 12, "height": 12,
-  "rows": [
-    "##...oo...##", "#..m.oo..?.#", "............", "..#.....#...",
-    "..........m.", "o....S......", "oo......#...", "...m........",
-    ".m..#....ii.", ".........ioo", "#.....m...oo", "##........##"
-  ],
-  "ship": { "x": 5, "y": 5 },
-  "initialExploredRadius": 2,
-  "forecastHorizonDays": 2
-}
+      x→ 20 21 22 23 24 25 26 27 28 29 30 31
+ y=20     #  #  .  .  .  o  o  .  .  .  #  #
+ y=21     #  .  .  m  .  o  o  .  .  ?  .  #
+ y=22     .  .  .  .  .  .  .  .  .  .  .  .
+ y=23     .  .  #  .  .  .  .  .  #  .  .  .
+ y=24     .  .  .  .  .  .  .  .  .  .  m  .
+ y=25     o  .  .  .  .  S  .  .  .  .  .  .
+ y=26     o  o  .  .  .  .  .  .  #  .  .  .
+ y=27     .  .  .  m  .  .  .  .  .  .  .  .
+ y=28     .  m  .  .  #  .  .  .  .  i  i  .
+ y=29     .  .  .  .  .  .  .  .  .  i  o  o
+ y=30     #  .  .  .  .  .  m  .  .  .  o  o
+ y=31     #  #  .  .  .  .  .  .  .  .  #  #
 ```
 
 | Carácter | Terreno | Regla |
 | --- | --- | --- |
-| `.` | `llano` | Se puede construir. |
+| `.` | `llano` | Se puede construir y caminar. |
 | `#` | `roca` | Bloqueado. |
 | `o` | `crater` | Bloqueado. |
-| `i` | `hielo` | Solo admite el extractor. Casillas: (9,8), (10,8), (9,9). |
-| `m` | `mineral` | Se recolecta una vez. Casillas: (3,7), (1,8), (3,1), (10,4), (6,10). |
-| `?` | `misterio` | Región del descubrimiento, en (9,1). |
-| `S` | `nave` | Nave inicial, en (5,5). |
+| `i` | `hielo` | Solo admite el extractor. En el sector P0: (29,28), (30,28), (29,29). |
+| `m` | `mineral` | Se recolecta una vez. En el sector P0: (23,27), (21,28), (23,21), (30,24), (26,30). |
+| `?` | `misterio` | Región del descubrimiento, en (29,21). |
+| `S` | `nave` | Nave inicial, en (25,25). |
 
-**Zona explorada al empezar:** el cuadrado de 5 × 5 alrededor de la nave, de `x` 3 a 7 y de `y` 3 a 7. El mineral de (3,7) está dentro: sirve para enseñar a recolectar el primer día.
+**Zona explorada al empezar:** el cuadrado de 5 × 5 alrededor de la nave, de `x` 23 a 27 y de `y` 23 a 27. El mineral de (23,27) está dentro: sirve para enseñar a recolectar el primer día.
 
 **Exploración:** se explora una casilla sin explorar que toque, también en diagonal, a una explorada. Cuesta 1 PA y revela el bloque de 3 × 3 centrado en ella. Detalle en [componentes/mapa.md](../componentes/mapa.md).
 
-**Pistas sin azar:** el tutorial dice "Los sensores detectan hielo al sureste de la nave". Explorar (8,8) revela el hielo de (9,8) y (9,9).
+**Pistas sin azar:** el tutorial dice "Los sensores detectan hielo al sureste de la nave". Explorar (28,28) revela el hielo de (29,28) y (29,29).
 
 ## Condiciones iniciales
 
@@ -112,19 +109,19 @@ Programa canónico (`canonical: true`). Las columnas muestran el estado **al cer
 
 | Día | Acciones | Energía | Oxígeno | Agua | Alimentos | Materiales | Racha | Exposición |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | Panel (4,4) · panel (5,4) · recolectar (3,7) · explorar (8,8) | 10/20 | 20 | 20 | 28 | 43 | 0 | 1 |
-| 2 | Extractor (9,8) · reciclador (6,4) | 20/20 | 16 | 16 | 24 | 27 | 0 | 2 |
-| 3 | Generador (4,5) · invernadero (6,6) | 20/20 | 12 | 21 | 20 | 9 | 0 | 3 |
-| 4 · sombra 25 % | Explorar (2,8) · recolectar (1,8) · batería (4,6) · explorar (3,2) | 10/20 | 14 | 22 | 16 | 19 | 0 | 4 |
-| 5 | Refugio (6,5) · recolectar (3,1) | 12/40 | 16 | 23 | 12 | 20 | 0 | 5 |
-| 6 | Panel (3,4) | 14/40 | 18 | 24 | 8 | 14 | 0 | 6 |
+| 1 | Panel (24,24) · panel (25,24) · recolectar (23,27) · explorar (28,28) | 10/20 | 20 | 20 | 28 | 43 | 0 | 1 |
+| 2 | Extractor (29,28) · reciclador (26,24) | 20/20 | 16 | 16 | 24 | 27 | 0 | 2 |
+| 3 | Generador (24,25) · invernadero (26,26) | 20/20 | 12 | 21 | 20 | 9 | 0 | 3 |
+| 4 · sombra 25 % | Explorar (22,28) · recolectar (21,28) · batería (24,26) · explorar (23,22) | 10/20 | 14 | 22 | 16 | 19 | 0 | 4 |
+| 5 | Refugio (26,25) · recolectar (23,21) | 12/40 | 16 | 23 | 12 | 20 | 0 | 5 |
+| 6 | Panel (23,24) | 14/40 | 18 | 24 | 8 | 14 | 0 | 6 |
 | 7 | — | 24/40 | 20 | 25 | 28 | 14 | 1 | 7 |
 | 8 · tormenta severa | Decidir: refugiar | 28/40 | 22 | 26 | 24 | 14 | 2 | 13 |
 | 9 | — | 38/40 | 24 | 27 | 20 | 14 | 3 | 14 |
 
 Resultado: victoria, 9 días usados, plazo terrestre restante 45.
 
-**Variante:** en el día 8 decidir "seguir trabajando", construir un invernadero en (7,6) y explorar (8,4) y (10,4). Resultado: exposición 58 al cerrar el día, 2 PA por día desde el día 9, victoria el día 11 con exposición 61, materiales 4 y plazo restante 43.
+**Variante:** en el día 8 decidir "seguir trabajando", construir un invernadero en (27,26) y explorar (28,24) y (30,24). Resultado: exposición 58 al cerrar el día, 2 PA por día desde el día 9, victoria el día 11 con exposición 61, materiales 4 y plazo restante 43.
 
 **Variante:** apagar el invernadero el día 4 y encenderlo el día 5. La cosecha llega el día 8 con 18 raciones en lugar de 24 el día 7, los alimentos bajan a 4 y la victoria se retrasa al día 14.
 
@@ -132,10 +129,10 @@ Resultado: victoria, 9 días usados, plazo terrestre restante 45.
 
 | Día | Acciones | Energía | Oxígeno | Agua | Alimentos | Materiales | Racha | Exposición |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | Panel (4,4) · panel (5,4) · recolectar (3,7) · explorar (8,8) | 16/20 | 28 | 28 | 36 | 58 | 0 | 1 |
-| 2 | Extractor (9,8) · reciclador (6,4) | 20/20 | 24 | 24 | 32 | 42 | 0 | 2 |
-| 3 | Generador (4,5) · invernadero (6,6) | 20/20 | 20 | 29 | 28 | 24 | 0 | 3 |
-| 4 | Refugio (6,5) | 20/20 | 22 | 30 | 24 | 10 | 1 | 4 |
+| 1 | Panel (24,24) · panel (25,24) · recolectar (23,27) · explorar (28,28) | 16/20 | 28 | 28 | 36 | 58 | 0 | 1 |
+| 2 | Extractor (29,28) · reciclador (26,24) | 20/20 | 24 | 24 | 32 | 42 | 0 | 2 |
+| 3 | Generador (24,25) · invernadero (26,26) | 20/20 | 20 | 29 | 28 | 24 | 0 | 3 |
+| 4 | Refugio (26,25) | 20/20 | 22 | 30 | 24 | 10 | 1 | 4 |
 | 5 · sombra 50 % | — | 14/20 | 24 | 31 | 20 | 10 | 2 | 5 |
 | 6 | — | 16/20 | 26 | 32 | 16 | 10 | 3 | 6 |
 | 7 | — | 18/20 | 28 | 33 | 36 | 10 | 4 | 7 |
@@ -148,12 +145,12 @@ Resultado: victoria, plazo terrestre restante 55. **Variante:** no refugiarse el
 
 | Día | Acciones | Energía | Oxígeno | Agua | Alimentos | Materiales | Racha | Exposición |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | Recolectar (3,7) · panel (4,4) · panel (5,4) · explorar (8,8) | 8/20 | 16 | 16 | 20 | 37 | 0 | 1 |
-| 2 | Extractor (9,8) · invernadero (6,6) | 20/20 | 12 | 12 | 16 | 19 | 0 | 2 |
-| 3 | Reciclador (6,4) · generador (4,5) | 20/20 | 8 | 12 | 12 | 3 | 0 | 3 |
-| 4 | Explorar (2,8) · recolectar (1,8) · explorar (3,2) · recolectar (3,1) | 20/20 | 10 | 13 | 8 | 33 | 0 | 4 |
-| 5 · sombra 25 % | Refugio (6,5) · panel (3,4) | 10/20 | 12 | 14 | 4 | 13 | 0 | 5 |
-| 6 · sombra 25 % | Batería (4,6) | 2/20 | 14 | 15 | 24 | 8 | 0 | 6 |
+| 1 | Recolectar (23,27) · panel (24,24) · panel (25,24) · explorar (28,28) | 8/20 | 16 | 16 | 20 | 37 | 0 | 1 |
+| 2 | Extractor (29,28) · invernadero (26,26) | 20/20 | 12 | 12 | 16 | 19 | 0 | 2 |
+| 3 | Reciclador (26,24) · generador (24,25) | 20/20 | 8 | 12 | 12 | 3 | 0 | 3 |
+| 4 | Explorar (22,28) · recolectar (21,28) · explorar (23,22) · recolectar (23,21) | 20/20 | 10 | 13 | 8 | 33 | 0 | 4 |
+| 5 · sombra 25 % | Refugio (26,25) · panel (23,24) | 10/20 | 12 | 14 | 4 | 13 | 0 | 5 |
+| 6 · sombra 25 % | Batería (24,26) | 2/20 | 14 | 15 | 24 | 8 | 0 | 6 |
 | 7 | — | 12/40 | 16 | 16 | 20 | 8 | 1 | 7 |
 | 8 · tormenta severa | Decidir: refugiar | 14/40 | 18 | 17 | 16 | 8 | 2 | 13 |
 | 9 · tormenta severa | Decidir: refugiar | 16/40 | 20 | 18 | 12 | 8 | 0 | 19 |

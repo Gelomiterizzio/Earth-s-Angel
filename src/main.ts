@@ -1,6 +1,7 @@
 // AI-assisted: Antigravity (Gemini) and OpenAI Codex; integrated from A and B.
 import type { AppContext } from './app/context';
 import { createFlow } from './app/flow';
+import { mountPresentationMode, recoverInterruptedPresentation } from './app/presentation';
 import { createI18n } from './app/i18n';
 import { createOptionsService } from './app/options';
 import { createPersistenceService } from './app/persistence';
@@ -17,6 +18,8 @@ function boot(): void {
   const uiRoot = document.getElementById('ui');
   if (!mapRoot || !uiRoot) return;
 
+  // Before anything reads storage: undo a presentation that was cut short.
+  recoverInterruptedPresentation();
   const options = createOptionsService();
   const i18n = createI18n(options.get().language);
   options.subscribe(({ language }) => i18n.setLang(language));
@@ -51,6 +54,9 @@ function boot(): void {
   attachAudio(audio, store, flow);
   // The mounted UI and map handle their own keyboard shortcuts.
   flow.go('titulo');
+
+  // X starts or stops presentation mode (the game plays itself), in every build.
+  mountPresentationMode(ctx);
 
   if (import.meta.env.DEV) {
     void import('./app/debug').then(({ mountDebugTools }) => mountDebugTools(ctx));

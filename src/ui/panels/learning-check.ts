@@ -1,6 +1,7 @@
 // AI-assisted: Cursor Grok 4.7 and OpenAI Codex. Human review by C pending.
 import type { AppContext } from '../app-bridge';
 import { el, on } from '../dom';
+import { scienceReply } from './science-card';
 
 export type LearnAnswer = 'A' | 'B' | 'C';
 
@@ -68,18 +69,33 @@ export function mountLearningCheck(root: HTMLElement, ctx: AppContext, phase: 'p
   veil.append(dialog);
   root.append(veil);
   let closed = false;
+  let answer: LearnAnswer | null = null;
+  const previous = document.activeElement;
 
   const close = (): void => {
     if (closed) return;
     closed = true;
     stop();
     veil.remove();
+    if (phase === 'pre') {
+      document.getElementById('map')?.focus({ preventScroll: true });
+    } else {
+      const target = previous instanceof HTMLElement && !previous.hidden ? previous : root.querySelector('h1');
+      target?.focus({ preventScroll: true });
+    }
   };
 
   const paint = (): void => {
-    title.textContent = ctx.t('ui.learn.prompt');
-    skip.textContent = ctx.t('ui.learn.skip');
+    title.textContent = ctx.t(phase === 'pre' ? 'ui.learn.prompt' : 'ui.learn.reviewPrompt');
+    skip.textContent = ctx.t(answer ? 'ui.learn.continue' : 'ui.learn.skip');
     options.replaceChildren();
+    if (phase === 'post' && answer) {
+      const { feedback } = scienceReply(ctx, answer === 'B', ['medic', 'engineer'], ctx.t('ui.practice.answer', {
+        choice: 'B', label: ctx.t('ui.learn.B'),
+      }), ctx.t('ui.practice.solarStorm.why'));
+      options.append(feedback);
+      return;
+    }
     for (const id of ['A', 'B', 'C'] as const) {
       const choice = el('button', 'btn', ctx.t(`ui.learn.${id}`));
       choice.type = 'button';
@@ -88,8 +104,9 @@ export function mountLearningCheck(root: HTMLElement, ctx: AppContext, phase: 'p
         ctx.audio.playSfx('sfx-confirm');
         record(phase, id);
         if (phase === 'post') {
-          options.replaceChildren(el('p', 'suggestion', ctx.t('ui.learn.after')));
-          skip.textContent = ctx.t('ui.learn.continue');
+          answer = id;
+          paint();
+          options.querySelector<HTMLElement>('.science-speech')?.focus({ preventScroll: true });
           return;
         }
         close();

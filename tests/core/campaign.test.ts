@@ -24,9 +24,9 @@ const lunarVictory = () => runPlan('media', MEDIA_PLAN, data).finalState;
 const MOON_PLANS = { facil: FACIL_PLAN, media: MEDIA_PLAN, imposible: IMPOSIBLE_PLAN };
 
 const moonScan: Action[] = [
-  { type: 'EXPLORE', x: 8, y: 3 },
-  { type: 'EXPLORE', x: 10, y: 2 },
-  { type: 'SCAN', x: 10, y: 2 },
+  { type: 'EXPLORE', x: 28, y: 23 },
+  { type: 'EXPLORE', x: 30, y: 22 },
+  { type: 'SCAN', x: 30, y: 22 },
 ];
 
 function runMars(difficulty: DifficultyId, secret = false): GameState {
@@ -81,7 +81,7 @@ describe('campaign transitions and persistence', () => {
   it('transfers the lunar supplies and crew exactly once and preserves the Mars start on retry', () => {
     const moon = lunarVictory();
     const mars = accept(applyTransition(moon, 'luna->marte', data));
-    expect(mars.mission.map).toMatchObject({ width: 20, height: 20 });
+    expect(mars.mission.map).toMatchObject({ width: 81, height: 81 });
     expect(mars.campaign.earthDaysRemaining).toBe(55);
     expect(mars.campaign.manifest?.supplies).toEqual({
       energia: 0, oxigeno: 12, agua: 13, alimentos: 10, materiales: 7,
