@@ -92,3 +92,15 @@
   top: auto;
   bottom: calc(100cqh * 24 / 720);
 }
+
+/* Speed control shown during X and Z, beside the NASA Space Apps badge. */
+.presentation-speed {
+  z-index: 902;
+  align-self: center;
+  font-size: calc(100cqw * 15 / 1280);
+}
+.presentation-speed.is-floating {
+  position: absolute;
+  left: calc(100cqw * 16 / 1280);
+  bottom: calc(100cqh * 16 / 720);
+}

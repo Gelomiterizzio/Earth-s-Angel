@@ -146,6 +146,7 @@ export function mountPresentationMode(ctx: AppContext, getWalk: () => LunarWalkC
   let shield: HTMLElement | null = null;
   let caption: HTMLElement | null = null;
   let speedLabel: HTMLElement | null = null;
+  let speedTimer: ReturnType<typeof setInterval> | undefined;
   let speedIndex = NORMAL_SPEED;
 
   /**
@@ -209,6 +210,20 @@ export function mountPresentationMode(ctx: AppContext, getWalk: () => LunarWalkC
   }
 
   /** On the results and credits the caption moves to the bottom so it never hides their titles. */
+  /** Keep the speed control beside the Space Apps badge of the current screen. */
+  function placeSpeed(): void {
+    if (!speedLabel) return;
+    const badge = [...document.querySelectorAll<HTMLElement>('.space-apps-entry')]
+      .find((node) => node.offsetParent !== null && !node.closest('[hidden]'));
+    if (badge) {
+      if (speedLabel.nextElementSibling !== badge) badge.before(speedLabel);
+      speedLabel.classList.remove('is-floating');
+    } else if (!speedLabel.classList.contains('is-floating') || !speedLabel.isConnected) {
+      (document.getElementById('stage') ?? document.body).append(speedLabel);
+      speedLabel.classList.add('is-floating');
+    }
+  }
+
   function placeCaption(): void {
     const scene = ctx.flow.current().scene;
     caption?.classList.toggle('presentation-bottom', scene === 'resultado' || scene === 'creditos');
@@ -537,9 +552,14 @@ export function mountPresentationMode(ctx: AppContext, getWalk: () => LunarWalkC
     speedLabel = document.createElement('span');
     speedLabel.className = 'presentation-speed';
     speedLabel.title = ctx.t('ui.presentation.speedHint');
-    caption.append(badge, text, speedLabel, stopButton);
+    caption.append(badge, text, stopButton);
+    // The caption bar is not shown (the show plays without it). Only the speed control stays on
+    // screen, next to the NASA Space Apps badge (bottom bar of the mission), or floating at the
+    // bottom left on screens without that badge.
     showSpeed();
-    stage.append(shield, caption);
+    stage.append(shield);
+    placeSpeed();
+    speedTimer = setInterval(placeSpeed, 300);
 
     await (mode === 'defeat' ? runDefeat() : runVictory());
     if (!stopped) stop();
@@ -582,5 +602,7 @@ export function mountPresentationMode(ctx: AppContext, getWalk: () => LunarWalkC
     pending?.();
     shield?.remove();
     caption?.remove();
+    speedLabel?.remove();
+    clearInterval(speedTimer);
   };
 }

@@ -3,7 +3,7 @@ import { campaignFlow, type AppContext, type Screen } from '../app-bridge';
 import { readMissionResult } from '../core-bridge';
 import { button } from '../components/button';
 import { openDialog } from '../components/dialog';
-import { bindChrome, demoSeed, press, showNarrow } from '../chrome';
+import { bindChrome, press, showNarrow } from '../chrome';
 import { cleaner, el, on } from '../dom';
 import { mountTitleCrew } from './title-crew';
 import { spaceAppsEntry } from '../components/space-apps';
@@ -58,11 +58,6 @@ function mountTitle(root: HTMLElement, ctx: AppContext): () => void {
     }, { once: true });
     logo.addEventListener('error', () => logo.remove(), { once: true });
     logo.src = 'assets/ui/logo.png';
-
-    if (demoSeed()) {
-      const flag = el('p', 'demo-flag', ctx.t('ui.title.demoSeed'));
-      brand.append(flag);
-    }
 
     const actions = el('div', 'menu-actions');
     const flow = campaignFlow(ctx.flow);
