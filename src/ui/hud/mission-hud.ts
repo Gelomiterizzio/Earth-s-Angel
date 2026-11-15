@@ -460,16 +460,64 @@ function objectives(ctx: AppContext, state: GameState): HTMLElement {
   const block = el('section');
   block.dataset.tutorial = 'hud-objectives';
   const streakTarget = ctx.data.difficulty[state.campaign.difficulty]?.levels[state.mission.level]?.streakDays;
-  block.append(el('h2', 'zone-title', ctx.t('ui.hud.objectives')));
-  block.append(el('p', undefined, ctx.t('ui.hud.streak', { current: state.mission.streak, target: streakTarget ?? '—' })));
-  const list = el('ul', 'goal-list');
+  const met = state.mission.objectives.filter((goal) => goal.met).length;
+  const total = state.mission.objectives.length;
+  const title = el('h2', 'zone-title zone-title-count');
+  title.append(el('span', undefined, ctx.t('ui.hud.objectives')), el('span', 'zone-count', `${met} / ${total}`));
+  block.append(title);
+  block.append(streakRow(ctx, state.mission.streak, streakTarget));
+  // AI-assisted: Claude Code (claude-opus-5-5). Status chip, name, numbers and a small bar per goal.
+  const list = el('ul', 'goal-list goal-board');
   for (const goal of state.mission.objectives) {
-    const progress = goal.current !== undefined && goal.target !== undefined ? ` ${goal.current} / ${goal.target}` : '';
-    list.append(el('li', undefined, `${goal.met ? ctx.t('ui.hud.met') : ctx.t('ui.hud.pending')} ${ctx.t(`ui.objective.${goal.id}`)}${progress}`));
+    const hasNumbers = goal.current !== undefined && goal.target !== undefined;
+    const share = hasNumbers && goal.target ? Math.max(0, Math.min(1, (goal.current ?? 0) / goal.target)) : goal.met ? 1 : 0;
+    const status = goal.met ? 'met' : share > 0 ? 'progress' : 'pending';
+    const name = ctx.t(`ui.objective.${goal.id}`);
+    const item = el('li', 'goal');
+    item.dataset.state = status;
+    item.setAttribute('aria-label', `${goal.met ? ctx.t('ui.hud.met') : ctx.t('ui.hud.pending')}: ${name}${hasNumbers ? ` ${goal.current} / ${goal.target}` : ''}`);
+    const chip = el('span', 'goal-chip', goal.met ? '✓' : '○');
+    chip.title = goal.met ? ctx.t('ui.hud.met') : ctx.t('ui.hud.pending');
+    chip.setAttribute('aria-hidden', 'true');
+    const label = el('span', 'goal-name', name);
+    label.setAttribute('aria-hidden', 'true');
+    item.append(chip, label);
+    if (hasNumbers) {
+      const numbers = el('span', 'goal-num');
+      numbers.setAttribute('aria-hidden', 'true');
+      numbers.append(el('b', undefined, String(goal.current)), document.createTextNode(` / ${goal.target}`));
+      item.append(numbers);
+    }
+    const bar = el('span', 'goal-bar');
+    bar.setAttribute('aria-hidden', 'true');
+    const fill = el('i');
+    fill.style.setProperty('--share', String(share));
+    bar.append(fill);
+    item.append(bar);
+    list.append(item);
   }
   block.append(list);
   return block;
 }
+
+/** Stability streak as a number and one dot per day of the target. */
+function streakRow(ctx: AppContext, current: number, target: number | undefined): HTMLElement {
+  const row = el('p', 'hud-streak');
+  row.setAttribute('aria-label', ctx.t('ui.hud.streak', { current, target: target ?? '—' }));
+  const label = el('span', 'hud-streak-label', ctx.t('ui.hud.streakShort'));
+  const value = el('span', 'hud-streak-value');
+  value.append(el('b', undefined, String(current)), document.createTextNode(` / ${target ?? '—'}`));
+  const dots = el('span', 'hud-streak-dots');
+  for (let i = 0; i < (target ?? 0); i++) dots.append(el('i', i < current ? 'is-on' : undefined));
+  for (const part of [label, value, dots]) part.setAttribute('aria-hidden', 'true');
+  row.append(label, value, dots);
+  if (target !== undefined && current >= target) row.classList.add('is-done');
+  return row;
+}
+
+const EVENT_ICON: Record<string, string> = {
+  sombra: '🌑', 'tormenta-solar': '☢', 'tormenta-polvo': '🌪', averia: '🔧',
+};
 
 function forecast(ctx: AppContext, state: GameState): HTMLElement {
   const block = el('section');
@@ -485,12 +533,16 @@ function forecast(ctx: AppContext, state: GameState): HTMLElement {
     ...state,
     campaign: { ...state.campaign, design: { ...designOf(state.campaign), comms: 'estandar' } },
   }, ctx.data) - bonus : withoutSensor;
-  if (items.length === 0) list.append(el('li', undefined, ctx.t(mars ? 'ui.hud.marsForecastEmpty' : 'ui.hud.forecastEmpty')));
+  if (items.length === 0) list.append(el('li', 'forecast-empty', ctx.t(mars ? 'ui.hud.marsForecastEmpty' : 'ui.hud.forecastEmpty')));
   for (const item of items) {
     const when = item.inDays === 0
       ? ctx.t(mars ? 'ui.hud.thisSol' : 'ui.hud.today')
       : ctx.t(mars ? (item.inDays === 1 ? 'ui.hud.nextSol' : 'ui.hud.inSols') : 'ui.hud.inDays', { days: item.inDays });
-    const line = el('li', undefined, `${when} · ${ctx.t(`content.event.${item.type}.name`)}`);
+    const line = el('li', 'forecast-item');
+    line.dataset.urgency = item.inDays === 0 ? 'now' : item.inDays === 1 ? 'soon' : 'later';
+    const icon = el('span', 'forecast-icon', EVENT_ICON[item.type] ?? '•');
+    icon.setAttribute('aria-hidden', 'true');
+    line.append(el('span', 'forecast-when', when), icon, el('span', 'forecast-name', ctx.t(`content.event.${item.type}.name`)));
     if (bonus > 0 && item.inDays > withoutSensor) {
       line.append(el('small', 'onboard-forecast', ctx.t(bonus === 1 ? 'ui.onboard.sensor' : 'ui.onboard.sensorPlural', { n: bonus })));
     } else if (hasAntenna && item.inDays > baseHorizon) {

@@ -202,9 +202,9 @@
   "ui.result.copy": "Copiar resumen",
   "ui.credits.heading": "Créditos",
   "ui.credits.team": "Equipo",
-  "ui.credits.roleA": "Simulación y arquitectura — el equipo aún debe poner el nombre.",
-  "ui.credits.roleB": "Jugabilidad y ciencia — el equipo aún debe poner el nombre.",
-  "ui.credits.roleC": "Interfaz, arte y entrega — el equipo aún debe poner el nombre.",
+  "ui.credits.roleA": "Simulación y arquitectura — Oscar Fernando Calustro Tellez.",
+  "ui.credits.roleB": "Jugabilidad y ciencia — Ruben Dario Quispe Andrade.",
+  "ui.credits.roleC": "Interfaz, arte y entrega — Angel Mauricio Viveros Cortez.",
   "ui.credits.event": "NASA Space Apps Challenge 2026. Sede: Santa Cruz de la Sierra. Reto: Juego de diseño de misiones espaciales (Space Mission Design Game).",
   "ui.credits.nasa": "Fuentes NASA",
   "ui.credits.donki": "Registros de clima espacial: NASA CCMC DONKI. Datos de archivo, no una señal en vivo.",
@@ -634,5 +634,6 @@
   "ui.presentation.loseDesign2": "El cohete más barato y la trayectoria más lenta, para ahorrar dinero.",
   "ui.presentation.loseDesign3": "Cargan materiales y una batería… pero nada de oxígeno, agua ni comida.",
   "ui.presentation.loseDesign4": "Cabe en el presupuesto, pero el plan ignora el soporte vital. ¡Despegue!",
-  "ui.options.randomMap": "Mapa aleatorio (partidas nuevas): hielo y minerales en otros lugares"
+  "ui.options.randomMap": "Mapa aleatorio (partidas nuevas): hielo y minerales en otros lugares",
+  "ui.hud.streakShort": "Racha"
 }

@@ -202,9 +202,9 @@
   "ui.result.copy": "Copy summary",
   "ui.credits.heading": "Credits",
   "ui.credits.team": "Team",
-  "ui.credits.roleA": "Simulation and architecture — name to be added by the team.",
-  "ui.credits.roleB": "Play and science — name to be added by the team.",
-  "ui.credits.roleC": "Interface, art and delivery — name to be added by the team.",
+  "ui.credits.roleA": "Simulation and architecture — Oscar Fernando Calustro Tellez.",
+  "ui.credits.roleB": "Play and science — Ruben Dario Quispe Andrade.",
+  "ui.credits.roleC": "Interface, art and delivery — Angel Mauricio Viveros Cortez.",
   "ui.credits.event": "NASA Space Apps Challenge 2026. Local event: Santa Cruz de la Sierra. Challenge: Space Mission Design Game.",
   "ui.credits.nasa": "NASA sources",
   "ui.credits.donki": "Space weather event records: NASA CCMC DONKI. Archived data, not a live feed.",
@@ -634,5 +634,6 @@
   "ui.presentation.loseDesign2": "The cheapest rocket and the slowest trajectory, to save money.",
   "ui.presentation.loseDesign3": "They pack materials and a battery… but no oxygen, water or food.",
   "ui.presentation.loseDesign4": "It fits the budget, but the plan ignores life support. Launch!",
-  "ui.options.randomMap": "Random map (new games): ice and minerals in different places"
+  "ui.options.randomMap": "Random map (new games): ice and minerals in different places",
+  "ui.hud.streakShort": "Streak"
 }

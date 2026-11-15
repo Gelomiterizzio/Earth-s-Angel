@@ -370,3 +370,87 @@
 .clue-log p {
   margin: calc(6 * var(--px)) 0 0;
 }
+
+/* Objectives, forecast and clue log with colours per state (AI-assisted: Claude Code). */
+.zone-title-count { display: flex; justify-content: space-between; align-items: baseline; }
+.zone-count { font-family: var(--font-title); color: var(--accent); }
+.hud-streak { display: flex; align-items: center; gap: calc(6 * var(--px)); }
+.hud-streak-label { color: var(--text-dim); }
+.hud-streak-value { font-family: var(--font-title); color: var(--text); }
+.hud-streak-value b, .goal-num b { font-weight: 400; }
+.hud-streak-dots { display: inline-flex; gap: calc(3 * var(--px)); }
+.hud-streak-dots i {
+  width: calc(9 * var(--px));
+  height: calc(9 * var(--px));
+  border: calc(1 * var(--px)) solid var(--accent);
+  border-radius: 50%;
+}
+.hud-streak-dots i.is-on { background: var(--accent); box-shadow: 0 0 calc(5 * var(--px)) var(--accent); }
+.hud-streak.is-done .hud-streak-value { color: var(--safe); }
+
+.hud-side .goal-board { row-gap: calc(6 * var(--px)); }
+.goal {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  column-gap: calc(5 * var(--px));
+  row-gap: calc(2 * var(--px));
+  line-height: 1.2;
+}
+.goal-chip {
+  display: inline-grid;
+  place-items: center;
+  width: calc(16 * var(--px));
+  height: calc(16 * var(--px));
+  border-radius: 50%;
+  font-size: calc(11 * var(--px));
+  font-weight: 700;
+}
+.goal[data-state="met"] .goal-chip { background: var(--safe); color: var(--bg); }
+.goal[data-state="progress"] .goal-chip { border: calc(1.5 * var(--px)) solid var(--warn); color: var(--warn); }
+.goal[data-state="pending"] .goal-chip { border: calc(1.5 * var(--px)) solid var(--text-dim); color: var(--text-dim); }
+.goal-name { color: var(--text); }
+.goal[data-state="met"] .goal-name { color: var(--safe); }
+.goal-num { font-family: var(--font-title); white-space: nowrap; color: var(--text-dim); }
+.goal[data-state="met"] .goal-num b { color: var(--safe); }
+.goal[data-state="progress"] .goal-num b { color: var(--warn); }
+.goal[data-state="pending"] .goal-num b { color: var(--crit); }
+.goal-bar {
+  grid-column: 2 / -1;
+  display: block;
+  height: calc(4 * var(--px));
+  border-radius: 99px;
+  background: color-mix(in srgb, var(--border) 70%, transparent);
+  overflow: hidden;
+}
+.goal-bar i {
+  display: block;
+  height: 100%;
+  width: calc(var(--share, 0) * 100%);
+  background: var(--warn);
+  border-radius: inherit;
+  transition: width .3s ease-out;
+}
+.goal[data-state="met"] .goal-bar i { background: var(--safe); }
+
+.forecast-item { display: flex; align-items: center; gap: calc(6 * var(--px)); flex-wrap: wrap; }
+.forecast-when {
+  padding: calc(1 * var(--px)) calc(6 * var(--px));
+  border-radius: calc(4 * var(--px));
+  font-size: calc(12 * var(--px));
+  font-weight: 700;
+  background: color-mix(in srgb, var(--focus) 18%, transparent);
+  color: var(--focus);
+}
+.forecast-item[data-urgency="soon"] .forecast-when { background: color-mix(in srgb, var(--warn) 22%, transparent); color: var(--warn); }
+.forecast-item[data-urgency="now"] .forecast-when { background: color-mix(in srgb, var(--crit) 25%, transparent); color: var(--crit); }
+.forecast-name { color: var(--text); font-weight: 600; }
+.forecast-empty, .clue-empty { color: var(--text-dim); font-style: italic; }
+
+.clue-item { display: flex; gap: calc(6 * var(--px)); align-items: baseline; }
+.clue-found { color: var(--accent); font-weight: 700; }
+.clue-distance, .clue-signal { color: var(--focus); }
+.clue-lab { color: var(--text-dim); }
+.clue-lab-bar { margin-top: calc(4 * var(--px)); }
+.clue-lab-bar i { background: var(--focus); }
+.reduced-motion .goal-bar i { transition: none; }

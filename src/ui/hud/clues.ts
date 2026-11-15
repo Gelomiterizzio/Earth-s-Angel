@@ -22,7 +22,12 @@ export function clueLog(ctx: AppContext, state: CampaignState, open: boolean): H
     if (!beacon) continue;
     const name = ctx.t(`ui.clues.level.${level}`);
     const label = (key: string, params = {}): void => {
-      list.append(el('li', undefined, ctx.t(`ui.clues.${key}`, { level: name, ...params })));
+      // AI-assisted: Claude Code (claude-opus-5-5). Icon and colour per kind of clue.
+      const item = el('li', `clue-item clue-${key}`);
+      const icon = el('span', 'clue-icon', key === 'found' ? '★' : key === 'distance' || key === 'signal' ? '📡' : '🔎');
+      icon.setAttribute('aria-hidden', 'true');
+      item.append(icon, el('span', undefined, ctx.t(`ui.clues.${key}`, { level: name, ...params })));
+      list.append(item);
     };
     if (campaign.narrativeFlags[BEACON_FLAGS[level]]) label('found');
     if (campaign.clues.includes(`${level}.column`)) label('column', { n: beacon.x });
@@ -33,11 +38,19 @@ export function clueLog(ctx: AppContext, state: CampaignState, open: boolean): H
       else label('signal');
     }
   }
-  if (!list.childElementCount) list.append(el('li', undefined, ctx.t('ui.clues.empty')));
+  if (!list.childElementCount) list.append(el('li', 'clue-empty', ctx.t('ui.clues.empty')));
   details.append(list);
   if (data.levels[mission.level]?.secret && data.constants.labClueDays !== undefined
     && !campaign.clues.includes(`${mission.level}.row`)) {
-    details.append(el('p', undefined, ctx.t('ui.clues.lab', { n: mission.labDays ?? 0, target: data.constants.labClueDays })));
+    const days = mission.labDays ?? 0;
+    const target = data.constants.labClueDays;
+    const lab = el('p', 'clue-lab', ctx.t('ui.clues.lab', { n: days, target }));
+    const bar = el('span', 'goal-bar clue-lab-bar');
+    bar.setAttribute('aria-hidden', 'true');
+    const fill = el('i');
+    fill.style.setProperty('--share', String(target > 0 ? Math.min(1, days / target) : 0));
+    bar.append(fill);
+    details.append(lab, bar);
   }
   block.append(details);
   return block;
