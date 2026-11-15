@@ -196,7 +196,8 @@ export function createFlow(opts: CreateFlowOptions): Flow {
       ensureStoreSubscription();
       const ctx = opts.getContext();
       const { seed, canonical } = resolveSeed(opts.search);
-      const created = createCampaign(difficulty, seed, ctx.data, { canonical });
+      // The random map option only affects new games started by the player, never X or Z.
+      const created = createCampaign(difficulty, seed, ctx.data, { canonical, randomMap: ctx.options.get().randomMap });
       const opened = startDay(created, ctx.data);
       ctx.store.replaceState(opened.state, opened.events);
 

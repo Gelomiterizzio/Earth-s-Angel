@@ -23,6 +23,7 @@ export function getDefaultOptions(): Options {
     fullscreen: false,
     tutorial: true,
     learningCheck: true,
+    randomMap: false,
   };
 }
 
@@ -54,6 +55,7 @@ export function sanitizeOptions(raw: unknown, defaults = getDefaultOptions()): O
     tutorial: typeof obj.tutorial === 'boolean' ? obj.tutorial : defaults.tutorial,
     learningCheck:
       typeof obj.learningCheck === 'boolean' ? obj.learningCheck : defaults.learningCheck,
+    randomMap: typeof obj.randomMap === 'boolean' ? obj.randomMap : defaults.randomMap,
   };
 }
 

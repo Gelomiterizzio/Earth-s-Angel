@@ -153,7 +153,8 @@
     "t08": "Low light is coming. A battery stores energy for that day.",
     "t09": "Solar storm ahead. The shelter takes 2 days: build it today.",
     "t10": "You decide. Each option has a cost.",
-    "t11": "Stable day. Keep the streak to finish the mission."
+    "t11": "Stable day. Keep the streak to finish the mission.",
+    "t04random": "Sensors detect ice somewhere near the base. Explore the terrain in shadow with E to find it."
   },
   "decision": {
     "title": "Solar storm today",

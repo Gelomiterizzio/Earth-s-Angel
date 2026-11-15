@@ -42,7 +42,7 @@ function baseForecastHorizon(state: GameState, data: GameData): number {
 
 function arrived(state: GameState, data: GameData, manifest: TransferManifest) {
   const { difficulty, seed, canonical } = state.campaign;
-  const mission = createMission('marte', difficulty, seed, canonical, data);
+  const mission = createMission('marte', difficulty, seed, canonical, data, { randomMap: state.campaign.randomMap === true });
   const storageBonus = designStorageBonus(state.campaign, data);
   if (storageBonus > 0) {
     for (const id of ['oxigeno', 'agua', 'alimentos', 'materiales'] as const) {

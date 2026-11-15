@@ -37,6 +37,8 @@ export interface Options {
   fullscreen: boolean;
   tutorial: boolean;
   learningCheck: boolean;
+  /** New campaigns place ice and minerals at random (seeded). Presentations X and Z ignore it. */
+  randomMap: boolean;
 }
 
 export interface OptionsService {

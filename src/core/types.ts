@@ -224,6 +224,8 @@ export interface CampaignState {
   history: MissionResult[];
   /** Mission design chosen before the launch to the Moon. Missing in older saves: default design. */
   design?: MissionDesign;
+  /** Ice and minerals placed at random (seeded) instead of the fixed level layout. Option, off by default. */
+  randomMap?: boolean;
 }
 
 export interface GameState {

@@ -53,7 +53,7 @@ export function mountTutorial(root: HTMLElement, ctx: AppContext, notify: (text:
   const show = (step: TutorialStep): void => {
     if (openId === step.id && bubble) {
       const text = bubble.querySelector('p');
-      if (text) text.textContent = ctx.t(step.textKey);
+      if (text) text.textContent = ctx.t(stepText(ctx, step.textKey));
       const practice = bubble.querySelector('.tutorial-practice');
       if (practice) practice.textContent = ctx.t('ui.practice.open');
       return;
@@ -63,7 +63,7 @@ export function mountTutorial(root: HTMLElement, ctx: AppContext, notify: (text:
     bubble = el('div', 'bubble');
     bubble.setAttribute('role', 'dialog');
     bubble.toggleAttribute('data-modal-tip', step.highlight === 'panel-decision');
-    const text = el('p', undefined, ctx.t(step.textKey));
+    const text = el('p', undefined, ctx.t(stepText(ctx, step.textKey)));
     const ok = el('button', 'btn btn-primary', ctx.t('ui.tutorial.ok'));
     ok.type = 'button';
     const skip = el('button', 'btn', ctx.t('ui.tutorial.skipAll'));
@@ -276,4 +276,9 @@ function skipAll(
     }
   }
   hide();
+}
+
+/** On a random map the ice is not where the fixed tutorial says: use the neutral line. */
+function stepText(ctx: AppContext, key: string): string {
+  return key === 'content.tutorial.t04' && ctx.store.getState()?.campaign.randomMap ? 'content.tutorial.t04random' : key;
 }

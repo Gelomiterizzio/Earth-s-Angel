@@ -85,6 +85,12 @@ function mountOptions(root: HTMLElement, ctx: AppContext): () => void {
     checked: ctx.options.get().learningCheck,
     onChange: (checked) => ctx.options.set('learningCheck', checked),
   });
+  // Applies to the next new game; the current campaign keeps its map.
+  const randomMap = toggle({
+    label: ctx.t('ui.options.randomMap'),
+    checked: ctx.options.get().randomMap,
+    onChange: (checked) => ctx.options.set('randomMap', checked),
+  });
 
   const langRow = el('div', 'option-row');
   const langName = el('span', undefined, ctx.t('ui.options.language'));
@@ -102,7 +108,7 @@ function mountOptions(root: HTMLElement, ctx: AppContext): () => void {
   langButtons.append(en, es);
   langRow.append(langName, langButtons);
 
-  list.append(master, music, sfx, muted, subs, motion, tutorial, learning, langRow);
+  list.append(master, music, sfx, muted, subs, motion, tutorial, learning, randomMap, langRow);
 
   let fullscreenRow: HTMLLabelElement | null = null;
   let fullscreenNote = el('p', 'dim', '');
@@ -161,6 +167,7 @@ function mountOptions(root: HTMLElement, ctx: AppContext): () => void {
     setToggle(motion, options.reducedMotion);
     setToggle(tutorial, options.tutorial);
     setToggle(learning, options.learningCheck);
+    setToggle(randomMap, options.randomMap);
     if (fullscreenRow) setToggle(fullscreenRow, options.fullscreen);
     en.setAttribute('aria-pressed', options.language === 'en' ? 'true' : 'false');
     es.setAttribute('aria-pressed', options.language === 'es' ? 'true' : 'false');
@@ -173,6 +180,7 @@ function mountOptions(root: HTMLElement, ctx: AppContext): () => void {
     labelOf(motion, ctx.t('ui.options.reducedMotion'));
     labelOf(tutorial, ctx.t('ui.options.tutorial'));
     labelOf(learning, ctx.t('ui.options.learning'));
+    labelOf(randomMap, ctx.t('ui.options.randomMap'));
     if (fullscreenRow) labelOf(fullscreenRow, ctx.t('ui.options.fullscreen'));
     controlsTitle.textContent = ctx.t('ui.options.controls');
     const items = controls.querySelectorAll('li');

@@ -633,5 +633,6 @@
   "ui.presentation.loseDesign1": "Demo de derrota: los planificadores recortan desde el principio.",
   "ui.presentation.loseDesign2": "El cohete más barato y la trayectoria más lenta, para ahorrar dinero.",
   "ui.presentation.loseDesign3": "Cargan materiales y una batería… pero nada de oxígeno, agua ni comida.",
-  "ui.presentation.loseDesign4": "Cabe en el presupuesto, pero el plan ignora el soporte vital. ¡Despegue!"
+  "ui.presentation.loseDesign4": "Cabe en el presupuesto, pero el plan ignora el soporte vital. ¡Despegue!",
+  "ui.options.randomMap": "Mapa aleatorio (partidas nuevas): hielo y minerales en otros lugares"
 }

@@ -633,5 +633,6 @@
   "ui.presentation.loseDesign1": "Defeat demo: the mission planners cut corners from the very start.",
   "ui.presentation.loseDesign2": "The cheapest rocket and the slowest trajectory, to save money.",
   "ui.presentation.loseDesign3": "They pack materials and a battery… but no oxygen, water or food.",
-  "ui.presentation.loseDesign4": "It fits the budget, but the plan ignores life support. Launch!"
+  "ui.presentation.loseDesign4": "It fits the budget, but the plan ignores life support. Launch!",
+  "ui.options.randomMap": "Random map (new games): ice and minerals in different places"
 }

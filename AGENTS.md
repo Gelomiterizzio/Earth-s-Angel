@@ -17,6 +17,7 @@ Juego educativo 2D por turnos para navegador. Entrada del equipo al NASA Space A
 - **15-nov-2026.** La compilación local incluye una cinemática secreta con el astronauta activo. Se abre desde el [extremo noreste de la Luna](docs/niveles/luna.md#encuentro-secreto) y, al terminar, devuelve el control al mismo punto de la misión.
 
 - **14-nov-2026.** Luna, Marte y Tierra están integrados y verificados en la compilación local. [Comandos y verificación](docs/DESPLIEGUE.md).
+- **15-nov-2026.** Versión definitiva en `EARTH'S ANGEL 2`, rama `main`. Ver CLAUDE.md.
 - **14-nov-2026.** El primer hito del RPG lunar está integrado en la compilación local. Incluye exploración a pie, interacciones de proximidad, diario de misión y un informe de fin de día con materiales y construcciones. [Alcance del RPG](docs/agentes/tareas/T-RPG-A1-mecanicas-de-campana.md).
 - **14-nov-2026.** El mapa lunar ocupa la ventana y permite girar en el sitio. El menú Q permite elegir a un tripulante y limita sus acciones de especialidad según el cargo.
 - **15-nov-2026.** La [Luna](docs/niveles/luna.md#mapa) mide 73 × 73 y [Marte](docs/niveles/marte.md#mapa), 81 × 81. La cámara deja visibles las casillas junto al HUD en los bordes. Los guardados anteriores conservan el progreso al abrir los mapas ampliados.

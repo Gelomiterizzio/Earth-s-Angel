@@ -548,6 +548,7 @@ export function applyAction(
         campaign.seed,
         campaign.canonical,
         data,
+        { randomMap: campaign.randomMap === true },
       );
       const initialEarthDays =
         campaign.level === 'luna'

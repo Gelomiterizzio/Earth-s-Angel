@@ -1,5 +1,6 @@
 // AI-assisted: Antigravity (Gemini), reviewed by A
 
+import { shuffleResources } from './map-shuffle';
 import type {
   Building,
   CampaignState,
@@ -61,18 +62,21 @@ export function createMission(
   seed: string,
   canonical: boolean,
   data: GameData,
+  opts?: { randomMap?: boolean },
 ): MissionState {
   const levelCfg = data.levels[level] ?? data.levels.luna;
   const diffBlock = data.difficulty[difficulty];
   const cfg = diffBlock.levels[level] ?? diffBlock.levels.luna;
 
-  const tiles = parseMapTiles(
+  const fixedTiles = parseMapTiles(
     levelCfg.rows,
     levelCfg.width,
     levelCfg.height,
     levelCfg.ship,
     levelCfg.initialExploredRadius,
   );
+  // Random map option: same resources, other places, decided by the seed.
+  const tiles = opts?.randomMap ? shuffleResources(fixedTiles, level, levelCfg, seed) : fixedTiles;
 
   const shipBuilding: Building = {
     id: 1,
@@ -151,13 +155,14 @@ export function createCampaign(
   difficulty: DifficultyId,
   seed: string,
   data: GameData,
-  opts?: { canonical?: boolean; level?: LevelId },
+  opts?: { canonical?: boolean; level?: LevelId; randomMap?: boolean },
 ): GameState {
   const canonical = opts?.canonical ?? isCanonicalSeed(seed);
   const level = opts?.level ?? 'luna';
   const diffBlock = data.difficulty[difficulty];
 
-  const mission = createMission(level, difficulty, seed, canonical, data);
+  const randomMap = opts?.randomMap === true;
+  const mission = createMission(level, difficulty, seed, canonical, data, { randomMap });
   const campaign: CampaignState = {
     version: 1,
     seed,
@@ -170,6 +175,7 @@ export function createCampaign(
     narrativeFlags: {},
     manifest: null,
     history: [],
+    ...(randomMap ? { randomMap } : {}),
   };
 
   return { campaign, mission };
