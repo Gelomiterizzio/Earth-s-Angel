@@ -4,6 +4,8 @@ Juego educativo 2D por turnos para navegador. Entrada del equipo al NASA Space A
 
 ## Estado del proyecto
 
+- **15-nov-2026.** El diseño previo al lanzamiento aplica cabina, antena, trayectoria y carga. El aviso lunar, el diario y el resultado muestran esas decisiones. [Diseño de la misión](docs/componentes/diseno-de-mision.md).
+
 - **15-nov-2026.** La llegada a Marte muestra cómo se incorporan los dos refuerzos y la tripulación pasa de cuatro a seis.
 
 - **15-nov-2026.** El final marciano aprobado de 28 segundos muestra la celebración de la colonia y el enlace con la Tierra antes de los créditos.
@@ -11,6 +13,8 @@ Juego educativo 2D por turnos para navegador. Entrada del equipo al NASA Space A
 - **15-nov-2026.** Nueva partida muestra la apertura animada aprobada de 45 segundos, con el proyecto EARTH'S ANGEL y la nave EL ANGEL.
 
 - **15-nov-2026.** El servidor local reproduce en bucle la pista ambiental aportada por el usuario a través de los controles de audio existentes.
+
+- **15-nov-2026.** La compilación local incluye una cinemática secreta con el astronauta activo. Se abre desde el [extremo noreste de la Luna](docs/niveles/luna.md#encuentro-secreto) y, al terminar, devuelve el control al mismo punto de la misión.
 
 - **14-nov-2026.** Luna, Marte y Tierra están integrados y verificados en la compilación local. [Comandos y verificación](docs/DESPLIEGUE.md).
 - **14-nov-2026.** El primer hito del RPG lunar está integrado en la compilación local. Incluye exploración a pie, interacciones de proximidad, diario de misión y un informe de fin de día con materiales y construcciones. [Alcance del RPG](docs/agentes/tareas/T-RPG-A1-mecanicas-de-campana.md).

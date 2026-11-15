@@ -93,6 +93,7 @@ Rutas relativas a `public/assets/`.
 | `astronauta-lunar` | [`src/map/astronaut-art.ts`](../src/map/astronaut-art.ts) | 24 × 24 · Canvas | Luna | Cuatro orientaciones, reposo y caminata. Gorra de mando, casco con lámpara y llave, sombrero con muestras, botiquín | Sí | Véase registro de IA | cuatro trajes seleccionables con Q | Equipo Earth’s Angel, arte original asistido por Codex. MIT |
 | `nave-lunar` | [`src/map/art.ts`](../src/map/art.ts) | 32 × 41 · Canvas | Luna | Cabina, antena, escalera, tren de aterrizaje y balizas | Sí | Véase registro de IA | compilación local | Equipo Earth’s Angel, arte original asistido por Codex. MIT |
 | `derrota-espacial` | [`src/ui/cinematics/defeat.ts`](../src/ui/cinematics/defeat.ts) | 320 × 180 · Canvas | Derrota en Luna y Marte | Evacuación, nave averiada, explosión y restos | No | Véase registro de IA | compilación local | Equipo Earth’s Angel, arte original asistido por Codex. MIT |
+| `encuentro-lunar` | [`src/ui/cinematics/lunar-secret-art.ts`](../src/ui/cinematics/lunar-secret-art.ts) | 320 × 180 · Canvas | Encuentro secreto de la Luna | Astronauta activo, ojos en la oscuridad, plataforma de EL ANGEL y celebración | No | Véase registro de IA | compilación local | Guion del usuario y arte original asistido por OpenAI Codex. MIT |
 | `fx-build` | `sprites/fx-build.png` | 96 × 24 · PNG | Tablero | 4 fotogramas | Sí | P-FX | entregado | Equipo Earth’s Angel, arte original asistido por Codex. MIT |
 | `fx-collect` | `sprites/fx-collect.png` | 96 × 24 · PNG | Tablero | 4 fotogramas | Sí | P-FX | entregado | Equipo Earth’s Angel, arte original asistido por Codex. MIT |
 | `icons-16` | `ui/icons-16.png` | 192 × 16 · PNG | HUD | 12 iconos: energía, oxígeno, agua, alimentos, materiales, radiación, puntos de acción, día, Tierra, seguro, preventivo, crítico | Sí | P-ICON | entregado | Equipo Earth’s Angel, arte original asistido por Codex. MIT |
@@ -150,6 +151,7 @@ El servidor de desarrollo reproduce en bucle el MP3 local `src/audio/soundtrack.
 | `music-portal` | Portal | 28 s | Sí |
 | `music-earth` | Pantalla de Tierra | 22 s | Sí |
 | `music-ending` | Cinemáticas «Victoria en Marte» y «Victoria terrestre» | 26 s | Sí |
+| `lunar-secret-score` | Encuentro lunar. Partitura original de OpenAI Codex sintetizada en [Web Audio](../src/ui/cinematics/lunar-secret-score.ts) | 50 s | Una vez |
 | `music-victory` / `music-defeat` | Resultados | 10 s / 14 s | Una vez |
 
 Hay efectos de interfaz, construcción, módulos que entran en funcionamiento, exploración, minería, cosecha, alertas, radio, despegue, aterrizaje y portal. [Implementación y controles](componentes/audio.md). [Procedencia](IA-Y-CREDITOS.md).

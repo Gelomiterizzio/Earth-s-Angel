@@ -6,7 +6,7 @@
 //   game-over sequence shows the world exploding.
 // Pressing the same key again stops. The player's save and options are restored afterwards,
 // even if the page reloads in the middle, so a demo never overwrites a real campaign.
-import { createCampaign, launchWithDesign, startDay, type MissionDesign } from '../core';
+import { createCampaign, DEFAULT_DESIGN, launchWithDesign, startDay, type MissionDesign } from '../core';
 import type { Action, GameState } from '../core/types';
 import { canWalk, type LunarWalkController, type WalkPosition } from '../map';
 import type { AppContext } from './context';
@@ -387,6 +387,8 @@ export function mountPresentationMode(ctx: AppContext, getWalk: () => LunarWalkC
     pick(`[data-design="rocket:${design.rocket}"]`);
     await wait(pace);
     pick(`[data-design="trajectory:${design.trajectory}"]`);
+    pick(`[data-design="ship:${design.ship ?? DEFAULT_DESIGN.ship}"]`);
+    pick(`[data-design="comms:${design.comms ?? DEFAULT_DESIGN.comms}"]`);
     await wait(pace);
     say(`${captions}3`);
     for (const id of design.payload) {
@@ -424,6 +426,7 @@ export function mountPresentationMode(ctx: AppContext, getWalk: () => LunarWalkC
     if (stopped) return;
     ctx.flow.completeCinematic('opening');
     await wait(900);
+    pick('[data-onboard-arrival] button');
 
     await playMission('luna');
     if (stopped) return;
@@ -486,6 +489,7 @@ export function mountPresentationMode(ctx: AppContext, getWalk: () => LunarWalkC
     if (stopped) return;
     ctx.flow.completeCinematic('opening');
     await wait(900);
+    pick('[data-onboard-arrival] button');
 
     await playMission('luna', LOSING_PLAN);
     if (stopped) return;

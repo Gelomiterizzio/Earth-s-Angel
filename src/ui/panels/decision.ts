@@ -1,6 +1,8 @@
 // AI-assisted: Cursor (Composer) and OpenAI Codex. Human review of the integrated layout pending.
 import type { AppContext } from '../../app/context';
+import { designSuitShield } from '../../core/design';
 import { previewEnergy } from '../../core/index';
+import { getOperationalShelterSeats } from '../../core/radiation';
 import { describeSepRecord, findSepRecord } from '../../data/nasa/adapter';
 import type { RadiationLevel, ScheduledEvent } from '../../core/types';
 
@@ -19,14 +21,6 @@ function activeStorm(state: NonNullable<ReturnType<AppContext['store']['getState
         e.startDay <= day &&
         day < e.startDay + e.durationDays,
     ) ?? null
-  );
-}
-
-function hasOperationalShelter(
-  state: NonNullable<ReturnType<AppContext['store']['getState']>>,
-): boolean {
-  return state.mission.buildings.some(
-    (b) => b.type === 'refugio' && b.enabled && state.mission.day >= b.operationalFromDay,
   );
 }
 
@@ -84,9 +78,9 @@ export function mountDecisionPanel(root: HTMLElement, ctx: AppContext): () => vo
     const energyPreview = previewEnergy(state, ctx.data);
     const band = rad > 0 ? ctx.data.constants.exposure[String(rad) as '1' | '2'] : null;
     const shelteredExp = band?.sheltered ?? 0;
-    const unshelteredExp = band?.unsheltered ?? 0;
+    const unshelteredExp = Math.max(0, (band?.unsheltered ?? 0) - designSuitShield(state.campaign, ctx.data));
 
-    const hasShelter = hasOperationalShelter(state);
+    const hasShelter = getOperationalShelterSeats(state.mission.buildings, state.mission.day, ctx.data) > 0;
     const canShelter = hasShelter && energyPreview.shelterAffordable;
     const energyOnHand = state.mission.resources.energia + energyPreview.generated;
     let shelterDisabledReason = '';

@@ -1,6 +1,7 @@
 // AI-assisted: Cursor Grok 4.7 and OpenAI Codex. Human review by C pending.
 import type { AppContext } from '../app-bridge';
-import type { DayReport, ObjectiveStatus } from '../core-bridge';
+import { designSuitShield } from '../../core/design';
+import type { DayReport, GameData, GameState, ObjectiveStatus } from '../core-bridge';
 import { el, on } from '../dom';
 import { press } from '../chrome';
 
@@ -189,14 +190,23 @@ function lifeBlock(ctx: AppContext, report: DayReport): HTMLElement {
   return block;
 }
 
+export function suitExposureReduction(state: GameState, report: DayReport, data: GameData): number {
+  if (report.radiationLevel === 0 || report.crew.every((member) => member.sheltered)) return 0;
+  const base = data.constants.exposure[report.radiationLevel].unsheltered;
+  return Math.min(base, designSuitShield(state.campaign, data));
+}
+
 function shieldBlock(ctx: AppContext, report: DayReport): HTMLElement {
   const block = el('section');
   block.append(
     el('h3', undefined, ctx.t('ui.report.shield')),
     el('p', undefined, ctx.t(report.shelter.active ? 'ui.report.shelterOn' : 'ui.report.shelterOff')),
   );
+  const state = ctx.store.getState();
+  const reduced = state ? suitExposureReduction(state, report, ctx.data) : 0;
+  if (reduced > 0) block.append(el('p', undefined, ctx.t('ui.onboard.suits', { n: reduced })));
   for (const member of report.crew) {
-    const known = ctx.store.getState()?.mission.crew.find((person) => person.id === member.id);
+    const known = state?.mission.crew.find((person) => person.id === member.id);
     block.append(el('p', undefined, ctx.t('ui.report.crewLine', {
       name: ctx.t(known?.nameKey ?? `content.crew.${member.id}`),
       exposure: member.exposure,

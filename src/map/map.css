@@ -233,6 +233,18 @@
   margin: .25em 0;
 }
 .walk-journal [data-objective-met="true"] { color: var(--safe); }
+.walk-journal .onboard-cargo {
+  display: grid;
+  gap: .3em;
+  list-style: none;
+  margin: .25em 0;
+  padding: 0;
+}
+.walk-journal .onboard-cargo li {
+  display: grid;
+  grid-template-columns: 1.4em 1fr;
+  gap: .35em;
+}
 .walk-journal-close-hint { font-size: .9em; }
 .walk-journal [data-journal-close] { align-self: end; }
 .walk-journal [data-journal-close]:focus-visible {

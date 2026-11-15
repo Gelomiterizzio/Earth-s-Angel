@@ -1,6 +1,6 @@
 // AI-assisted: Antigravity (Gemini), reviewed by A
 
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { AppContext } from '../../src/app/context';
 import { createFlow } from '../../src/app/flow';
 import { createI18n } from '../../src/app/i18n';
@@ -21,11 +21,14 @@ import {
   inspectWalkTarget,
   describeWalkTarget,
 } from '../../src/map/index';
+import { openLunarSecret } from '../../src/ui/cinematics/lunar-secret';
 import { mountDayReport } from '../../src/ui/panels/day-report';
 import { MEDIA_PLAN } from './plans/media';
 import { runPlan } from './plans/runner';
 
 const data = loadGameData();
+
+vi.mock('../../src/ui/cinematics/lunar-secret', { spy: true });
 
 function camelToKebab(str: string): string {
   return str.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`);
@@ -301,6 +304,18 @@ class FakeElement {
   getContext(): null {
     return null;
   }
+
+  getBoundingClientRect() {
+    return { width: 960, height: 540 };
+  }
+
+  showModal(): void {
+    this.setAttribute('open', '');
+  }
+
+  close(): void {
+    this.removeAttribute('open');
+  }
 }
 
 class FakeKeyboardEvent {
@@ -361,6 +376,8 @@ const fakeDocument = {
   getElementById(id: string): FakeElement | null {
     return fakeDocument.body.querySelector(`#${id}`);
   },
+  addEventListener() {},
+  removeEventListener() {},
 };
 
 const fakeWindow = {
@@ -606,6 +623,61 @@ describe('Hito 1 · Una misión lunar jugable (T-RPG-A1)', () => {
       const afterWalk = h.store.getState()!;
       expect(afterWalk.mission.ap).toBe(4);
       expect(afterWalk.mission.apSpentToday).toBe(0);
+    } finally {
+      h.cleanup();
+    }
+  });
+
+  it('opens the secret only for fresh keys in order at the lunar corner and keeps the selected crew', () => {
+    const h = setupMissionTestHarness('media', 'EA-LUNAR-SECRET');
+    const openSecret = vi.mocked(openLunarSecret);
+    openSecret.mockClear();
+    const press = (keys: string) => { for (const key of keys) h.pressKey(key); };
+    try {
+      press('wsdada');
+      expect(openSecret).not.toHaveBeenCalled();
+
+      const explored = structuredClone(h.store.getState()!);
+      for (const tile of explored.mission.map.tiles) {
+        if (tile.x >= explored.mission.map.width - 4 && tile.y <= 3) tile.explored = true;
+      }
+      h.store.load(explored);
+      const corner = { x: explored.mission.map.width - 2, y: 1 };
+      h.mapView.walk.reset(explored, { x: corner.x, y: 0 });
+      h.pressKey('q');
+      fakeDocument.body.querySelector('[data-action-focus="crew-1"]')?.click();
+      fakeDocument.body.querySelector('.walk-actions-close')?.click();
+      expect(h.mapView.walk.getSnapshot()).toMatchObject({ position: corner, crewId: 1 });
+
+      press('wsadad');
+      press('w');
+      h.pressKey('s', { repeat: true });
+      press('dada');
+      press('wsd');
+      fakeWindow.dispatchEvent(new FakeKeyboardEvent('blur', { key: '' }));
+      press('ada');
+      press('wsd');
+      h.flow.go('pausa');
+      h.flow.back();
+      press('ada');
+      expect(openSecret).not.toHaveBeenCalled();
+
+      const mission = h.store.getState();
+      press('wsdad');
+      const beforeLastKey = h.mapView.walk.getSnapshot();
+      press('a');
+      expect(openSecret).toHaveBeenCalledExactlyOnceWith(h.ctx, 'engineer', h.mapEl);
+      const secret = fakeDocument.body.querySelector('[data-lunar-secret][open]');
+      expect(secret?.getAttribute('aria-modal')).toBe('true');
+      expect(h.store.getState()).toBe(mission);
+      expect(h.mapView.walk.getSnapshot()).toEqual(beforeLastKey);
+
+      press('wsdada');
+      expect(openSecret).toHaveBeenCalledTimes(1);
+      expect(h.mapView.walk.getSnapshot()).toEqual(beforeLastKey);
+      secret?.querySelector('button')?.click();
+      expect(fakeDocument.body.querySelector('[data-lunar-secret]')).toBeNull();
+      expect(fakeDocument.activeElement).toBe(h.mapEl);
     } finally {
       h.cleanup();
     }

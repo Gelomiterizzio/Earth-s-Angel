@@ -42,7 +42,8 @@ export const MARS_SCRIPT: Record<number, ScriptDay> = {
   6: { actions: [explore(16, 3), explore(18, 4), clean] },
   7: { actions: [collect(19, 4), build('invernadero', 15, 7), build('panel', 14, 7)] },
   8: { actions: [explore(4, 10), explore(2, 10), collect(2, 10)] },
-  9: { caption: 'mars9', actions: [build('refugio', 7, 7), build('refugio', 7, 8)] },
+  // Keep (7,7) open so the crew can reach the north extractor for the Sol 16 repair.
+  9: { caption: 'mars9', actions: [build('refugio', 6, 9), build('refugio', 7, 8)] },
   10: { actions: [explore(5, 8), explore(16, 8), explore(18, 9), clean] },
   11: { caption: 'mars11', actions: [explore(20, 9), collect(20, 9), build('comunicaciones', 14, 5)] },
   14: { actions: [explore(15, 1), collect(14, 0), build('generador', 7, 9)] },

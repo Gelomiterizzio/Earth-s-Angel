@@ -6,18 +6,20 @@ import enSim from '../../src/data/i18n/en/sim.json';
 import esSim from '../../src/data/i18n/es/sim.json';
 import enContent from '../../src/data/i18n/en/content.json';
 import esContent from '../../src/data/i18n/es/content.json';
+import enUi from '../../src/data/i18n/en/ui.json';
+import esUi from '../../src/data/i18n/es/ui.json';
 
-function collectKeys(obj: Record<string, unknown>, prefix = ''): string[] {
-  const keys: string[] = [];
+function catalogSignature(obj: Record<string, unknown>, prefix = ''): Array<[string, string[]]> {
+  const entries: Array<[string, string[]]> = [];
   for (const [k, v] of Object.entries(obj)) {
     const path = prefix ? `${prefix}.${k}` : k;
     if (typeof v === 'string') {
-      keys.push(path);
+      entries.push([path, [...v.matchAll(/\{(\w+)\}/g)].map((match) => match[1]).sort()]);
     } else if (v && typeof v === 'object' && !Array.isArray(v)) {
-      keys.push(...collectKeys(v as Record<string, unknown>, path));
+      entries.push(...catalogSignature(v as Record<string, unknown>, path));
     }
   }
-  return keys.sort();
+  return entries.sort(([a], [b]) => a.localeCompare(b));
 }
 
 describe('Localization i18n (U-LOC-01..03)', () => {
@@ -45,8 +47,9 @@ describe('Localization i18n (U-LOC-01..03)', () => {
     expect(i18n.t('nonexistent.key.xyz')).toContain('nonexistent.key.xyz');
   });
 
-  it('U-LOC-03: en/*.json and es/*.json have identical key sets', () => {
-    expect(collectKeys(enSim)).toEqual(collectKeys(esSim));
-    expect(collectKeys(enContent)).toEqual(collectKeys(esContent));
+  it('U-LOC-03: en and es share the keys and placeholders of every catalog', () => {
+    expect(catalogSignature(enSim)).toEqual(catalogSignature(esSim));
+    expect(catalogSignature(enContent)).toEqual(catalogSignature(esContent));
+    expect(catalogSignature(enUi)).toEqual(catalogSignature(esUi));
   });
 });

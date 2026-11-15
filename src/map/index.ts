@@ -1,7 +1,7 @@
 // AI-assisted: Cursor (Composer) and OpenAI Codex. Team review pending.
 import type { AppContext } from '../app/context';
 import type { GameState, MapView } from '../core/types';
-import { BUILDING_PX, drawAtlasFrame, drawLunarLander, drawSupportShip, MARS_SUPPORT_SHIP, drawMapEffect, drawTerrainAccent, EFFECT_DURATION, loadMapArt, makeLunarBackdrop, TILE_PX } from './art';
+import { BUILDING_PX, drawAtlasFrame, drawLunarCargo, drawLunarLander, drawSupportShip, MARS_SUPPORT_SHIP, drawMapEffect, drawTerrainAccent, EFFECT_DURATION, loadMapArt, lunarCargoProps, makeLunarBackdrop, TILE_PX } from './art';
 import type { MapEffect } from './art';
 import { createMapAmbience } from './ambience';
 import { actionForTool, dispatchToolAction, previewAt } from './map-input';
@@ -207,7 +207,11 @@ export function createMapView(parent: HTMLElement, ctx: AppContext): LunarMapVie
       }
       const supportShip = martian && x === MARS_SUPPORT_SHIP.x && y === MARS_SUPPORT_SHIP.y;
       // The support ship covers its rock: draw flat ground under its feet.
-      const terrain = supportShip ? 'llano' : tile.collected && tile.terrain === 'mineral' ? 'llano' : tile.terrain;
+      // Mystery tiles (Moon and Mars) stay in the simulation for the hidden Earth route, but the map
+      // draws plain ground there: no "?" gives the secret away.
+      const hiddenMystery = tile.terrain === 'misterio';
+      const collectedMineral = tile.collected && tile.terrain === 'mineral';
+      const terrain = supportShip || hiddenMystery || collectedMineral ? 'llano' : tile.terrain;
       const fallback = TERRAIN_FALLBACK[terrain];
       if (!drawAtlasFrame(g, art, tiles, TERRAIN_SPRITE[terrain], x, y)) {
         g.fillStyle = fallback.fill;
@@ -216,6 +220,8 @@ export function createMapView(parent: HTMLElement, ctx: AppContext): LunarMapVie
       }
       if (terrain === 'llano' || terrain === 'nave') drawTerrainAccent(g, martian, x, y);
     }
+
+    for (const prop of lunarCargoProps(state, ctx.data)) drawLunarCargo(g, prop);
 
     const support = martian && mission.map.tiles[MARS_SUPPORT_SHIP.y * width + MARS_SUPPORT_SHIP.x]?.explored;
     let supportDrawn = !support;

@@ -329,6 +329,11 @@
   text-overflow: ellipsis;
 }
 
+.onboard-forecast {
+  display: block;
+  color: var(--accent);
+}
+
 .end-day {
   min-width: calc(180 * var(--px));
   min-height: calc(36 * var(--px));

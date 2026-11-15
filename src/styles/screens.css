@@ -1242,3 +1242,13 @@
 .design-summary p { margin: .15em 0; }
 .design-summary .is-met { color: var(--safe); font-weight: 700; }
 .design-summary .is-missed { color: var(--warn); font-weight: 700; }
+
+.design-orbital {
+  margin: 0 0 calc(5 * var(--px));
+  padding: calc(4 * var(--px)) calc(7 * var(--px));
+  border-inline-start: calc(3 * var(--px)) solid var(--focus);
+  border-radius: calc(4 * var(--px));
+  background: color-mix(in srgb, var(--panel) 80%, transparent);
+  color: var(--text-dim);
+  font-size: calc(12 * var(--px));
+}

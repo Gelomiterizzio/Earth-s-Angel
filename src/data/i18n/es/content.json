@@ -253,6 +253,14 @@
         "REPAIR": "Equipo reparado."
       }
     },
+    "onboard": {
+      "heading": "Equipo a bordo",
+      "empty": "Sin carga adicional.",
+      "supply": "+{amount} de {resource} al aterrizar en la Luna.",
+      "reserve": "Margen de reserva {current} / {target} unidades sobre el mínimo · Días de soporte vital {days}",
+      "ice": "Casillas de hielo cartografiadas: {current} / {target} · Extractor construido: {extractor}",
+      "exposure": "Exposición máxima: {current} (límite {target}) · Refugio construido: {shelter}"
+    },
     "journal": {
       "title": "Diario de misión",
       "shortcut": "M · Diario",

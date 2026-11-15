@@ -1,5 +1,8 @@
 // AI-assisted: Cursor Grok 4.7 and OpenAI Codex. Human review by C pending.
 import type { AppContext, Tool } from '../app-bridge';
+import { designCommsForecast, designForecastBonus, designOf, designRepairCost } from '../../core/design';
+import { forecastHorizon } from '../../core/progression';
+import { mineralPayloadExtra } from '../../map/map-input';
 import type {
   ActionError,
   BuildingType,
@@ -20,6 +23,7 @@ import { mountDecisionPanel } from '../panels/decision';
 import { openShelterScene } from '../panels/shelter-scene';
 import { mountDayQuiz } from '../panels/day-quiz';
 import { mountLearningCheck, shouldAskPre } from '../panels/learning-check';
+import { mountOnboardArrival } from '../panels/onboard-arrival';
 import { openCards } from '../panels/science-card';
 import { mountTutorial } from '../panels/tutorial';
 import { clueLog } from './clues';
@@ -114,7 +118,7 @@ export function mountMissionHud(root: HTMLElement, ctx: AppContext): () => void 
       signature = '';
       draw();
     }, showCards);
-    paintSide(side, ctx, state, tool);
+    paintSide(side, ctx, state, tool, say);
     side.hidden = (state?.mission.level === 'luna' || state?.mission.level === 'marte')
       && ctx.uiStore.get().openPanel !== 'base';
     reserves.hidden = !state;
@@ -202,6 +206,12 @@ export function mountMissionHud(root: HTMLElement, ctx: AppContext): () => void 
   bag.add(ctx.store.on('action/rejected', (event) => {
     say(ctx.t(event.error.messageKey, event.error.params));
   }));
+  bag.add(ctx.store.on('resource/collected', ({ resource, amount }) => {
+    const state = ctx.store.getState();
+    if (!state || resource !== 'materiales') return;
+    const extra = mineralPayloadExtra(state, ctx.data, amount);
+    say(extra > 0 ? ctx.t('ui.onboard.drill', { n: extra }) : ctx.t('content.map.walk.done.COLLECT_DETAIL', { n: amount }));
+  }));
   bag.add(ctx.store.on('decision/made', (event) => {
     if (!event.shelter) return;
     const crew = ctx.store.getState()?.mission.crew.length ?? 4;
@@ -240,6 +250,7 @@ export function mountMissionHud(root: HTMLElement, ctx: AppContext): () => void 
   bag.add(mountDayQuiz(screen, ctx));
 
   if (shouldAskPre(ctx)) bag.add(mountLearningCheck(screen, ctx, 'pre'));
+  bag.add(mountOnboardArrival(screen, ctx));
   ctx.audio.playMusic(musicFor(ctx.store.getState()?.mission.level));
   draw();
   return () => {
@@ -434,12 +445,12 @@ function meterDetail(ctx: AppContext, id: 'energia' | 'soporte' | 'proteccion', 
   });
 }
 
-function paintSide(side: HTMLElement, ctx: AppContext, state: CampaignState | null, tool: Tool): void {
+function paintSide(side: HTMLElement, ctx: AppContext, state: CampaignState | null, tool: Tool, say: (text: string) => void): void {
   const cluesOpen = side.querySelector('.clue-log[open]') !== null;
   side.replaceChildren();
   if (!state) return;
   side.append(objectives(ctx, state), forecast(ctx, state));
-  if (state.mission.level === 'marte') side.append(marsExtras(ctx, state));
+  if (state.mission.level === 'marte') side.append(marsExtras(ctx, state, say));
   const clues = clueLog(ctx, state, cluesOpen);
   if (clues) side.append(clues);
   side.append(palette(ctx, state, tool), crew(ctx, state));
@@ -467,12 +478,25 @@ function forecast(ctx: AppContext, state: GameState): HTMLElement {
   const list = el('ul', 'forecast-list');
   const items = readForecast(state, ctx);
   const mars = state.mission.level === 'marte';
+  const bonus = designForecastBonus(state.campaign, ctx.data);
+  const hasAntenna = designCommsForecast(state.campaign, ctx.data) > 0;
+  const withoutSensor = items.length > 0 && (bonus > 0 || hasAntenna) ? forecastHorizon(state, ctx.data) - bonus : 0;
+  const baseHorizon = hasAntenna && items.length > 0 ? forecastHorizon({
+    ...state,
+    campaign: { ...state.campaign, design: { ...designOf(state.campaign), comms: 'estandar' } },
+  }, ctx.data) - bonus : withoutSensor;
   if (items.length === 0) list.append(el('li', undefined, ctx.t(mars ? 'ui.hud.marsForecastEmpty' : 'ui.hud.forecastEmpty')));
   for (const item of items) {
     const when = item.inDays === 0
       ? ctx.t(mars ? 'ui.hud.thisSol' : 'ui.hud.today')
       : ctx.t(mars ? (item.inDays === 1 ? 'ui.hud.nextSol' : 'ui.hud.inSols') : 'ui.hud.inDays', { days: item.inDays });
-    list.append(el('li', undefined, `${when} · ${ctx.t(`content.event.${item.type}.name`)}`));
+    const line = el('li', undefined, `${when} · ${ctx.t(`content.event.${item.type}.name`)}`);
+    if (bonus > 0 && item.inDays > withoutSensor) {
+      line.append(el('small', 'onboard-forecast', ctx.t(bonus === 1 ? 'ui.onboard.sensor' : 'ui.onboard.sensorPlural', { n: bonus })));
+    } else if (hasAntenna && item.inDays > baseHorizon) {
+      line.append(el('small', 'onboard-forecast', ctx.t('ui.onboard.antennaForecast')));
+    }
+    list.append(line);
   }
   block.append(list);
   return block;
@@ -589,7 +613,7 @@ function crew(ctx: AppContext, state: GameState): HTMLElement {
   return block;
 }
 
-function marsExtras(ctx: AppContext, state: CampaignState): HTMLElement {
+function marsExtras(ctx: AppContext, state: CampaignState, say: (text: string) => void): HTMLElement {
   const block = el('section');
   block.append(el('h2', 'zone-title', ctx.t('ui.hud.maintenance')));
   const row = el('div', 'dust-row');
@@ -620,6 +644,9 @@ function marsExtras(ctx: AppContext, state: CampaignState): HTMLElement {
       n: state.mission.linkOutageDays ?? 0, limit: cfg.maxLinkOutage,
     })));
   }
+  const baseRepair = data.constants.repairCost;
+  const repairCost = designRepairCost(state.campaign, baseRepair ?? 0);
+  const freeRepair = (baseRepair ?? 0) > 0 && repairCost === 0;
   for (const building of damaged) {
     const repairAction = { type: 'REPAIR', buildingId: building.id } as const;
     const reason = previewAction(state, repairAction, ctx.data);
@@ -627,13 +654,15 @@ function marsExtras(ctx: AppContext, state: CampaignState): HTMLElement {
     const repair = button({
       label: ctx.t('ui.hud.repair'),
       disabled: state.mission.phase !== 'planning' || reason !== null,
-      onClick: press(ctx, () => ctx.store.dispatch(repairAction)),
+      onClick: press(ctx, () => {
+        if (ctx.store.dispatch(repairAction).ok && freeRepair) say(ctx.t('ui.onboard.repair'));
+      }),
     });
     if (reason) repair.title = ctx.t(reason.messageKey, reason.params);
     repair.dataset.hudFocus = `repair-${building.id}`;
     const item = el('div', 'repair-row');
     item.append(el('span', undefined, ctx.t('ui.hud.damaged', { name, x: building.x, y: building.y })), repair);
-    if (data.constants.repairCost !== undefined) item.append(el('small', undefined, ctx.t('ui.hud.repairCost', { n: data.constants.repairCost })));
+    if (baseRepair !== undefined) item.append(el('small', undefined, ctx.t('ui.hud.repairCost', { n: repairCost })));
     block.append(item);
   }
   return block;

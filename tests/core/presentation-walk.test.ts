@@ -22,11 +22,14 @@ function farTargets(start: GameState, plan?: MissionScript): { state: GameState;
   for (const step of missionSteps(() => state, plan)) {
     if (step.kind !== 'action') continue;
     const { action } = step;
-    if ('x' in action && 'y' in action) {
-      const path = findWalkPath(state, at, { x: action.x, y: action.y }, true) ?? [];
+    const target = 'x' in action && 'y' in action ? action : action.type === 'REPAIR'
+      ? state.mission.buildings.find((building) => building.id === action.buildingId)
+      : undefined;
+    if (target) {
+      const path = findWalkPath(state, at, target, true) ?? [];
       if (path.length) at = path[path.length - 1];
-      const gap = Math.max(Math.abs(at.x - action.x), Math.abs(at.y - action.y));
-      if (gap > 1) far.push(`${state.mission.level} day ${state.mission.day} ${action.type} (${action.x},${action.y}) from (${at.x},${at.y})`);
+      const gap = Math.max(Math.abs(at.x - target.x), Math.abs(at.y - target.y));
+      if (gap > 1) far.push(`${state.mission.level} day ${state.mission.day} ${action.type} (${target.x},${target.y}) from (${at.x},${at.y})`);
     }
     const result = applyAction(state, action, data);
     if (!result.ok) throw new Error(result.error.code);

@@ -1,4 +1,6 @@
 // AI-assisted: OpenAI Codex. Team review pending.
+import { designOf } from '../core/design';
+import type { GameData, GameState } from '../core/types';
 
 export const TILE_PX = 24;
 export const BUILDING_PX = 32;
@@ -118,6 +120,58 @@ export function drawSupportShip(g: CanvasRenderingContext2D, x: number, y: numbe
   g.fillStyle = '#a8bcff';
   g.fillRect(14, -19, 3, 1);
   g.restore();
+}
+
+const LUNAR_CARGO = [
+  { kind: 'crates', x: 28, y: 26 },
+  { kind: 'sensor', x: 24, y: 28 },
+] as const;
+type LunarCargoProp = (typeof LUNAR_CARGO)[number];
+
+export function lunarCargoProps(state: GameState, data: GameData): LunarCargoProp[] {
+  if (state.mission.level !== 'luna') return [];
+  const { payload } = designOf(state.campaign);
+  const visible = {
+    crates: payload.some((id) => data.missionDesign?.payload[id]?.kind === 'supply'),
+    sensor: payload.includes('sensor'),
+  };
+  const { tiles, width, height } = state.mission.map;
+  // Unloading is visible at landing, even before the underlying rocks are explored.
+  return LUNAR_CARGO.filter(({ kind, x, y }) => {
+    if (!visible[kind] || x >= width || y >= height) return false;
+    const terrain = tiles[y * width + x]?.terrain;
+    return terrain === 'roca' || terrain === 'crater';
+  });
+}
+
+export function drawLunarCargo(g: CanvasRenderingContext2D, prop: LunarCargoProp): void {
+  const left = prop.x * TILE_PX;
+  const top = prop.y * TILE_PX;
+  const pixels = (color: string, x: number, y: number, w: number, h: number): void => {
+    g.fillStyle = color;
+    g.fillRect(left + x, top + y, w, h);
+  };
+  pixels('#101827', 2, 19, 20, 3);
+  if (prop.kind === 'crates') {
+    pixels('#473025', 3, 9, 12, 11);
+    pixels('#bb8554', 4, 11, 10, 7);
+    pixels('#f2c783', 4, 10, 10, 2);
+    pixels('#f4dbad', 6, 12, 2, 6);
+    pixels('#1d374a', 12, 13, 10, 8);
+    pixels('#548995', 13, 15, 8, 4);
+    pixels('#a0d6d9', 13, 14, 8, 2);
+    pixels('#e5f1dd', 17, 16, 2, 3);
+    return;
+  }
+
+  pixels('#314557', 6, 17, 12, 4);
+  pixels('#88a7b4', 8, 17, 8, 2);
+  pixels('#bfceda', 11, 6, 2, 11);
+  pixels('#567083', 13, 9, 2, 8);
+  pixels('#577b91', 7, 7, 10, 3);
+  pixels('#a9ced9', 6, 5, 3, 3);
+  pixels('#a9ced9', 15, 5, 3, 3);
+  pixels('#8cf5d8', 11, 4, 2, 3);
 }
 
 export function drawAtlasFrame(

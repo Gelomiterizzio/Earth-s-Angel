@@ -1,5 +1,6 @@
 // AI-assisted: Cursor (Composer), OpenAI Codex, and Antigravity (Gemini). Team review pending.
 import type { AppContext } from '../app/context';
+import { designMineralYield, designRepairCost } from '../core/design';
 import { previewAction } from '../core/index';
 import type { Action, ActionError, ActionResult, BuildingType, GameData, GameState, Tool } from '../core/types';
 
@@ -47,8 +48,20 @@ export function actionMaterialsCost(
   return 0;
 }
 
+export function mineralPayloadExtra(state: GameState, data: GameData, collected: number): number {
+  const base = data.difficulty[state.campaign.difficulty].levels[state.mission.level]?.mineralYield ?? 0;
+  const withDrill = designMineralYield(state.campaign, base, data);
+  return Math.max(0, Math.min(collected, withDrill) - base);
+}
+
+export function mineralCollectionYield(state: GameState, data: GameData): number {
+  const base = data.difficulty[state.campaign.difficulty].levels[state.mission.level]?.mineralYield ?? 0;
+  const freeSpace = Math.max(0, state.mission.caps.materiales - state.mission.resources.materiales);
+  return Math.min(freeSpace, designMineralYield(state.campaign, base, data));
+}
+
 export function describeActionOption(
-  ctx: AppContext,
+  ctx: Pick<AppContext, 'data' | 't'>,
   state: GameState,
   action: Action,
 ): WalkActionOption {
@@ -60,7 +73,8 @@ export function describeActionOption(
     : error;
   const requiredAp = withoutAp?.code === 'NO_AP' ? withoutAp.params?.need : undefined;
   const costAp = typeof requiredAp === 'number' ? requiredAp : actionApCost(state, ctx.data, action);
-  const costMaterials = actionMaterialsCost(ctx.data, action);
+  const baseCost = actionMaterialsCost(ctx.data, action);
+  const costMaterials = action.type === 'REPAIR' ? designRepairCost(state.campaign, baseCost) : baseCost;
 
   let label = ctx.t(action.type === 'CLEAN_PANELS' ? 'ui.hud.clean' : `content.map.walk.${action.type}`);
   let readyDay: number | undefined;
@@ -79,9 +93,7 @@ export function describeActionOption(
       label = ctx.t('content.map.walk.REPAIR_NAME', { name });
     }
   } else if (action.type === 'COLLECT') {
-    const diffCfg = ctx.data.difficulty[state.campaign.difficulty]?.levels[state.mission.level];
-    const freeSpace = Math.max(0, state.mission.caps.materiales - state.mission.resources.materiales);
-    yieldMaterials = Math.min(freeSpace, diffCfg?.mineralYield ?? 0);
+    yieldMaterials = mineralCollectionYield(state, ctx.data);
   }
 
   return {

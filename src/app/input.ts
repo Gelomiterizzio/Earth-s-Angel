@@ -3,28 +3,6 @@
 import type { BuildingType } from '../core/types';
 import type { AppContext } from './context';
 
-export interface ControlBinding {
-  key: string;
-  whereKey: string;
-  actionKey: string;
-}
-
-export const CONTROLS_TABLE: readonly ControlBinding[] = [
-  { key: 'Tab / Shift+Tab', whereKey: 'ui.controls.always', actionKey: 'ui.controls.focusNextPrev' },
-  { key: 'Enter / Space', whereKey: 'ui.controls.focused', actionKey: 'ui.controls.activate' },
-  { key: 'Escape', whereKey: 'ui.controls.missionOrMenu', actionKey: 'ui.controls.cancelOrPause' },
-  { key: 'Arrow Keys', whereKey: 'ui.controls.map', actionKey: 'ui.controls.moveCursor' },
-  { key: 'Enter', whereKey: 'ui.controls.cinematic', actionKey: 'ui.controls.skipCinematic' },
-  { key: 'B', whereKey: 'ui.controls.mission', actionKey: 'ui.controls.buildPalette' },
-  { key: 'X', whereKey: 'ui.controls.mission', actionKey: 'ui.controls.exploreTool' },
-  { key: 'C', whereKey: 'ui.controls.mission', actionKey: 'ui.controls.collectTool' },
-  { key: 'M', whereKey: 'ui.controls.mission', actionKey: 'ui.controls.focusMap' },
-  { key: 'F', whereKey: 'ui.controls.mission', actionKey: 'ui.controls.endDay' },
-  { key: 'H / ?', whereKey: 'ui.controls.mission', actionKey: 'ui.controls.helpCards' },
-  { key: '1-7', whereKey: 'ui.controls.mission', actionKey: 'ui.controls.selectBuilding' },
-  { key: 'P', whereKey: 'ui.controls.mission', actionKey: 'ui.controls.pause' },
-];
-
 const BUILDING_SLOTS: BuildingType[] = [
   'panel',
   'bateria',

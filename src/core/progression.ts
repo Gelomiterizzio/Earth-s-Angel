@@ -1,5 +1,5 @@
 // AI-assisted: OpenAI Codex. Human review pending.
-import { designForecastBonus } from './design';
+import { designCommsForecast, designForecastBonus, designStorageBonus } from './design';
 import type { ActionResult, GameData, GameState, ResourceId, TransferManifest } from './types';
 import { startDay } from './day-cycle';
 import { createEarth } from './earth';
@@ -30,7 +30,9 @@ export function forecastHorizon(state: GameState, data: GameData): number {
 function baseForecastHorizon(state: GameState, data: GameData): number {
   const { mission, campaign } = state;
   const level = data.levels[mission.level] ?? data.levels.luna;
-  if (!level.forecastHorizonWithComms) return level.forecastHorizonDays;
+  const commsBonus = designCommsForecast(campaign, data);
+  if (!level.forecastHorizonWithComms) return level.forecastHorizonDays + commsBonus;
+  if (commsBonus > 0) return level.forecastHorizonWithComms;
   const cfg = data.difficulty[campaign.difficulty].levels[mission.level];
   const power = resolveEnergyStep(mission, mission.day,
     getSolarFactorForDay(mission.schedule, mission.day), cfg?.shelterEnergy ?? 0, data);
@@ -41,6 +43,12 @@ function baseForecastHorizon(state: GameState, data: GameData): number {
 function arrived(state: GameState, data: GameData, manifest: TransferManifest) {
   const { difficulty, seed, canonical } = state.campaign;
   const mission = createMission('marte', difficulty, seed, canonical, data);
+  const storageBonus = designStorageBonus(state.campaign, data);
+  if (storageBonus > 0) {
+    for (const id of ['oxigeno', 'agua', 'alimentos', 'materiales'] as const) {
+      mission.caps[id] += storageBonus;
+    }
+  }
   for (const id of Object.keys(mission.resources) as ResourceId[]) {
     if (id !== 'energia') {
       mission.resources[id] = Math.min(

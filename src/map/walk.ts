@@ -12,6 +12,8 @@ import type {
   Tool,
 } from '../core/types';
 import { buildTerrain } from '../core/terrain';
+import { openLunarSecret } from '../ui/cinematics/lunar-secret';
+import { onboardJournalSection } from '../ui/panels/onboard-journal';
 import { lifeSupportAdvice } from './advisor';
 import { MARS_SUPPORT_SHIP, TILE_PX } from './art';
 import { createAstronautAnimation, drawAstronaut, type SuitRole } from './astronaut-art';
@@ -19,6 +21,7 @@ import {
   actionForTool,
   describeActionOption,
   dispatchToolAction,
+  mineralCollectionYield,
   type WalkActionOption,
 } from './map-input';
 
@@ -129,6 +132,8 @@ const buildingOwner: Partial<Record<BuildingType, SuitRole>> = {
   habitat: 'medic',
 };
 const WALK_REPEAT_MS = 150;
+const LUNAR_SECRET_SEQUENCE = 'wsdada';
+const LUNAR_SECRET_CORNER_SIZE = 4;
 // NASA NSSDC surface gravity, m/s². Only the visual arc of a Martian step uses this value.
 const MARS_GRAVITY = 3.73;
 const STEP_LIFT_VELOCITY = .25;
@@ -278,8 +283,7 @@ export function describeWalkTarget(ctx: AppContext, state: GameState, info: Walk
   const terrain = buildTerrain(tile);
   if (tile.terrain === 'mineral' && tile.collected) return look('terrain.collected');
   if (terrain === 'mineral') {
-    const yieldN = ctx.data.difficulty[state.campaign.difficulty]?.levels[state.mission.level]?.mineralYield ?? 0;
-    return look('terrain.mineral', { n: yieldN });
+    return look('terrain.mineral', { n: mineralCollectionYield(state, ctx.data) });
   }
   return look(`terrain.${terrain}`);
 }
@@ -448,6 +452,8 @@ export function createLunarWalk(
   let lastToolSignature = JSON.stringify(ctx.uiStore.get().tool);
   let lastOutcome: WalkActionOutcome | null = null;
   let lastTargetInfo: WalkTargetInfo | null = null;
+  let secretProgress = 0;
+  let closeSecret: (() => void) | undefined;
 
   function activeCrewId(state: GameState | null): CrewId {
     const selected = state?.mission.crew.find((member) => member.id === selectedCrew && member.health > 0);
@@ -708,7 +714,10 @@ export function createLunarWalk(
       }
     });
 
-    dialog.append(title, activeSection, deadlinesSection, progressSection, closeHint, closeBtn);
+    dialog.append(title, activeSection, deadlinesSection, progressSection);
+    const onboard = onboardJournalSection(ctx, state);
+    if (onboard) dialog.append(onboard);
+    dialog.append(closeHint, closeBtn);
     journalVeil.replaceChildren(dialog);
 
     if (focusInJournal) {
@@ -730,6 +739,20 @@ export function createLunarWalk(
 
   function target(): WalkPosition {
     return { x: position.x + facing.x, y: position.y + facing.y };
+  }
+
+  function inSecretCorner(state: GameState): boolean {
+    return state.mission.level === 'luna'
+      && position.x >= state.mission.map.width - LUNAR_SECRET_CORNER_SIZE
+      && position.y < LUNAR_SECRET_CORNER_SIZE
+      && canWalk(state, position);
+  }
+
+  function resetSecret(): void {
+    secretProgress = 0;
+    const close = closeSecret;
+    closeSecret = undefined;
+    close?.();
   }
 
   function ensureValidPosition(state: GameState): void {
@@ -780,10 +803,17 @@ export function createLunarWalk(
     if (turnSig !== lastTurnSignature) {
       lastTurnSignature = turnSig;
       message = '';
+      secretProgress = 0;
     }
 
     syncJournalModal(state);
     syncActionsMenu(state);
+    if (parent.hidden || state.mission.phase !== 'planning' || ctx.flow.current().scene !== 'mision') {
+      resetSecret();
+    }
+    if (secretProgress && (!activeState() || ctx.uiStore.get().openPanel || !inSecretCorner(state))) {
+      secretProgress = 0;
+    }
     if (parent.hidden) {
       stopWalking();
       return;
@@ -944,6 +974,8 @@ export function createLunarWalk(
       const name = def ? ctx.t(def.nameKey) : action.building;
       const readyDay = state.mission.day + (def?.buildDays ?? 1);
       message = ctx.t('content.map.walk.done.BUILD_DETAIL', { name, day: readyDay });
+    } else if (action.type === 'REPAIR' && primary.costMaterials === 0 && (ctx.data.constants.repairCost ?? 0) > 0) {
+      message = ctx.t('ui.onboard.repair');
     } else {
       message = ctx.t(action.type === 'CLEAN_PANELS' ? 'ui.walk.cleaned' : `content.map.walk.done.${action.type}`);
     }
@@ -1002,6 +1034,11 @@ export function createLunarWalk(
     if (event.key.toLowerCase() === walkingKey) stopWalking();
   }
 
+  function loseFocus(): void {
+    secretProgress = 0;
+    stopWalking();
+  }
+
   function onKey(event: KeyboardEvent): void {
     if (
       event.defaultPrevented ||
@@ -1011,10 +1048,12 @@ export function createLunarWalk(
       (event.target instanceof HTMLElement &&
         (event.target.closest('input, textarea, select') || event.target.isContentEditable))
     ) {
+      if (!event.repeat) secretProgress = 0;
       return;
     }
 
     const key = event.key.toLowerCase();
+    if (!event.repeat && (key.length !== 1 || !LUNAR_SECRET_SEQUENCE.includes(key))) secretProgress = 0;
     if (key === 'q' && !event.repeat && activeState()) {
       event.preventDefault();
       openActions(true);
@@ -1046,7 +1085,10 @@ export function createLunarWalk(
     const step = steps[key];
     if (!step && key !== 'e') return;
     const state = activeState();
-    if (!state) return;
+    if (!state) {
+      secretProgress = 0;
+      return;
+    }
 
     event.preventDefault();
     parent.dataset.walkInput = '';
@@ -1057,6 +1099,17 @@ export function createLunarWalk(
 
     if (event.repeat) return;
     stopWalking();
+    if (!ctx.uiStore.get().openPanel && inSecretCorner(state)) {
+      secretProgress = key === LUNAR_SECRET_SEQUENCE[secretProgress] ? secretProgress + 1 : Number(key === 'w');
+      if (secretProgress === LUNAR_SECRET_SEQUENCE.length) {
+        secretProgress = 0;
+        astronaut.rest();
+        closeSecret = openLunarSecret(ctx, roleFor(state), parent);
+        return;
+      }
+    } else {
+      secretProgress = 0;
+    }
     walkingKey = key;
     const turning = facing.x !== step.x || facing.y !== step.y;
     facing = step;
@@ -1081,11 +1134,12 @@ export function createLunarWalk(
   });
   window.addEventListener('keydown', onKey);
   window.addEventListener('keyup', releaseKey);
-  window.addEventListener('blur', stopWalking);
+  window.addEventListener('blur', loseFocus);
   return {
     reset(state: GameState, ship: WalkPosition) {
       facing = south;
       stopWalking();
+      resetSecret();
       selectedCrew = undefined;
       const exits = [south, steps.d, steps.w, steps.a].map(({ x, y }) => ({
         x: ship.x + x,
@@ -1102,6 +1156,7 @@ export function createLunarWalk(
       hintSize?.disconnect();
       alertBubble.remove();
       stopWalking();
+      resetSecret();
       astronaut.rest();
       actionsVeil?.remove();
       if (journalVeil) {
@@ -1110,7 +1165,7 @@ export function createLunarWalk(
       }
       window.removeEventListener('keydown', onKey);
       window.removeEventListener('keyup', releaseKey);
-      window.removeEventListener('blur', stopWalking);
+      window.removeEventListener('blur', loseFocus);
     },
     getSnapshot(): WalkSnapshot {
       const state = ctx.store.getState();

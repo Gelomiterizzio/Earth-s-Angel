@@ -46,7 +46,7 @@ El sector original de 12 × 12, con el que se validaron los recorridos de P0, oc
 | `o` | `crater` | Bloqueado. |
 | `i` | `hielo` | Solo admite el extractor. En el sector P0: (29,28), (30,28), (29,29). |
 | `m` | `mineral` | Se recolecta una vez. En el sector P0: (23,27), (21,28), (23,21), (30,24), (26,30). |
-| `?` | `misterio` | Región del descubrimiento, en (29,21). |
+| `?` | `misterio` | Fragmento de la ruta P2 en (29,21). La marca visual se oculta en el mapa lunar y el fragmento se sigue encontrando al explorar. |
 | `S` | `nave` | Nave inicial, en (25,25). |
 
 **Zona explorada al empezar:** el cuadrado de 5 × 5 alrededor de la nave, de `x` 23 a 27 y de `y` 23 a 27. El mineral de (23,27) está dentro: sirve para enseñar a recolectar el primer día.
@@ -54,6 +54,12 @@ El sector original de 12 × 12, con el que se validaron los recorridos de P0, oc
 **Exploración:** se explora una casilla sin explorar que toque, también en diagonal, a una explorada. Cuesta 1 PA y revela el bloque de 3 × 3 centrado en ella. Detalle en [componentes/mapa.md](../componentes/mapa.md).
 
 **Pistas sin azar:** el tutorial dice "Los sensores detectan hielo al sureste de la nave". Explorar (28,28) revela el hielo de (29,28) y (29,29).
+
+### Encuentro secreto
+
+Desde una casilla transitable del extremo noreste (`x ≥ ancho − 4`, `y ≤ 3`), pulsa `W S D A D A`. La casilla de referencia es `(71,1)`, columna 72 y fila 2 si se cuenta desde uno. La escena protagoniza el tripulante que esté seleccionado en el menú `Q`.
+
+Es una escena opcional de ficción. Al terminar se retoma la exploración en el mismo punto. La reproducción no gasta PA ni cambia la campaña o el guardado.
 
 ## Condiciones iniciales
 

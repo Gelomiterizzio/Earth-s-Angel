@@ -1,7 +1,8 @@
-// AI-assisted: Claude Code (claude-opus-5-5). Human review by A pending.
+// AI-assisted: Claude Code (claude-opus-5-5), Antigravity (Gemini), and OpenAI Codex. Human review by A pending.
 // Mission design before the launch from Earth to the Moon: mission objective, launch vehicle,
-// trajectory, and the payload (supplies, science instruments and crew equipment), limited by
-// budget and by the rocket's mass capacity. Pure: integers only, no DOM, no clock, no random.
+// trajectory (with orbital window and travel days), spacecraft cabin module, communications
+// antenna, and payload (supplies, science instruments and crew equipment), limited by budget
+// and by the rocket's mass capacity. Pure: integers only, no DOM, no clock, no random.
 // The default design changes nothing, so the walkthroughs and saved games behave as before.
 import type {
   CampaignState,
@@ -14,6 +15,8 @@ import type {
 
 export type RocketId = 'ligero' | 'medio' | 'pesado';
 export type TrajectoryId = 'economica' | 'estandar' | 'rapida';
+export type ShipId = 'pequena' | 'estandar' | 'grande';
+export type CommsId = 'estandar' | 'alta';
 export type PayloadId =
   | 'oxigeno' | 'agua' | 'alimentos' | 'materiales' | 'bateria'
   | 'espectrometro' | 'sensor'
@@ -24,7 +27,30 @@ export interface MissionDesign {
   objective: DesignObjectiveId;
   rocket: RocketId;
   trajectory: TrajectoryId;
+  ship?: ShipId;
+  comms?: CommsId;
   payload: PayloadId[];
+}
+
+export interface TrajectoryDef {
+  cost: number;
+  earthDays: number;
+  travelDays?: number;
+  windowDays?: number;
+}
+
+export interface ShipDef {
+  mass: number;
+  cost: number;
+  /** Extra storage capacity added to oxygen, water, food and materials caps. */
+  storage: number;
+}
+
+export interface CommsDef {
+  mass: number;
+  cost: number;
+  /** Extra forecast days on the Moon; when > 0, also activates Mars comms forecast from Sol 1. */
+  forecast: number;
 }
 
 export interface PayloadDef {
@@ -38,7 +64,9 @@ export interface PayloadDef {
 export interface MissionDesignData {
   budget: Record<DifficultyId, number>;
   rockets: Record<RocketId, { capacity: number; cost: number }>;
-  trajectories: Record<TrajectoryId, { cost: number; earthDays: number }>;
+  trajectories: Record<TrajectoryId, TrajectoryDef>;
+  ships?: Record<ShipId, ShipDef>;
+  comms?: Record<CommsId, CommsDef>;
   payload: Record<PayloadId, PayloadDef>;
   objectives: {
     autosuficiente: { minMargin: number };
@@ -49,6 +77,8 @@ export interface MissionDesignData {
 
 export const ROCKETS: readonly RocketId[] = ['ligero', 'medio', 'pesado'];
 export const TRAJECTORIES: readonly TrajectoryId[] = ['economica', 'estandar', 'rapida'];
+export const SHIPS: readonly ShipId[] = ['pequena', 'estandar', 'grande'];
+export const COMMS: readonly CommsId[] = ['estandar', 'alta'];
 export const PAYLOAD: readonly PayloadId[] = [
   'oxigeno', 'agua', 'alimentos', 'materiales', 'bateria',
   'espectrometro', 'sensor',
@@ -56,11 +86,13 @@ export const PAYLOAD: readonly PayloadId[] = [
 ];
 export const DESIGN_OBJECTIVES: readonly DesignObjectiveId[] = ['autosuficiente', 'hielo', 'solar'];
 
-/** What a campaign without a chosen design uses: no extras, so nothing changes. */
+/** What a campaign without a chosen design uses: neutral options and no extras, so nothing changes. */
 export const DEFAULT_DESIGN: MissionDesign = {
   objective: 'autosuficiente',
   rocket: 'medio',
   trajectory: 'economica',
+  ship: 'pequena',
+  comms: 'estandar',
   payload: [],
 };
 
@@ -89,29 +121,55 @@ function hasPayload(campaign: CampaignState, id: PayloadId): boolean {
 export function evaluateDesign(design: MissionDesign, difficulty: DifficultyId, data: GameData): DesignBudget {
   const table = designData(data);
   if (!table) return { cost: 0, budget: 0, mass: 0, capacity: 0, problem: 'unknown' };
+  const shipId: ShipId = design.ship ?? 'pequena';
+  const commsId: CommsId = design.comms ?? 'estandar';
   const rocket = table.rockets[design.rocket];
   const trajectory = table.trajectories[design.trajectory];
+  const ship = table.ships ? table.ships[shipId] : (shipId === 'pequena' ? { mass: 0, cost: 0, storage: 0 } : undefined);
+  const comms = table.comms ? table.comms[commsId] : (commsId === 'estandar' ? { mass: 0, cost: 0, forecast: 0 } : undefined);
   const items = design.payload.map((id) => table.payload[id]);
-  if (!rocket || !trajectory || items.some((item) => !item)
+  if (!rocket || !trajectory || !ship || !comms || items.some((item) => !item)
     || new Set(design.payload).size !== design.payload.length
     || !DESIGN_OBJECTIVES.includes(design.objective)) {
     return { cost: 0, budget: table.budget[difficulty] ?? 0, mass: 0, capacity: 0, problem: 'unknown' };
   }
-  const cost = rocket.cost + trajectory.cost + items.reduce((sum, item) => sum + item.cost, 0);
-  const mass = items.reduce((sum, item) => sum + item.mass, 0);
+  const cost = rocket.cost + trajectory.cost + ship.cost + comms.cost + items.reduce((sum, item) => sum + item.cost, 0);
+  const mass = ship.mass + comms.mass + items.reduce((sum, item) => sum + item.mass, 0);
   const budget = table.budget[difficulty] ?? 0;
   const problem = cost > budget ? 'budget' : mass > rocket.capacity ? 'mass' : null;
   return { cost, budget, mass, capacity: rocket.capacity, problem };
 }
 
-/** Supplies and instruments land with the crew: applied to a freshly created Moon mission. */
+/** Extra storage capacity from the chosen spacecraft cabin module. */
+export function designStorageBonus(campaign: CampaignState, data: GameData): number {
+  const shipId: ShipId = designOf(campaign).ship ?? 'pequena';
+  return designData(data)?.ships?.[shipId]?.storage ?? 0;
+}
+
+/** Extra forecast days from the high-gain communications antenna. */
+export function designCommsForecast(campaign: CampaignState, data: GameData): number {
+  const commsId: CommsId = designOf(campaign).comms ?? 'estandar';
+  return designData(data)?.comms?.[commsId]?.forecast ?? 0;
+}
+
+/** Supplies, cabin storage and instruments land with the crew: applied to a freshly created Moon mission. */
 export function applyDesignToMission(mission: MissionState, campaign: CampaignState, data: GameData): MissionState {
   const table = designData(data);
   const design = designOf(campaign);
-  if (!table || mission.level !== 'luna' || design.payload.length === 0) return mission;
+  const storage = designStorageBonus(campaign, data);
+  if (!table || mission.level !== 'luna' || (design.payload.length === 0 && storage === 0)) return mission;
+  const caps = storage > 0
+    ? {
+        ...mission.caps,
+        oxigeno: mission.caps.oxigeno + storage,
+        agua: mission.caps.agua + storage,
+        alimentos: mission.caps.alimentos + storage,
+        materiales: mission.caps.materiales + storage,
+      }
+    : mission.caps;
   const resources = { ...mission.resources };
   const add = (key: keyof typeof resources, amount: number): void => {
-    resources[key] = Math.min(mission.caps[key], resources[key] + amount);
+    resources[key] = Math.min(caps[key], resources[key] + amount);
   };
   for (const id of design.payload) {
     const item = table.payload[id];
@@ -130,7 +188,7 @@ export function applyDesignToMission(mission: MissionState, campaign: CampaignSt
         ? tile : { ...tile, explored: true }),
     };
   }
-  return { ...mission, resources, map };
+  return { ...mission, caps, resources, map };
 }
 
 /** Choose a design for a new campaign: stores it, applies its effects and the trajectory time. */
@@ -138,12 +196,11 @@ export function launchWithDesign(state: GameState, design: MissionDesign, data: 
   const check = evaluateDesign(design, state.campaign.difficulty, data);
   if (check.problem) return null;
   if (state.mission.level !== 'luna' || state.mission.day !== 1) return null;
-  const table = designData(data);
-  const campaign = {
+  const campaign: CampaignState = {
     ...state.campaign,
     design: { ...design, payload: [...design.payload] },
-    earthDaysRemaining: state.campaign.earthDaysRemaining + (table?.trajectories[design.trajectory].earthDays ?? 0),
-  } as CampaignState;
+  };
+  campaign.earthDaysRemaining += designTrajectoryDays(campaign, data);
   return { ...state, campaign, mission: applyDesignToMission(state.mission, campaign, data) };
 }
 
@@ -151,7 +208,12 @@ export function launchWithDesign(state: GameState, design: MissionDesign, data: 
 
 /** Earth days the chosen trajectory saves (added to the Earth countdown at launch). */
 export function designTrajectoryDays(campaign: CampaignState, data: GameData): number {
-  return designData(data)?.trajectories[designOf(campaign).trajectory]?.earthDays ?? 0;
+  const trajectories = designData(data)?.trajectories;
+  const chosen = trajectories?.[designOf(campaign).trajectory];
+  const baseTravel = trajectories?.economica.travelDays;
+  return baseTravel !== undefined && chosen?.travelDays !== undefined
+    ? baseTravel - chosen.travelDays
+    : chosen?.earthDays ?? 0;
 }
 
 /** Extra forecast days from the radiation sensor. */
@@ -174,6 +236,13 @@ export function designMineralYield(campaign: CampaignState, base: number, data: 
 /** Exposure the shielded suits remove from an unsheltered storm day. */
 export function designSuitShield(campaign: CampaignState, data: GameData): number {
   return hasPayload(campaign, 'exotraje') ? designData(data)?.payload.exotraje.amount ?? 0 : 0;
+}
+
+/** The limiting reserve margin uses the same units as the lunar result. */
+export function designReserveMargin(state: GameState, data: GameData): number {
+  const { oxigeno, agua, alimentos } = state.mission.resources;
+  const threshold = data.difficulty[state.campaign.difficulty].levels.luna.reserveThreshold;
+  return Math.min(oxigeno, agua, alimentos) - threshold;
 }
 
 /** Whether the chosen objective was achieved, judged on the Moon mission result. */

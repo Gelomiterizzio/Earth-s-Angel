@@ -1,6 +1,6 @@
 // AI-assisted: Antigravity (Gemini), reviewed by A
 
-import { designSuitShield } from './design';
+import { designStorageBonus, designSuitShield } from './design';
 import type {
   DayReport,
   GameData,
@@ -212,12 +212,13 @@ export function advanceDay(
     )
     .reduce((sum, b) => sum + (data.buildings[b.type]?.capacity ?? 0), 0);
 
+  const storageBonus = designStorageBonus(campaign, data);
   const nextCaps: Resources = {
     energia: energyCap,
-    oxigeno: levelCfg.baseCaps.oxigeno + extraDepotCap,
-    agua: levelCfg.baseCaps.agua + extraDepotCap,
-    alimentos: levelCfg.baseCaps.alimentos + extraDepotCap,
-    materiales: levelCfg.baseCaps.materiales + extraDepotCap,
+    oxigeno: levelCfg.baseCaps.oxigeno + extraDepotCap + storageBonus,
+    agua: levelCfg.baseCaps.agua + extraDepotCap + storageBonus,
+    alimentos: levelCfg.baseCaps.alimentos + extraDepotCap + storageBonus,
+    materiales: levelCfg.baseCaps.materiales + extraDepotCap + storageBonus,
   };
 
   const nextResources: Resources = {

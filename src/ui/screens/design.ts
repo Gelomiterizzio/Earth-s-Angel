@@ -1,26 +1,33 @@
-// AI-assisted: Claude Code (claude-opus-5-5). Human review by C pending.
+// AI-assisted: Claude Code (claude-opus-5-5), Antigravity (Gemini). Human review by C pending.
 // Mission design screen, between choosing the difficulty and the launch from Earth. The player
-// picks the mission objective, the launch vehicle, the trajectory and the payload (supplies,
-// science instruments and crew equipment) within a budget and the rocket's mass capacity.
+// picks the mission objective, the launch vehicle, the trajectory (with visible orbital window
+// and travel time), the spacecraft cabin module, the communications antenna and the payload
+// (supplies, science instruments and crew equipment) within a budget and the rocket's mass capacity.
 // It shows live what each choice costs and does; the rules live in src/core/design.ts.
 import type { AppContext, Screen } from '../app-bridge';
 import {
+  COMMS,
   DEFAULT_DESIGN,
   DESIGN_OBJECTIVES,
+  designTrajectoryDays,
   evaluateDesign,
   launchWithDesign,
   PAYLOAD,
   ROCKETS,
+  SHIPS,
   TRAJECTORIES,
+  type CommsId,
   type DesignObjectiveId,
   type MissionDesign,
   type PayloadId,
   type RocketId,
+  type ShipId,
   type TrajectoryId,
 } from '../../core/design';
 import { button } from '../components/button';
 import { bindChrome, press, showNarrow } from '../chrome';
 import { cleaner, el, on } from '../dom';
+import { antennaDescription, objectiveGoal, payloadEffect } from '../design-copy';
 
 let cleanup: (() => void) | null = null;
 
@@ -38,6 +45,8 @@ const ICON: Record<string, string> = {
   autosuficiente: '🏠', hielo: '🧊', solar: '☀️',
   ligero: '🚀', medio: '🚀', pesado: '🚀',
   economica: '🌙', estandar: '🛰️', rapida: '⚡',
+  'ship:pequena': '🛸', 'ship:estandar': '🏠', 'ship:grande': '🏗️',
+  'comms:estandar': '📻', 'comms:alta': '📡',
   oxigeno: '🫧', agua: '💧', alimentos: '🥫', materiales: '🧱', bateria: '🔋',
   espectrometro: '🔬', sensor: '☢', herramientas: '🧰', taladro: '⛏', exotraje: '🧑‍🚀',
 };
@@ -53,28 +62,29 @@ function mountDesign(root: HTMLElement, ctx: AppContext): () => void {
   bag.add(showNarrow(screen, ctx));
   bag.add(() => screen.remove());
   const table = ctx.data.missionDesign;
-  let design: MissionDesign = { ...lastDesign, payload: [...lastDesign.payload] };
+  const base = document.querySelector('.presentation-shield') ? DEFAULT_DESIGN : lastDesign;
+  let design: MissionDesign = { ...DEFAULT_DESIGN, ...base, payload: [...base.payload] };
   let launched = false;
 
   const t = (key: string, params?: Record<string, string | number>): string => ctx.t(`ui.design.${key}`, params);
 
   function choice<T extends string>(
-    group: string, id: T, selected: boolean, detail: string, onPick: () => void, multi = false,
+    group: string, id: T, selected: boolean, detail: string, onPick: () => void, description: string, multi = false,
   ): HTMLButtonElement {
     const card = el('button', `design-card${selected ? ' is-selected' : ''}`);
     card.type = 'button';
     card.dataset.design = `${group}:${id}`;
     card.setAttribute(multi ? 'aria-pressed' : 'aria-checked', String(selected));
     if (!multi) card.setAttribute('role', 'radio');
-    const icon = el('span', 'design-icon', ICON[id] ?? '•');
+    const icon = el('span', 'design-icon', ICON[`${group}:${id}`] ?? ICON[id] ?? '•');
     icon.setAttribute('aria-hidden', 'true');
     card.append(icon, el('strong', undefined, t(`${group}.${id}.name`)), el('span', 'design-detail', detail),
-      el('span', 'design-desc', t(`${group}.${id}.desc`)));
+      el('span', 'design-desc', description));
     card.addEventListener('click', press(ctx, onPick));
     return card;
   }
 
-  function section(titleKey: string, cards: HTMLElement[], radio = true): HTMLElement {
+  function section(titleKey: string, cards: HTMLElement[], radio = true, noteKey?: string): HTMLElement {
     const block = el('section', 'design-section');
     const heading = el('h2', undefined, t(titleKey));
     const row = el('div', 'design-row');
@@ -83,7 +93,9 @@ function mountDesign(root: HTMLElement, ctx: AppContext): () => void {
       row.setAttribute('aria-label', heading.textContent ?? '');
     }
     row.append(...cards);
-    block.append(heading, row);
+    block.append(heading);
+    if (noteKey) block.append(el('p', 'design-orbital', t(noteKey)));
+    block.append(row);
     return block;
   }
 
@@ -119,16 +131,35 @@ function mountDesign(root: HTMLElement, ctx: AppContext): () => void {
     head.append(el('h1', 'screen-title', t('heading')), el('p', 'design-intro', t('intro')));
 
     const objective = section('objective', DESIGN_OBJECTIVES.map((id: DesignObjectiveId) =>
-      choice('objective', id, design.objective === id, t(`objective.${id}.goal`), () => { design.objective = id; paint(); })));
+      choice('objective', id, design.objective === id, objectiveGoal(ctx, id), () => { design.objective = id; paint(); }, t(`objective.${id}.desc`))));
     const rocket = section('rocket', ROCKETS.map((id: RocketId) => {
       const r = table.rockets[id];
       return choice('rocket', id, design.rocket === id, t('rocketDetail', { capacity: r.capacity, cost: r.cost }),
-        () => { design.rocket = id; paint(); });
+        () => { design.rocket = id; paint(); }, t(`rocket.${id}.desc`));
     }));
     const trajectory = section('trajectory', TRAJECTORIES.map((id: TrajectoryId) => {
       const tr = table.trajectories[id];
-      return choice('trajectory', id, design.trajectory === id, t('trajectoryDetail', { cost: tr.cost, days: tr.earthDays }),
-        () => { design.trajectory = id; paint(); });
+      const days = state ? designTrajectoryDays({ ...state.campaign, design: { ...design, trajectory: id } }, ctx.data) : tr.earthDays;
+      const detail = t(tr.travelDays === undefined || tr.windowDays === undefined ? 'trajectoryDetailLegacy' : 'trajectoryDetail', {
+        cost: tr.cost,
+        days,
+        travel: tr.travelDays ?? '',
+        window: tr.windowDays ?? '',
+      });
+      return choice('trajectory', id, design.trajectory === id, detail,
+        () => { design.trajectory = id; paint(); }, t(`trajectory.${id}.desc`));
+    }), true, 'orbitalNote');
+    const shipId = design.ship ?? 'pequena';
+    const ship = section('ship', SHIPS.map((id: ShipId) => {
+      const s = table.ships?.[id] ?? { mass: 0, cost: 0, storage: 0 };
+      return choice('ship', id, shipId === id, t('shipDetail', { mass: s.mass, cost: s.cost, storage: s.storage }),
+        () => { design.ship = id; paint(); }, t(`ship.${id}.desc`));
+    }));
+    const commsId = design.comms ?? 'estandar';
+    const comms = section('comms', COMMS.map((id: CommsId) => {
+      const c = table.comms?.[id] ?? { mass: 0, cost: 0, forecast: 0 };
+      return choice('comms', id, commsId === id, t('commsDetail', { mass: c.mass, cost: c.cost }),
+        () => { design.comms = id; paint(); }, t(`comms.${id}.desc`, antennaDescription(ctx.data, c.forecast)));
     }));
 
     const groups = (['supply', 'instrument', 'crew'] as const).map((kind) => {
@@ -139,14 +170,14 @@ function mountDesign(root: HTMLElement, ctx: AppContext): () => void {
         return choice('payload', id, on, t('itemDetail', { mass: item.mass, cost: item.cost }), () => {
           design.payload = on ? design.payload.filter((p) => p !== id) : [...design.payload, id];
           paint();
-        }, true);
+        }, payloadEffect(ctx, id), true);
       }), false);
     });
 
     const left = el('div', 'design-column');
-    left.append(objective, rocket, trajectory);
+    left.append(objective, rocket, trajectory, ship);
     const right = el('div', 'design-column');
-    right.append(...groups);
+    right.append(comms, ...groups);
     const body = el('div', 'design-body');
     body.append(left, right);
 

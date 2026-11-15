@@ -253,6 +253,14 @@
         "REPAIR": "Equipment repaired."
       }
     },
+    "onboard": {
+      "heading": "Equipment on board",
+      "empty": "No extra payload.",
+      "supply": "+{amount} {resource} at the Moon landing.",
+      "reserve": "Reserve margin: {current} / {target} units above the floor · Days of life support: {days}",
+      "ice": "Ice tiles mapped: {current} / {target} · Extractor built: {extractor}",
+      "exposure": "Peak exposure: {current} (limit {target}) · Shelter built: {shelter}"
+    },
     "journal": {
       "title": "Mission journal",
       "shortcut": "M · Journal",

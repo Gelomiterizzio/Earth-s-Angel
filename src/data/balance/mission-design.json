@@ -7,9 +7,18 @@
     "pesado": { "capacity": 16, "cost": 60 }
   },
   "trajectories": {
-    "economica": { "cost": 0, "earthDays": 0 },
-    "estandar": { "cost": 10, "earthDays": 2 },
-    "rapida": { "cost": 20, "earthDays": 4 }
+    "economica": { "cost": 0, "earthDays": 0, "travelDays": 5, "windowDays": 4 },
+    "estandar": { "cost": 10, "earthDays": 2, "travelDays": 3, "windowDays": 2 },
+    "rapida": { "cost": 20, "earthDays": 4, "travelDays": 1, "windowDays": 1 }
+  },
+  "ships": {
+    "pequena": { "mass": 0, "cost": 0, "storage": 0 },
+    "estandar": { "mass": 1, "cost": 6, "storage": 6 },
+    "grande": { "mass": 2, "cost": 12, "storage": 12 }
+  },
+  "comms": {
+    "estandar": { "mass": 0, "cost": 0, "forecast": 0 },
+    "alta": { "mass": 1, "cost": 8, "forecast": 1 }
   },
   "payload": {
     "oxigeno": { "kind": "supply", "mass": 2, "cost": 6, "amount": 12 },
@@ -17,11 +26,11 @@
     "alimentos": { "kind": "supply", "mass": 2, "cost": 6, "amount": 12 },
     "materiales": { "kind": "supply", "mass": 3, "cost": 5, "amount": 15 },
     "bateria": { "kind": "supply", "mass": 1, "cost": 6, "amount": 10 },
-    "espectrometro": { "kind": "instrument", "mass": 1, "cost": 12, "amount": 1 },
+    "espectrometro": { "kind": "instrument", "mass": 1, "cost": 12, "amount": 3 },
     "sensor": { "kind": "instrument", "mass": 1, "cost": 10, "amount": 1 },
     "herramientas": { "kind": "crew", "mass": 1, "cost": 8, "amount": 0 },
     "taladro": { "kind": "crew", "mass": 2, "cost": 10, "amount": 50 },
-    "exotraje": { "kind": "crew", "mass": 2, "cost": 12, "amount": 1 }
+    "exotraje": { "kind": "crew", "mass": 2, "cost": 12, "amount": 15 }
   },
   "objectives": {
     "autosuficiente": { "minMargin": 6 },
