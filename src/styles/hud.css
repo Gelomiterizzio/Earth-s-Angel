@@ -525,3 +525,37 @@
 /* Long names (Reciclador, Invernadero...) get their own line under the icon and the key. */
 .build-btn .build-name { flex-wrap: wrap; row-gap: calc(3 * var(--px)); width: 100%; }
 .build-btn .build-label { flex: 1 1 100%; min-width: 0; overflow-wrap: anywhere; hyphens: auto; }
+
+/* Top bar: coloured numbers, progress bars and state edges (AI-assisted: Claude Code). */
+.hud-clock { position: relative; flex-direction: column; align-items: flex-start; justify-content: center; gap: calc(3 * var(--px)); }
+.hud-clock .hud-bar { width: 100%; }
+.hud-num-accent { font-family: var(--font-title); font-weight: 400; color: var(--accent); font-size: 1.12em; }
+.hud-num { font-family: var(--font-title); font-weight: 400; font-size: 1.08em; }
+.hud-text { white-space: nowrap; }
+.hud-bar { display: block; height: calc(4 * var(--px)); border-radius: 99px; background: color-mix(in srgb, var(--border) 70%, transparent); overflow: hidden; }
+.hud-bar i { display: block; height: 100%; width: calc(var(--share, 0) * 100%); border-radius: inherit; background: var(--safe); transition: width .3s ease-out; }
+.hud-bar[data-level="warn"] i { background: var(--warn); }
+.hud-bar[data-level="crit"] i { background: var(--crit); }
+
+.hud-earth[data-level="ok"] .hud-num { color: var(--ocean); filter: brightness(1.6); }
+.hud-earth[data-level="warn"] .hud-num { color: var(--warn); }
+.hud-earth[data-level="crit"] .hud-num { color: var(--crit); }
+.hud-materials .hud-num { color: var(--mineral); }
+.hud-materials[data-level="warn"] .hud-num { color: var(--warn); }
+.hud-materials[data-level="crit"] .hud-num { color: var(--crit); }
+.hud-ap .hud-num { color: var(--focus); }
+.hud-ap[data-level="crit"] .hud-num { color: var(--crit); }
+.hud-pips { display: inline-flex; gap: calc(3 * var(--px)); margin-left: calc(2 * var(--px)); }
+.hud-pips i { width: calc(7 * var(--px)); height: calc(7 * var(--px)); border-radius: 50%; border: calc(1 * var(--px)) solid var(--focus); }
+.hud-pips i.is-on { background: var(--focus); box-shadow: 0 0 calc(4 * var(--px)) var(--focus); }
+
+.meter { border-left-width: calc(4 * var(--px)); gap: calc(2 * var(--px)); }
+.meter[data-status="seguro"] { border-left-color: var(--safe); }
+.meter[data-status="preventivo"] { border-left-color: var(--warn); background: color-mix(in srgb, var(--warn) 8%, var(--bg)); }
+.meter[data-status="critico"] { border-left-color: var(--crit); background: color-mix(in srgb, var(--crit) 12%, var(--bg)); }
+.meter-reading { color: var(--text-dim); }
+.meter-num { font-family: var(--font-title); font-weight: 400; color: var(--text); font-size: 1.08em; }
+.meter[data-status="preventivo"] .meter-num { color: var(--warn); }
+.meter[data-status="critico"] .meter-num { color: var(--crit); }
+.meter .hud-bar { margin-top: calc(1 * var(--px)); }
+.reduced-motion .hud-bar i { transition: none; }

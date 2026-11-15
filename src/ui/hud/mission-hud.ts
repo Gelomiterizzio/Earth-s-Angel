@@ -338,14 +338,24 @@ function paintTop(
   const displayDay = state.mission.phase === 'report'
     ? state.mission.lastReport?.day ?? state.mission.day
     : state.mission.day;
-  const clock = el('p', 'hud-clock', ctx.t(`ui.hud.${unit}${level?.dayLimit == null ? 'Open' : ''}`, {
+  // AI-assisted: Claude Code (claude-opus-5-5). Numbers stand out by colour; bars show progress.
+  const clockText = ctx.t(`ui.hud.${unit}${level?.dayLimit == null ? 'Open' : ''}`, {
     day: displayDay, limit: level?.dayLimit ?? '',
-  }));
+  });
+  const clock = el('p', 'hud-clock');
+  clock.setAttribute('aria-label', clockText);
+  clock.append(emphasize(clockText, displayDay, 'hud-num-accent'));
+  if (level?.dayLimit) {
+    const share = Math.min(1, displayDay / level.dayLimit);
+    clock.append(hudBar(share, share >= 0.85 ? 'crit' : share >= 0.65 ? 'warn' : 'ok'));
+  }
   if (state.mission.level === 'marte') {
     clock.title = `${ctx.t('ui.hud.solHint')} ${ctx.t('ui.hud.marsGravity')}`;
   }
-  const earth = el('p', 'hud-stat');
-  earth.append(el('span', 'icon icon-earth'), el('span', undefined, ctx.t('ui.hud.earth', { days: state.campaign.earthDaysRemaining })));
+  const earth = el('p', 'hud-stat hud-earth');
+  const earthDays = state.campaign.earthDaysRemaining;
+  earth.dataset.level = earthDays <= 10 ? 'crit' : earthDays <= 20 ? 'warn' : 'ok';
+  earth.append(el('span', 'icon icon-earth'), emphasize(ctx.t('ui.hud.earth', { days: earthDays }), earthDays, 'hud-num'));
   const meters = el('div', 'hud-meters');
   meters.dataset.tutorial = 'hud-meters';
   meters.append(
@@ -353,10 +363,18 @@ function paintTop(
     meterButton(ctx, 'soporte', summary, openMeter, state, toggle),
     meterButton(ctx, 'proteccion', summary, openMeter, state, toggle),
   );
-  const materials = el('p', 'hud-stat');
-  materials.append(el('span', 'icon icon-materiales'), el('span', undefined, ctx.t('ui.hud.materials', { n: state.mission.resources.materiales })));
-  const ap = el('p', 'hud-stat');
-  ap.append(el('span', 'icon icon-ap'), el('span', undefined, ctx.t('ui.hud.ap', { n: state.mission.ap })));
+  const materials = el('p', 'hud-stat hud-materials');
+  const stock = state.mission.resources.materiales;
+  materials.dataset.level = stock < 6 ? 'crit' : stock < 12 ? 'warn' : 'ok';
+  materials.append(el('span', 'icon icon-materiales'), emphasize(ctx.t('ui.hud.materials', { n: stock }), stock, 'hud-num'));
+  const ap = el('p', 'hud-stat hud-ap');
+  ap.dataset.level = state.mission.ap === 0 ? 'crit' : 'ok';
+  const apText = ctx.t('ui.hud.ap', { n: state.mission.ap });
+  ap.setAttribute('aria-label', apText);
+  const pips = el('span', 'hud-pips');
+  pips.setAttribute('aria-hidden', 'true');
+  for (let i = 0; i < state.mission.crew.length; i++) pips.append(el('i', i < state.mission.ap ? 'is-on' : undefined));
+  ap.append(el('span', 'icon icon-ap'), emphasize(apText, state.mission.ap, 'hud-num'), pips);
   const help = button({ label: ctx.t('ui.hud.help'), onClick: press(ctx, showCards) });
   const options = button({ label: ctx.t('ui.hud.options'), onClick: press(ctx, () => ctx.flow.go('opciones')) });
   const pause = button({ label: ctx.t('ui.hud.pause'), onClick: press(ctx, () => ctx.flow.go('pausa')) });
@@ -389,9 +407,17 @@ function meterButton(
   const status = summary ? summary[id].status : null;
   main.append(el('span', `icon icon-${id === 'energia' ? 'energy' : id === 'soporte' ? 'agua' : 'radiation'}`));
   main.append(el('span', undefined, ctx.t(`ui.hud.${id === 'energia' ? 'energy' : id === 'soporte' ? 'life' : 'shield'}`)));
-  const value = el('span', 'meter-reading', meterValue(ctx, id, summary, state.mission.level === 'marte'));
+  if (status) node.dataset.status = status;
+  const reading = meterValue(ctx, id, summary, state.mission.level === 'marte');
+  const value = el('span', 'meter-reading');
+  const number = !summary ? null : id === 'energia' ? summary.energia.stored
+    : id === 'soporte' ? summary.soporte.marginDays : summary.proteccion.maxExposure;
+  value.append(number === null ? el('span', undefined, reading) : emphasize(reading, number, 'meter-num'));
   if (status) value.append(statusBadge(status, ctx.t(`ui.status.${status}`), ctx.t(`ui.status.mark.${status}`)));
   node.append(main, value);
+  if (summary && id === 'energia' && summary.energia.cap > 0) {
+    node.append(hudBar(summary.energia.stored / summary.energia.cap, status === 'critico' ? 'crit' : status === 'preventivo' ? 'warn' : 'ok'));
+  }
   const item = el('div', 'meter-slot');
   item.append(node);
   if (open === id) {
@@ -401,6 +427,31 @@ function meterButton(
     item.append(detail);
   }
   return item;
+}
+
+/** The text with the first appearance of the number wrapped in <b class>, to colour it. */
+function emphasize(text: string, value: number, className: string): HTMLElement {
+  const holder = el('span', 'hud-text');
+  const needle = String(value);
+  const at = text.indexOf(needle);
+  if (at < 0) {
+    holder.textContent = text;
+    return holder;
+  }
+  holder.append(document.createTextNode(text.slice(0, at)), el('b', className, needle),
+    document.createTextNode(text.slice(at + needle.length)));
+  return holder;
+}
+
+/** Thin progress bar for the top bar. */
+function hudBar(share: number, level: 'ok' | 'warn' | 'crit'): HTMLElement {
+  const bar = el('span', 'hud-bar');
+  bar.dataset.level = level;
+  bar.setAttribute('aria-hidden', 'true');
+  const fill = el('i');
+  fill.style.setProperty('--share', String(Math.max(0, Math.min(1, share))));
+  bar.append(fill);
+  return bar;
 }
 
 function meterValue(ctx: AppContext, id: 'energia' | 'soporte' | 'proteccion', summary: HudSummary | null, sols = false): string {
