@@ -36,3 +36,19 @@ describe('presentation mode script', () => {
     expect(mars.captions[0]).toBe('mars1');
   });
 });
+
+describe('defeat presentation script (key Z)', () => {
+  it('loses the Moon mission because life support runs out', async () => {
+    const { LOSING_PLAN } = await import('../../src/app/presentation-script');
+    const created = createCampaign(PRESENTATION_DIFFICULTY, PRESENTATION_SEED, data, { canonical: true });
+    let state = startDay(created, data).state;
+    for (const step of missionSteps(() => state, LOSING_PLAN)) {
+      if (step.kind !== 'action') continue;
+      const result = applyAction(state, step.action, data);
+      if (!result.ok) throw new Error(`${step.action.type} on day ${state.mission.day}: ${result.error.code}`);
+      state = result.state;
+    }
+    expect(state.mission.result).toMatchObject({ level: 'luna', outcome: 'defeat' });
+    expect(state.mission.day).toBeLessThanOrEqual(10);
+  });
+});

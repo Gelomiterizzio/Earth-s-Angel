@@ -4,6 +4,8 @@ Juego educativo 2D por turnos para navegador. Entrada del equipo al NASA Space A
 
 ## Estado del proyecto
 
+- **15-nov-2026.** Nueva partida muestra la apertura animada aprobada de 45 segundos, con el proyecto EARTH'S ANGEL y la nave EL ANGEL.
+
 - **15-nov-2026.** El servidor local reproduce en bucle la pista ambiental aportada por el usuario a través de los controles de audio existentes.
 
 - **14-nov-2026.** Luna, Marte y Tierra están integrados y verificados en la compilación local. [Comandos y verificación](docs/DESPLIEGUE.md).

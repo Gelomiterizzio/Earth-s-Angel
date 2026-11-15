@@ -24,13 +24,15 @@ Ver o saltar una secuencia **nunca** cambia el estado del juego ([progresion](co
 
 ## 1. Apertura · `intro` · P0 · 45 s
 
+La apertura aprobada se anima en Canvas. Conserva las seis escenas y sus tiempos. El río pierde caudal, la ciudad se apaga por edificios, la tripulación entra a la sala y la cámara sigue el despegue. En la Luna, la nave desciende y la tripulación baja por la escalera. El vídeo de apertura se puede saltar con Enter.
+
 | Nº | Dur. | Composición y capas | Cámara | Transición | Narración (ES) | Narration (EN) |
 | --- | --- | --- | --- | --- | --- | --- |
 | 1 | 7 s | Fondo: estrellas. Medio: la Tierra azul. Frente: nubes finas | Zoom lento hacia dentro | Fundido | La Tierra fue siempre nuestro hogar. | Earth has always been our home. |
 | 2 | 8 s | Fondo: cielo que se enturbia. Medio: montañas y bosque ralo. Frente: río con poco caudal | Paneo a la derecha | Fundido | La cuidamos poco. El agua bajó, los bosques se apagaron y el cielo cambió. | We took poor care of it. Rivers shrank, forests faded and the sky changed. |
 | 3 | 7 s | Fondo: ciudad de noche. Medio: ventanas que se apagan una a una. Frente: siluetas en fila ante una fuente | Fija | Fundido | Las ciudades empezaron a quedarse sin lo necesario. | Cities began to run short of what they needed. |
-| 4 | 8 s | Fondo: sala con un mapa de la Luna y Marte. Medio: mesa de trabajo. Frente: cuatro siluetas con traje | Zoom lento hacia fuera | Fundido | Así nació el Proyecto Last Hope: aprender a vivir sin desperdiciar nada. Cuatro tripulantes fueron elegidos. | So Project Last Hope was born: learning to live without wasting anything. Four crew members were chosen. |
-| 5 | 7 s | Fondo: cielo del amanecer. Medio: la nave despegando. Frente: humo en la base | Paneo hacia arriba | Corte | Su nave, la *Ángel*, partió hacia la Luna. | Their ship, the *Angel*, set out for the Moon. |
+| 4 | 8 s | Fondo: sala con un mapa de la Luna y Marte. Medio: mesa de trabajo. Frente: cuatro siluetas con traje | Zoom lento hacia fuera | Fundido | Así nació el Proyecto EARTH'S ANGEL: aprender a vivir sin desperdiciar nada. Cuatro tripulantes fueron elegidos. | So Project EARTH'S ANGEL was born: learning to live without wasting anything. Four crew members were chosen. |
+| 5 | 7 s | Fondo: cielo del amanecer. Medio: la nave despegando. Frente: humo en la base | Paneo hacia arriba | Corte | Su nave, EL ANGEL, partió hacia la Luna. | Their ship, EL ANGEL, set out for the Moon. |
 | 6 | 8 s | Fondo: cielo negro con la Tierra pequeña. Medio: horizonte lunar. Frente: la nave posada | Zoom lento a la nave | Fundido a la misión | Primera misión: construir un refugio donde nada falte. La Tierra cuenta los días. | First mission: build a shelter where nothing runs out. Earth is counting the days. |
 
 Sonido: `sfx-radio` en la escena 4, `sfx-launch` en la 5 y `sfx-landing` en la 6. Al terminar o saltar: escena `mision`, día 1.

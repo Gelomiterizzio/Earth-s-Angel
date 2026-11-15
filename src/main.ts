@@ -55,8 +55,8 @@ function boot(): void {
   // The mounted UI and map handle their own keyboard shortcuts.
   flow.go('titulo');
 
-  // X starts or stops presentation mode (the game plays itself), in every build.
-  mountPresentationMode(ctx);
+  // X: presentation (the game plays itself). Z: defeat demo. Available in every build.
+  mountPresentationMode(ctx, () => mapView.walk);
 
   if (import.meta.env.DEV) {
     void import('./app/debug').then(({ mountDebugTools }) => mountDebugTools(ctx));

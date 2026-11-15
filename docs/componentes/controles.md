@@ -47,7 +47,8 @@ Los atajos globales se ignoran si el foco está en un campo de texto o un desliz
 | Enter | Tablero con foco | Acción de la herramienta |
 | **Enter** | Cinemática | **Saltar** |
 | B | Luna y Marte | Abrir o cerrar el panel de la base |
-| **X** | **Cualquier pantalla** | **Modo presentación: el juego se juega solo (Luna, tormenta, Marte y final). X otra vez lo detiene.** En la Luna y Marte se explora con E |
+| **X** | **Cualquier pantalla** | **Modo presentación: el juego se juega solo como un jugador (camina con WASD, se gira hacia la casilla y construye, explora o recoge) por la Luna, la tormenta, Marte y el final. X otra vez lo detiene.** En la Luna y Marte se explora con E |
+| **Z** | **Cualquier pantalla** | **Demo de derrota: la tripulación ignora el soporte vital, se acaba el aire y la secuencia de fin de partida muestra el mundo estallando. Z otra vez la detiene.** |
 | C | Misión | Herramienta recolectar |
 | M | Misión | Abrir el diario de misión |
 | R | Misión | Mostrar u ocultar las reservas actuales |

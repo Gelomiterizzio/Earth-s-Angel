@@ -11,6 +11,7 @@ export const CONTROL_LABEL_KEYS = [
   'ui.controls.b',
   'ui.controls.r',
   'ui.controls.x',
+  'ui.controls.z',
   'ui.controls.c',
   'ui.controls.m',
   'ui.controls.f',

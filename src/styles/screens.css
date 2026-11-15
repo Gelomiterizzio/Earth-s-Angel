@@ -428,11 +428,72 @@
   background: var(--panel);
 }
 
+.cine:has(.intro-canvas) .cine-dock {
+  min-height: 0;
+  padding-block: calc(8 * var(--px));
+}
+
 .cine .caption {
   grid-column: 1;
   margin: 0;
   font-size: clamp(13px, calc(24 * var(--px)), 32px);
   line-height: 1.4;
+}
+
+.intro-stage {
+  container-type: inline-size;
+}
+
+.intro-stage .intro-canvas {
+  image-rendering: auto;
+}
+
+.intro-title {
+  position: absolute;
+  inset: 5% auto auto 3%;
+  margin: 0;
+  padding: .36em .7em;
+  color: #bbf6ff;
+  background: #0b1428f5;
+  border-inline-start: .2em solid #6be5eb;
+  font: 700 clamp(13px, 1.8cqw, 26px) / 1.1 var(--font-title);
+  letter-spacing: .035em;
+}
+
+.cine .intro-caption {
+  position: absolute;
+  inset: auto 0 0;
+  padding: .48em 6% max(.55em, 7px);
+  border-top: 1px solid #678bbb;
+  background: #10182bf7;
+  color: #faf7ef;
+  font: 600 clamp(13px, 2.15cqw, 30px) / 1.35 var(--font-body);
+  text-align: center;
+  text-wrap: balance;
+}
+
+.intro-countdown {
+  position: absolute;
+  inset: 21% auto auto 76%;
+  transform: translateX(-50%);
+  margin: 0;
+  color: #ffe6ad;
+  border-bottom: .045em solid #ffd277;
+  font: 700 clamp(24px, 8.8cqw, 110px) / 1 var(--font-title);
+  text-shadow: 0 .04em #232139;
+}
+
+.intro-progress {
+  position: absolute;
+  inset: auto 0 0;
+  height: clamp(2px, .38cqw, 5px);
+  background: #293c5f;
+}
+
+.intro-progress > div {
+  height: 100%;
+  background: #80d9ec;
+  transform-origin: left;
 }
 
 #ui .cine .skip {

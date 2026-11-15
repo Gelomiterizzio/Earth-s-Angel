@@ -46,6 +46,39 @@ export const MARS_SCRIPT: Record<number, ScriptDay> = {
   15: { actions: [build('panel', 10, 8), clean] },
 };
 
+/**
+ * Script for the defeat demo (key Z): the crew only builds power and wanders around. Nobody
+ * builds water, oxygen or food, mission control's warnings are ignored and air runs out.
+ */
+export const LOSING_MOON_SCRIPT: Record<number, ScriptDay> = {
+  1: { caption: 'lose1', actions: [build('panel', 24, 24), build('panel', 25, 24), explore(28, 28)] },
+  2: { caption: 'lose2', actions: [build('bateria', 24, 26), collect(23, 27)] },
+  3: { caption: 'lose3', actions: [explore(22, 28), build('panel', 23, 24)] },
+  4: { caption: 'lose4', actions: [] },
+  5: { caption: 'lose5', actions: [] },
+  6: { caption: 'lose6', actions: [] },
+  7: { caption: 'lose7', actions: [] },
+};
+
+export interface MissionScript {
+  days: Record<number, ScriptDay>;
+  /** Shelter the crew when a storm decision comes up. */
+  shelter: (level: string, day: number) => boolean;
+  /** Caption keys for days without their own caption and for storm decisions. */
+  idleCaption: string;
+  stormCaption: string;
+}
+
+export const MOON_PLAN: MissionScript = {
+  days: MOON_SCRIPT, shelter: (_level, day) => day === 8, idleCaption: 'moonDay', stormCaption: 'moonStorm',
+};
+export const MARS_PLAN: MissionScript = {
+  days: MARS_SCRIPT, shelter: () => true, idleCaption: 'marsDay', stormCaption: 'marsStorm',
+};
+export const LOSING_PLAN: MissionScript = {
+  days: LOSING_MOON_SCRIPT, shelter: () => false, idleCaption: 'loseDay', stormCaption: 'loseStorm',
+};
+
 export type ScriptStep =
   | { kind: 'caption'; key: string; day: number }
   | { kind: 'action'; action: Action; pause: 'short' | 'report' | 'decision' };
@@ -54,17 +87,21 @@ export type ScriptStep =
  * Steps for the mission currently in the state, until it has a result. Reads the state again
  * after every step, so the caller can dispatch through the store (browser) or the core (tests).
  */
-export function* missionSteps(getState: () => import('../core/types').GameState): Generator<ScriptStep, void, void> {
+export function* missionSteps(
+  getState: () => import('../core/types').GameState,
+  plan?: MissionScript,
+): Generator<ScriptStep, void, void> {
   const level = getState().mission.level;
-  const script = level === 'luna' ? MOON_SCRIPT : MARS_SCRIPT;
+  const chosen = plan ?? (level === 'luna' ? MOON_PLAN : MARS_PLAN);
+  const script = chosen.days;
   for (let guard = 0; guard < 200; guard++) {
     const state = getState();
     const { mission } = state;
     if (mission.result || mission.level !== level || mission.phase === 'ended') return;
     const day = mission.day;
     if (mission.phase === 'decision') {
-      yield { kind: 'caption', key: level === 'luna' ? 'moonStorm' : 'marsStorm', day };
-      const shelter = level === 'marte' || day === 8;
+      yield { kind: 'caption', key: chosen.stormCaption, day };
+      const shelter = chosen.shelter(level, day);
       yield { kind: 'action', action: { type: 'DECIDE_SHELTER', shelter, day }, pause: 'decision' };
       // On Mars the walkthrough ends the sol right after the decision, like tests/core/campaign.test.ts.
       if (level === 'marte' && !getState().mission.result) {
@@ -78,7 +115,7 @@ export function* missionSteps(getState: () => import('../core/types').GameState)
       continue;
     }
     const entry = script[day];
-    yield { kind: 'caption', key: entry?.caption ?? (level === 'luna' ? 'moonDay' : 'marsDay'), day };
+    yield { kind: 'caption', key: entry?.caption ?? chosen.idleCaption, day };
     for (const action of entry?.actions ?? []) yield { kind: 'action', action, pause: 'short' };
     if (level === 'marte') {
       for (const b of getState().mission.buildings) {

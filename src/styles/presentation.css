@@ -66,3 +66,7 @@
 }
 .reduced-motion .presentation-caption { animation: none;
 }
+
+/* Defeat demo (key Z): a red frame instead of the gold one. */
+.presentation-defeat { border-color: var(--crit); }
+.presentation-defeat .presentation-badge { background: var(--crit); color: var(--text); }

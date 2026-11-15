@@ -7,6 +7,7 @@ import { drawLunarLander } from '../../map/art';
 import { bindChrome, press } from '../chrome';
 import { cleaner, el } from '../dom';
 import { mountPlayer } from '../cinematics/player';
+import { mountAnimatedIntro } from '../cinematics/intro';
 import { mountBoarding } from '../cinematics/boarding';
 import { getScript } from '../cinematics/scripts';
 
@@ -67,7 +68,8 @@ function mountCinematic(root: HTMLElement, ctx: AppContext): () => void {
   const manifest = id === 'moonToMars' ? campaign?.manifest : null;
   const bonus = manifest?.bonusDaysApplied ?? ctx.data.difficulty[campaign?.difficulty ?? 'media']?.bonusDays ?? 0;
   const playScript = (scenes = script.scenes): void => {
-    stopPlayer = mountPlayer(stage, caption, {
+    const mount = script.id === 'intro' ? mountAnimatedIntro : mountPlayer;
+    stopPlayer = mount(stage, caption, {
       script: { ...script, scenes },
       reducedMotion: ctx.options.get().reducedMotion,
       showSubtitles: () => ctx.options.get().subtitles,
