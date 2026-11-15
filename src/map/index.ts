@@ -1,7 +1,7 @@
 // AI-assisted: Cursor (Composer) and OpenAI Codex. Team review pending.
 import type { AppContext } from '../app/context';
 import type { GameState, MapView } from '../core/types';
-import { BUILDING_PX, drawAtlasFrame, drawLunarLander, drawMapEffect, drawTerrainAccent, EFFECT_DURATION, loadMapArt, makeLunarBackdrop, TILE_PX } from './art';
+import { BUILDING_PX, drawAtlasFrame, drawLunarLander, drawSupportShip, MARS_SUPPORT_SHIP, drawMapEffect, drawTerrainAccent, EFFECT_DURATION, loadMapArt, makeLunarBackdrop, TILE_PX } from './art';
 import type { MapEffect } from './art';
 import { createMapAmbience } from './ambience';
 import { actionForTool, dispatchToolAction, previewAt } from './map-input';
@@ -205,7 +205,9 @@ export function createMapView(parent: HTMLElement, ctx: AppContext): LunarMapVie
         }
         continue;
       }
-      const terrain = tile.collected && tile.terrain === 'mineral' ? 'llano' : tile.terrain;
+      const supportShip = martian && x === MARS_SUPPORT_SHIP.x && y === MARS_SUPPORT_SHIP.y;
+      // The support ship covers its rock: draw flat ground under its feet.
+      const terrain = supportShip ? 'llano' : tile.collected && tile.terrain === 'mineral' ? 'llano' : tile.terrain;
       const fallback = TERRAIN_FALLBACK[terrain];
       if (!drawAtlasFrame(g, art, tiles, TERRAIN_SPRITE[terrain], x, y)) {
         g.fillStyle = fallback.fill;
@@ -215,8 +217,14 @@ export function createMapView(parent: HTMLElement, ctx: AppContext): LunarMapVie
       if (terrain === 'llano' || terrain === 'nave') drawTerrainAccent(g, martian, x, y);
     }
 
+    const support = martian && mission.map.tiles[MARS_SUPPORT_SHIP.y * width + MARS_SUPPORT_SHIP.x]?.explored;
+    let supportDrawn = !support;
     for (const building of [...mission.buildings].sort((a, b) => a.y - b.y)) {
       const { x, y } = building;
+      if (!supportDrawn && y > MARS_SUPPORT_SHIP.y) {
+        drawSupportShip(g, MARS_SUPPORT_SHIP.x, MARS_SUPPORT_SHIP.y);
+        supportDrawn = true;
+      }
       if (!mission.map.tiles[y * width + x]?.explored) continue;
       if (supportsFieldWalk(mission.level) && building.type === 'nave') {
         drawLunarLander(g, x, y);
@@ -233,6 +241,7 @@ export function createMapView(parent: HTMLElement, ctx: AppContext): LunarMapVie
         mapMark(g, building.damaged ? '!' : '⊘', x, y, true);
       }
     }
+    if (!supportDrawn) drawSupportShip(g, MARS_SUPPORT_SHIP.x, MARS_SUPPORT_SHIP.y);
   }
 
   function updateControls(refreshLabels = false): void {

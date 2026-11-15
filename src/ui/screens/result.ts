@@ -36,6 +36,15 @@ function mountResult(root: HTMLElement, ctx: AppContext): () => void {
   if (result?.outcome === 'victory') ctx.audio.playMusic('music-victory');
   if (result?.outcome === 'defeat') ctx.audio.playMusic('music-defeat');
 
+  // The results always open at the top, with the title in view. Again on the next frames, after
+  // fonts, badges and images have settled the layout.
+  const toTop = (): void => {
+    screen.scrollTop = 0;
+    requestAnimationFrame(() => {
+      screen.scrollTop = 0;
+      requestAnimationFrame(() => { screen.scrollTop = 0; });
+    });
+  };
   const paint = (): void => {
     const state: CampaignState | null = ctx.store.getState();
     const current = readMissionResult(state) ?? result;
@@ -55,6 +64,7 @@ function mountResult(root: HTMLElement, ctx: AppContext): () => void {
     if (current.level === 'tierra') {
       paintEarthResult(screen, ctx, current, state);
       heading.focus({ preventScroll: true });
+      toTop();
       return;
     }
     if (!victory && current.cause) screen.append(el('p', undefined, ctx.t(`ui.result.cause.${current.cause}`)));
@@ -148,6 +158,7 @@ function mountResult(root: HTMLElement, ctx: AppContext): () => void {
     }
     screen.append(actions);
     heading.focus({ preventScroll: true });
+    toTop();
   };
   const showReport = () => {
     paint();

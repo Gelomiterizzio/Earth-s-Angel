@@ -353,7 +353,9 @@
   opacity: .34;
   pointer-events: none;
   background: repeating-linear-gradient(-19deg, transparent 0 12%, var(--mars-light) 18%, transparent 23% 32%);
-  animation: map-dust 3s ease-in-out infinite alternate;
+  /* Only the haze breathes. Moving these large bands made the whole map seem to slide on its
+     own; the wind-blown dust drawn in src/map/ambience.ts shows the movement instead. */
+  animation: map-dust 4s ease-in-out infinite alternate;
 }
 
 .map-dust.map-still::before { animation: none; }
@@ -365,8 +367,8 @@
 }
 
 @keyframes map-dust {
-  from { background-position: -56px 48px; opacity: .14; }
-  to { background-position: 56px -48px; opacity: .34; }
+  from { opacity: .16; }
+  to { opacity: .3; }
 }
 
 /* Mission control advice and the warning bubble over the astronaut (AI-assisted: Claude Code). */

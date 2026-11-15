@@ -108,6 +108,7 @@ Rutas relativas a `public/assets/`.
 
 | ID | Ruta | Tamaño · formato | Escena | Capas o animación | Transp. | Prompt | Estado | Autoría · licencia |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `mars-arrival` | [`src/ui/cinematics/mars-arrival-art.ts`](../src/ui/cinematics/mars-arrival-art.ts) | 384 × 216 · Canvas | Llegada a Marte | Descenso de dos naves, polvo, escaleras, caminata y saludo de los seis tripulantes | No | Véase registro de IA | compilación local | Equipo Earth’s Angel, arte original asistido por Codex. MIT |
 | `tiles-mars` | `sprites/tiles-mars.png` | 168 × 24 · PNG | Marte | Las mismas 7 casillas | Sí | P-TERR | entregado | Equipo Earth’s Angel, arte original asistido por Codex. MIT |
 | `buildings-p1` | `sprites/buildings-p1.png` | 96 × 32 · PNG | Marte | 4 cuadros: depósito, comunicaciones, laboratorio, hábitat | Sí | P-EDIF | entregado | Equipo Earth’s Angel, arte original asistido por Codex. MIT |
 | `crew-p1` | `sprites/crew-p1.png` | 64 × 32 · PNG | HUD | Geólogo y especialista en comunicaciones | Sí | P-TRIP | entregado | Equipo Earth’s Angel, arte original asistido por Codex. MIT |

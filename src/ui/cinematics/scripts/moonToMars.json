@@ -96,7 +96,7 @@
       "sfx": "sfx-launch"
     },
     {
-      "durationMs": 8000,
+      "durationMs": 4000,
       "captionKey": "ui.cine.moonToMars.5",
       "background": "mars-base",
       "layers": [
@@ -118,6 +118,36 @@
       ],
       "transition": "fade",
       "sfx": "sfx-landing"
+    },
+    {
+      "durationMs": 3500,
+      "captionKey": "ui.cine.moonToMars.6",
+      "background": "#754554",
+      "layers": [],
+      "transition": "cut",
+      "sfx": "sfx-landing"
+    },
+    {
+      "durationMs": 4300,
+      "captionKey": "ui.cine.moonToMars.7",
+      "background": "#754554",
+      "layers": [],
+      "transition": "cut"
+    },
+    {
+      "durationMs": 3600,
+      "captionKey": "ui.cine.moonToMars.8",
+      "background": "#754554",
+      "layers": [],
+      "transition": "cut",
+      "sfx": "sfx-radio"
+    },
+    {
+      "durationMs": 3600,
+      "captionKey": "ui.cine.moonToMars.9",
+      "background": "#754554",
+      "layers": [],
+      "transition": "cut"
     }
   ]
 }

@@ -3,7 +3,7 @@
   "music": "music-ending",
   "scenes": [
     {
-      "durationMs": 8000,
+      "durationMs": 3500,
       "captionKey": "ui.cine.marsVictory.1",
       "background": "mars-base",
       "layers": [
@@ -26,8 +26,55 @@
       "transition": "fade"
     },
     {
-      "durationMs": 7000,
+      "durationMs": 3500,
       "captionKey": "ui.cine.marsVictory.2",
+      "background": "mars-base",
+      "layers": [
+        {
+          "image": "mars-victory-1.png",
+          "from": {
+            "x": 12,
+            "y": 0,
+            "scale": 1.035,
+            "opacity": 1
+          },
+          "to": {
+            "x": -12,
+            "y": 0,
+            "scale": 1.035,
+            "opacity": 1
+          }
+        }
+      ],
+      "transition": "fade"
+    },
+    {
+      "durationMs": 3800,
+      "captionKey": "ui.cine.marsVictory.3",
+      "background": "mars-light",
+      "layers": [
+        {
+          "image": "mars-victory-2.png",
+          "from": {
+            "x": 0,
+            "y": 0,
+            "scale": 1,
+            "opacity": 1
+          },
+          "to": {
+            "x": 0,
+            "y": 0,
+            "scale": 1,
+            "opacity": 1
+          }
+        }
+      ],
+      "transition": "fade",
+      "sfx": "sfx-victory"
+    },
+    {
+      "durationMs": 3200,
+      "captionKey": "ui.cine.marsVictory.4",
       "background": "mars-light",
       "layers": [
         {
@@ -49,8 +96,8 @@
       "transition": "fade"
     },
     {
-      "durationMs": 7000,
-      "captionKey": "ui.cine.marsVictory.3",
+      "durationMs": 3450,
+      "captionKey": "ui.cine.marsVictory.5",
       "background": "mars-sky",
       "layers": [
         {
@@ -69,11 +116,59 @@
           }
         }
       ],
+      "transition": "fade",
+      "sfx": "sfx-radio"
+    },
+    {
+      "durationMs": 3550,
+      "captionKey": "ui.cine.marsVictory.6",
+      "background": "mars-sky",
+      "layers": [
+        {
+          "image": "mars-victory-3.png",
+          "from": {
+            "x": 0,
+            "y": 0,
+            "scale": 1,
+            "opacity": 1
+          },
+          "to": {
+            "x": 0,
+            "y": 0,
+            "scale": 1.04,
+            "opacity": 1
+          }
+        }
+      ],
+      "transition": "fade",
+      "sfx": "sfx-radio"
+    },
+    {
+      "durationMs": 3500,
+      "captionKey": "ui.cine.marsVictory.7",
+      "background": "ocean",
+      "layers": [
+        {
+          "image": "mars-victory-4.png",
+          "from": {
+            "x": 0,
+            "y": 0,
+            "scale": 1.04,
+            "opacity": 1
+          },
+          "to": {
+            "x": 0,
+            "y": 0,
+            "scale": 1,
+            "opacity": 1
+          }
+        }
+      ],
       "transition": "fade"
     },
     {
-      "durationMs": 8000,
-      "captionKey": "ui.cine.marsVictory.4",
+      "durationMs": 3500,
+      "captionKey": "ui.cine.marsVictory.8",
       "background": "ocean",
       "layers": [
         {

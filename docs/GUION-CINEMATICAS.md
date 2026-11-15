@@ -39,9 +39,9 @@ Sonido: `sfx-radio` en la escena 4, `sfx-launch` en la 5 y `sfx-landing` en la 6
 
 **Versión recortada** si falta tiempo: solo la escena 6 con tres frases: "La Tierra necesita ayuda. El Proyecto Last Hope envía cuatro tripulantes a la Luna. Tu misión: construir un refugio donde nada falte."
 
-## 2. Luna → Marte · `moonToMars` · P1 · 36 s
+## 2. Luna → Marte · `moonToMars` · P1
 
-La transición y el bono ya están aplicados y guardados cuando empieza.
+La transición y el bono ya están aplicados y guardados cuando empieza. Tras el manifiesto se reproducen el embarque animado, los planos de tránsito y el aterrizaje de 19 s. Con movimiento reducido, las cuatro primeras viñetas sustituyen el embarque animado y el aterrizaje muestra poses fijas.
 
 | Nº | Dur. | Composición y capas | Cámara | Transición | Narración (ES) | Narration (EN) |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -49,18 +49,22 @@ La transición y el bono ya están aplicados y guardados cuando empieza.
 | 2 | 6 s | Interior del hábitat. Cuatro siluetas con los brazos en alto | Fija | Fundido | La tripulación lo celebra. | The crew celebrates. |
 | 3 | 8 s | La Tierra a un lado y un contador de días que sube | Zoom suave | Fundido | Lo que aprendieron ya ayuda en casa. La Tierra gana {bonus} días. | What they learned is already helping at home. Earth gains {bonus} days. |
 | 4 | 7 s | La nave se aleja de la Luna hacia un punto rojo | Paneo siguiendo a la nave | Fundido | Con ese tiempo, la *Ángel* parte hacia Marte. | With that time, the *Angel* sets out for Mars. |
-| 5 | 8 s | Fondo: cielo anaranjado. Medio: llanura con polvo en el aire. Frente: la nave posada | Zoom lento | Fundido a la misión | Marte está más lejos. Hay polvo, y las señales tardan en llegar. Empieza una nueva misión. | Mars is farther away. There is dust, and signals take time to arrive. A new mission begins. |
+| 5 | 4 s | El Ángel desciende sobre una llanura rojiza y el motor levanta polvo. | Fija | Corte | Comandante: Aquí El Ángel. Los cuatro hemos llegado a Marte. | Commander: This is El Ángel. All four of us have reached Mars. |
+| 6 | 3,5 s | Al fondo aparece la segunda nave, con baliza azul. Los cuatro comienzan a bajar de El Ángel. | Fija | Plano continuo | Ingeniería: ¡Miren a la derecha! Hay otra nave aterrizando. | Engineering: Look to the right! Another ship is landing. |
+| 7 | 4,3 s | La segunda nave despliega su escalera. Bajan Geología y Comunicaciones y se acercan al centro. | Fija | Plano continuo | Geología: Somos el equipo de refuerzo. Yo puedo localizar hielo y otros recursos. | Geology: We're the backup team. I can locate ice and other resources. |
+| 8 | 3,6 s | Comunicaciones saluda al llegar frente al comandante. | Fija | Plano continuo | Comunicaciones: ¡Venimos a ayudarles! Yo me encargo del enlace con la Tierra. | Communications: We're here to help! I'll keep us in touch with Earth. |
+| 9 | 3,6 s | El comandante devuelve el saludo. Los seis quedan reunidos entre las dos naves. | Fija | Corte a la misión | Comandante: ¡Bienvenidos! Ahora somos seis. Vamos a levantar esta base juntos. | Commander: Welcome! There are six of us now. Let's build this base together. |
 
 El tiempo ganado es ficción y la escena 3 lo presenta como parte de la historia. `{bonus}` sale del balance.
 
-## 3. Victoria ordinaria · `marsVictory` · P1 · 30 s
+## 3. Victoria ordinaria · `marsVictory` · P1 · 28 s
 
 | Nº | Dur. | Composición y capas | Cámara | Transición | Narración (ES) | Narration (EN) |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 | 8 s | Colonia marciana: cúpulas, paneles limpios, antena | Paneo a la derecha | Fundido | La colonia de Marte funciona. | The Mars colony is working. |
-| 2 | 7 s | Seis siluetas mirando el horizonte al amanecer | Fija | Fundido | Aquí empieza una nueva etapa. | A new chapter begins here. |
-| 3 | 7 s | Cielo marciano con un punto azul | Zoom lento al punto | Fundido | Desde aquí, la Tierra es un punto azul. | From here, Earth is a small blue dot. |
-| 4 | 8 s | La Tierra llena la viñeta | Zoom lento hacia fuera | Fundido a créditos | Aprendimos a vivir sin desperdiciar nada. Cuidar la Tierra sigue siendo tarea de todos. | We learned to live without wasting anything. Caring for Earth is still everyone's job. |
+| 1 | 7 s | La colonia al amanecer, con paneles, hábitats e invernadero activos | Paneo lateral | Corte | La colonia ya puede sostenerse. | The colony can sustain itself now. |
+| 2 | 7 s | Los seis astronautas salen a celebrar y dos se chocan las manos | Plano general fijo | Corte | ¡Marte es autónomo! ¡Lo logramos, equipo! | Mars is self-sufficient! We did it, team! |
+| 3 | 7 s | La señal de Marte llega a la Tierra y vuelve la respuesta de Control | Plano orbital | Corte | Ya estamos aplicando lo que aprendieron. | We're already putting what you learned to work. |
+| 4 | 7 s | La tripulación celebra bajo el rótulo ¡MARTE AUTÓNOMO! | Plano general | Créditos | Y le dimos a la Tierra una oportunidad más. | And we gave Earth another chance. |
 
 Si se llega aquí tras fallar en la Tierra, la escena 1 añade: "Volvimos a Marte. La Tierra sigue necesitando ayuda."
 

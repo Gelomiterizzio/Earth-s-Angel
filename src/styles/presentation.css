@@ -16,7 +16,7 @@
   transform: translateX(-50%);
   width: min(92%, calc(100cqw * 860 / 1280));
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1fr auto auto;
   align-items: center;
   gap: .8em;
   padding: .6em .9em;
@@ -70,3 +70,19 @@
 /* Defeat demo (key Z): a red frame instead of the gold one. */
 .presentation-defeat { border-color: var(--crit); }
 .presentation-defeat .presentation-badge { background: var(--crit); color: var(--text); }
+
+/* Show speed, changed with the mouse wheel. */
+.presentation-speed {
+  padding: .2em .5em;
+  border: 1px solid var(--border);
+  border-radius: .3em;
+  background: var(--bg);
+  color: var(--text-dim);
+  font-family: var(--font-title);
+  white-space: nowrap;
+}
+.presentation-speed[data-speed="fast"] { color: var(--accent); border-color: var(--accent); }
+.presentation-speed[data-speed="slow"] { color: var(--focus); border-color: var(--focus); }
+.presentation-speed-pop { animation: presentation-speed-pop .25s ease-out; }
+@keyframes presentation-speed-pop { 50% { transform: scale(1.18); } }
+.reduced-motion .presentation-speed-pop { animation: none; }

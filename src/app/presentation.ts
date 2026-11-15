@@ -57,6 +57,10 @@ const PACE = {
   marte: { short: 320, report: 1200, decision: 2600, caption: 850, step: 120, turn: 70 },
 } as const;
 
+/** Speeds the mouse wheel steps through. Every show starts at normal speed (1×). */
+export const SPEED_STEPS = [0.25, 0.5, 0.75, 1, 1.5, 2, 3, 4] as const;
+const NORMAL_SPEED = SPEED_STEPS.indexOf(1);
+
 const KEY_FOR: Record<string, string> = { '0,-1': 'w', '-1,0': 'a', '0,1': 's', '1,0': 'd' };
 const DIRECTIONS: readonly WalkPosition[] = [{ x: 0, y: 1 }, { x: 1, y: 0 }, { x: 0, y: -1 }, { x: -1, y: 0 }];
 
@@ -81,7 +85,11 @@ function actionTarget(action: Action, state: GameState): WalkPosition | null {
   }
 }
 
-/** Shortest walk to a tile beside the target (or onto it, for wandering). Breadth-first search. */
+/**
+ * Walk to a tile beside the target (or onto it, for wandering), breadth-first. When no tile
+ * beside it can be reached, the path ends on the reachable tile closest to the target, so the
+ * astronaut always works from as near as the map allows.
+ */
 export function findWalkPath(
   state: GameState,
   from: WalkPosition,
@@ -92,12 +100,23 @@ export function findWalkPath(
   const done = (p: WalkPosition): boolean => beside
     ? Math.abs(p.x - target.x) + Math.abs(p.y - target.y) === 1
     : p.x === target.x && p.y === target.y;
+  // Chebyshev distance: a diagonal neighbour counts as next to the target.
+  const gap = (p: WalkPosition): number => Math.max(Math.abs(p.x - target.x), Math.abs(p.y - target.y));
   if (done(from)) return [];
   const previous = new Map<number, number>();
   const start = from.y * width + from.x;
   previous.set(start, -1);
   const queue = [start];
-  for (let head = 0; head < queue.length && head < 6000; head++) {
+  let best = start;
+  let bestGap = beside ? gap(from) : Number.POSITIVE_INFINITY;
+  const pathTo = (end: number): WalkPosition[] => {
+    const path: WalkPosition[] = [];
+    for (let at = end; at !== start; at = previous.get(at) ?? start) {
+      path.unshift({ x: at % width, y: Math.floor(at / width) });
+    }
+    return path;
+  };
+  for (let head = 0; head < queue.length && head < 8000; head++) {
     const index = queue[head];
     const here = { x: index % width, y: Math.floor(index / width) };
     for (const d of DIRECTIONS) {
@@ -106,17 +125,15 @@ export function findWalkPath(
       const key = next.y * width + next.x;
       if (previous.has(key) || !canWalk(state, next)) continue;
       previous.set(key, index);
-      if (done(next)) {
-        const path: WalkPosition[] = [];
-        for (let at = key; at !== start; at = previous.get(at) ?? start) {
-          path.unshift({ x: at % width, y: Math.floor(at / width) });
-        }
-        return path;
+      if (done(next)) return pathTo(key);
+      if (beside && gap(next) < bestGap && !(next.x === target.x && next.y === target.y)) {
+        best = key;
+        bestGap = gap(next);
       }
       queue.push(key);
     }
   }
-  return null;
+  return beside && best !== start ? pathTo(best) : beside ? [] : null;
 }
 
 export function mountPresentationMode(ctx: AppContext, getWalk: () => LunarWalkController | null): () => void {
@@ -126,11 +143,62 @@ export function mountPresentationMode(ctx: AppContext, getWalk: () => LunarWalkC
   let pending: (() => void) | null = null;
   let shield: HTMLElement | null = null;
   let caption: HTMLElement | null = null;
+  let speedLabel: HTMLElement | null = null;
+  let speedIndex = NORMAL_SPEED;
 
+  /**
+   * Waits `ms` of show time. The time runs faster or slower with the wheel speed, and a change
+   * applies at once, even in the middle of a pause.
+   */
   const wait = (ms: number): Promise<void> => new Promise((resolve) => {
+    let left = ms;
+    let last = performance.now();
+    let timer: ReturnType<typeof setTimeout>;
+    const tick = (): void => {
+      const now = performance.now();
+      left -= (now - last) * SPEED_STEPS[speedIndex];
+      last = now;
+      if (left <= 0) { pending = null; resolve(); return; }
+      timer = setTimeout(tick, Math.min(50, left / SPEED_STEPS[speedIndex]));
+    };
+    timer = setTimeout(tick, Math.min(50, ms / SPEED_STEPS[speedIndex]));
+    pending = () => { clearTimeout(timer); resolve(); };
+  });
+
+  /** Waits real time: for cinematics and the game-over sequence, which play at their own pace. */
+  const hold = (ms: number): Promise<void> => new Promise((resolve) => {
     const timer = setTimeout(() => { pending = null; resolve(); }, ms);
     pending = () => { clearTimeout(timer); resolve(); };
   });
+
+  /** Waits (real time) until the condition holds, or at most `maxMs`. */
+  async function until(done: () => boolean, maxMs: number): Promise<void> {
+    const started = performance.now();
+    while (!stopped && !done() && performance.now() - started < maxMs) await hold(150);
+  }
+
+  function showSpeed(): void {
+    if (!speedLabel) return;
+    const value = SPEED_STEPS[speedIndex];
+    speedLabel.textContent = ctx.t('ui.presentation.speed', { n: String(value) });
+    speedLabel.dataset.speed = value === 1 ? 'normal' : value > 1 ? 'fast' : 'slow';
+    // Restart the small pop so each wheel notch is visible.
+    speedLabel.classList.remove('presentation-speed-pop');
+    void speedLabel.offsetWidth;
+    speedLabel.classList.add('presentation-speed-pop');
+  }
+
+  const onWheel = (event: WheelEvent): void => {
+    if (!running) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    if (event.deltaY === 0) return;
+    // Wheel up (away from you) speeds up, wheel down slows down.
+    const next = Math.max(0, Math.min(SPEED_STEPS.length - 1, speedIndex + (event.deltaY < 0 ? 1 : -1)));
+    if (next === speedIndex) return;
+    speedIndex = next;
+    showSpeed();
+  };
 
   function say(key: string, params: Record<string, number> = {}): void {
     const text = caption?.querySelector('.presentation-text');
@@ -194,8 +262,33 @@ export function mountPresentationMode(ctx: AppContext, getWalk: () => LunarWalkC
     }
     if (beside) {
       const here = walk.getSnapshot().position;
-      await face({ x: Math.sign(target.x - here.x), y: Math.sign(target.y - here.y) }, level);
+      const dx = target.x - here.x;
+      const dy = target.y - here.y;
+      // Face the target along its main axis (diagonal neighbours included).
+      if (dx !== 0 || dy !== 0) {
+        await face(Math.abs(dx) >= Math.abs(dy) ? { x: Math.sign(dx), y: 0 } : { x: 0, y: Math.sign(dy) }, level);
+      }
     }
+  }
+
+  /** The working panel the astronaut can walk right up to with the shortest walk. */
+  function reachablePanel(): WalkPosition | null {
+    const walk = getWalk();
+    const s = state();
+    if (!walk) return null;
+    const from = walk.getSnapshot().position;
+    let best: { at: WalkPosition; gap: number; steps: number } | null = null;
+    for (const b of s.mission.buildings) {
+      if (b.type !== 'panel') continue;
+      const path = findWalkPath(s, from, b, true);
+      if (!path) continue;
+      const end = path[path.length - 1] ?? from;
+      const gap = Math.max(Math.abs(end.x - b.x), Math.abs(end.y - b.y));
+      if (!best || gap < best.gap || (gap === best.gap && path.length < best.steps)) {
+        best = { at: { x: b.x, y: b.y }, gap, steps: path.length };
+      }
+    }
+    return best?.at ?? null;
   }
 
   /** On a day without work, stroll to a random explored tile near the ship. */
@@ -232,9 +325,19 @@ export function mountPresentationMode(ctx: AppContext, getWalk: () => LunarWalkC
       }
       const { action } = step;
       if (action.type === 'END_DAY' && !actedToday) await wander(level);
-      const target = actionTarget(action, state());
+      const target = action.type === 'CLEAN_PANELS' ? reachablePanel() : actionTarget(action, state());
       if (target) {
-        await walkTo(target, true, level);
+        // A dialog can interrupt a walk for a moment: try again before acting.
+        for (let attempt = 0; attempt < 3 && !stopped; attempt++) {
+          await walkTo(target, true, level);
+          const here = getWalk()?.getSnapshot().position;
+          if (!here || Math.max(Math.abs(here.x - target.x), Math.abs(here.y - target.y)) <= 1) break;
+          await hold(350);
+        }
+        const here = getWalk()?.getSnapshot().position;
+        if (here && Math.max(Math.abs(here.x - target.x), Math.abs(here.y - target.y)) > 1) {
+          console.warn('[presentation] acting away from the astronaut', action, here);
+        }
         actedToday = true;
       }
       if (stopped) return;
@@ -269,7 +372,7 @@ export function mountPresentationMode(ctx: AppContext, getWalk: () => LunarWalkC
     if (stopped) return;
     startCampaign();
     say('opening');
-    await wait(5000);
+    await hold(5000);
     if (stopped) return;
     ctx.flow.completeCinematic('opening');
     await wait(900);
@@ -282,9 +385,29 @@ export function mountPresentationMode(ctx: AppContext, getWalk: () => LunarWalkC
 
     ctx.flow.departToMars?.();
     say('toMars');
-    await wait(5200);
+    // The cargo manifest first, then Continue, like a player: the crew walks up the ramp,
+    // boards the ship, lifts off and meets the reinforcements on Mars.
+    await hold(4500);
     if (stopped) return;
-    ctx.flow.completeCinematic('moonToMars');
+    const board = document.querySelector<HTMLButtonElement>('.cine-briefing .btn-primary');
+    if (board) {
+      board.click();
+      say('boarding');
+      // Follow the animation itself: it ends when the flight scenes replace its canvas.
+      await hold(300);
+      const boardingArt = document.querySelector('.cine-layer');
+      await until(() => !boardingArt?.isConnected, 16000);
+      if (stopped) return;
+      say('flight');
+      // The Mars arrival animation: the second ship lands with two more crew members.
+      await until(() => Boolean(document.querySelector('.mars-arrival-canvas'))
+        || ctx.flow.current().scene === 'mision', 40_000);
+      if (stopped) return;
+      if (ctx.flow.current().scene !== 'mision') say('arrival');
+      await until(() => ctx.flow.current().scene === 'mision', 40_000);
+    }
+    if (stopped) return;
+    if (ctx.flow.current().scene === 'cinematica') ctx.flow.completeCinematic('moonToMars');
     await wait(900);
 
     say('marsArrive');
@@ -297,9 +420,9 @@ export function mountPresentationMode(ctx: AppContext, getWalk: () => LunarWalkC
 
     ctx.flow.chooseEnding?.('mars');
     say('ending');
-    await wait(6500);
+    await until(() => ctx.flow.current().scene === 'creditos', 32_000);
     if (stopped) return;
-    ctx.flow.completeCinematic('marsVictory');
+    if (ctx.flow.current().scene === 'cinematica') ctx.flow.completeCinematic('marsVictory');
     say('end');
     await wait(5000);
   }
@@ -319,7 +442,7 @@ export function mountPresentationMode(ctx: AppContext, getWalk: () => LunarWalkC
     if (stopped) return;
     // The result screen plays the game-over sequence: the world breaks apart.
     say('loseBoom');
-    await wait(9800);
+    await hold(9800);
     if (stopped) return;
     say('loseLesson');
     await wait(7000);
@@ -328,6 +451,7 @@ export function mountPresentationMode(ctx: AppContext, getWalk: () => LunarWalkC
   async function run(mode: Mode): Promise<void> {
     running = mode;
     stopped = false;
+    speedIndex = NORMAL_SPEED;
     // Kept in storage, not memory, so a reload in the middle of the show still restores it.
     try {
       if (localStorage.getItem(BACKUP_KEY) === null) {
@@ -357,7 +481,11 @@ export function mountPresentationMode(ctx: AppContext, getWalk: () => LunarWalkC
     stopButton.className = 'presentation-stop';
     stopButton.textContent = ctx.t(mode === 'defeat' ? 'ui.presentation.stopDefeat' : 'ui.presentation.stop');
     stopButton.addEventListener('click', stop);
-    caption.append(badge, text, stopButton);
+    speedLabel = document.createElement('span');
+    speedLabel.className = 'presentation-speed';
+    speedLabel.title = ctx.t('ui.presentation.speedHint');
+    caption.append(badge, text, speedLabel, stopButton);
+    showSpeed();
     stage.append(shield, caption);
 
     await (mode === 'defeat' ? runDefeat() : runVictory());
@@ -392,8 +520,10 @@ export function mountPresentationMode(ctx: AppContext, getWalk: () => LunarWalkC
     }
   };
   window.addEventListener('keydown', onKey, true);
+  window.addEventListener('wheel', onWheel, { capture: true, passive: false });
   return () => {
     window.removeEventListener('keydown', onKey, true);
+    window.removeEventListener('wheel', onWheel, true);
     pending?.();
     shield?.remove();
     caption?.remove();

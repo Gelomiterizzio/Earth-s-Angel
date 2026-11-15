@@ -95,6 +95,31 @@ export function drawLunarLander(g: CanvasRenderingContext2D, x: number, y: numbe
   pixels('#ffbf62', 10, -14, 2, 1);
 }
 
+/**
+ * The smaller support ship that brought the two extra crew members to Mars (see the Mars
+ * arrival cinematic). Purely visual: it stands on the rock two tiles below the main ship, a
+ * tile nobody can walk or build on, so the rules and the walkthroughs do not change.
+ * AI-assisted: Claude Code (claude-opus-5-5).
+ */
+export const MARS_SUPPORT_SHIP = { x: 9, y: 10 } as const;
+
+export function drawSupportShip(g: CanvasRenderingContext2D, x: number, y: number): void {
+  g.save();
+  // Same lander as the main ship, mirrored to face it and about three quarters of its size.
+  g.translate(x * TILE_PX + 12, (y + 1) * TILE_PX - 1);
+  g.scale(-0.74, 0.74);
+  g.translate(-12, -22);
+  drawLunarLander(g, 0, 0);
+  // Blue trim and a radio mast, as in the cinematic.
+  g.fillStyle = '#a8bcff';
+  g.fillRect(2, 10, 20, 2);
+  g.fillStyle = '#312d51';
+  g.fillRect(15, -18, 1, 8);
+  g.fillStyle = '#a8bcff';
+  g.fillRect(14, -19, 3, 1);
+  g.restore();
+}
+
 export function drawAtlasFrame(
   g: CanvasRenderingContext2D,
   art: MapArt,

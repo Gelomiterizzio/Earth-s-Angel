@@ -53,7 +53,11 @@ function mountCredits(root: HTMLElement, ctx: AppContext): () => void {
       onClick: press(ctx, () => ctx.flow.go('titulo')),
     });
     screen.append(back);
-    back.focus();
+    // Enter still goes back to the title, but the credits open at the top, not at the button.
+    // AI-assisted: Claude Code (claude-opus-5-5).
+    back.focus({ preventScroll: true });
+    screen.scrollTop = 0;
+    requestAnimationFrame(() => { screen.scrollTop = 0; });
   };
   paint();
   bag.add(ctx.options.subscribe(paint));

@@ -336,9 +336,18 @@
 }
 
 .result-screen {
-  justify-content: safe center;
+  /* Centered when it fits, starting at the top when it does not, in every browser. Plain
+     "center" (or an unsupported "safe center") cuts off the top instead. */
+  justify-content: flex-start;
   gap: calc(14 * var(--px));
   overflow-y: auto;
+}
+.result-screen::before,
+.result-screen::after {
+  /* Flexible spacers: they share the free space (centering) and shrink to nothing when the
+     content is taller than the screen, so it starts at the top. */
+  content: "";
+  flex: 1 0 0;
 }
 
 .result-screen > p,
@@ -494,6 +503,36 @@
   height: 100%;
   background: #80d9ec;
   transform-origin: left;
+}
+
+.mars-victory-heading {
+  position: absolute;
+  inset: 20% 11% auto;
+  padding: clamp(8px, 2.3cqw, 24px) 3.5%;
+  text-align: center;
+  border-top: 2px solid #fed08b;
+  background: #211733ed;
+  animation: mars-victory-reveal .65s ease-out both;
+}
+
+.mars-victory-heading h1 {
+  margin: 0;
+  color: #ffd783;
+  font: 700 clamp(18px, 6.2cqw, 86px) / 1.03 var(--font-title);
+  text-wrap: balance;
+}
+
+.mars-victory-heading p {
+  margin: .4em 0 0;
+  color: #d5edfa;
+  font: 600 clamp(12px, 2.5cqw, 31px) / 1.15 var(--font-body);
+}
+
+.mars-victory-heading.still { animation: none; }
+
+@keyframes mars-victory-reveal {
+  from { opacity: 0; transform: translateY(.35em); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 #ui .cine .skip {

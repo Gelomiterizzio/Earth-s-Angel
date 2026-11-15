@@ -4,6 +4,10 @@ Juego educativo 2D por turnos para navegador. Entrada del equipo al NASA Space A
 
 ## Estado del proyecto
 
+- **15-nov-2026.** La llegada a Marte muestra cómo se incorporan los dos refuerzos y la tripulación pasa de cuatro a seis.
+
+- **15-nov-2026.** El final marciano aprobado de 28 segundos muestra la celebración de la colonia y el enlace con la Tierra antes de los créditos.
+
 - **15-nov-2026.** Nueva partida muestra la apertura animada aprobada de 45 segundos, con el proyecto EARTH'S ANGEL y la nave EL ANGEL.
 
 - **15-nov-2026.** El servidor local reproduce en bucle la pista ambiental aportada por el usuario a través de los controles de audio existentes.

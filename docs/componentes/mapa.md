@@ -119,6 +119,7 @@ Las dos capas son solo visuales: leen el estado y nunca lo cambian.
 
   Se apaga con «Reducir movimiento». Solo dibuja la zona que rodea al astronauta.
 - En Marte el indicador del HUD dice «soles de margen».
+- **Nave de apoyo** (`MARS_SUPPORT_SHIP` en `src/map/art.ts`): en Marte se dibuja una nave más pequeña sobre la roca (9,10), dos casillas debajo de la nave principal. Es la que trajo a los dos tripulantes de refuerzo. Solo es visual: esa roca ya bloqueaba el paso y la construcción. Prueba: `tests/core/support-ship.test.ts`.
 
 ## 4. Implementación delegable
 

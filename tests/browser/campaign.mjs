@@ -227,10 +227,21 @@ async function setup() {
   await sleep(180);
   assert.ok(await task(() => Boolean(document.querySelector('.cine-stage canvas'))));
   if (process.env.EA_NATURAL === '1') {
-    for (let i = 0; i < 72; i++) {
-      if (await task(() => Boolean(document.querySelector('.end-day')))) break;
-      await sleep(500);
+    const arrivalCaptions = new Set();
+    let onMars = false;
+    for (let i = 0; i < 240 && !onMars; i++) {
+      const frame = await task(() => ({
+        onMars: Boolean(document.querySelector('.end-day')),
+        caption: document.querySelector('.mars-arrival-canvas ~ .intro-caption')?.textContent,
+      }));
+      if (frame.caption) arrivalCaptions.add(frame.caption);
+      onMars = frame.onMars;
+      if (!onMars) await sleep(200);
     }
+    assert.equal(arrivalCaptions.size, 5);
+    assert.ok([...arrivalCaptions].some((line) => line.includes("We're here to help!")));
+    assert.ok(onMars, 'The Mars landing did not advance to the mission');
+    console.log('Both ships landed, the five arrival captions played and Mars started.');
   } else await skip();
   assert.deepEqual(await saved(), after);
   await verifySouthwest(after);
@@ -276,7 +287,28 @@ async function mars() {
 }
 async function earth(marsWon) {
   await named('Finish on Mars');
-  await skip();
+  if (process.env.EA_MARS_VICTORY_NATURAL === '1') {
+    const captions = new Set();
+    let banner;
+    let credits = false;
+    for (let i = 0; i < 330 && !credits; i++) {
+      const frame = await task(() => ({
+        caption: document.querySelector('.intro-caption')?.textContent,
+        banner: document.querySelector('.mars-victory-heading:not([hidden]) h1')?.textContent,
+        credits: Boolean(document.querySelector('.credits')),
+      }));
+      if (frame.caption) captions.add(frame.caption);
+      if (frame.banner) banner = frame.banner;
+      credits = frame.credits;
+      if (!credits) await sleep(100);
+    }
+    assert.equal(captions.size, 8);
+    assert.equal(banner, 'MARS IS SELF-SUFFICIENT!');
+    assert.ok(credits, 'Mars ending did not advance to credits');
+    console.log('Mars ending played all eight captions and advanced to credits.');
+  } else {
+    await skip();
+  }
   assert.ok((await saved()).campaign.narrativeFlags.endingSeen);
   await load(marsWon);
   await named('Review the portal choice');
@@ -295,6 +327,7 @@ async function earth(marsWon) {
   await named('Return to the Mars ending');
   assert.equal((await saved()).campaign.narrativeFlags.earthFailed, true);
   await skip();
+  assert.ok(await task(() => Boolean(document.querySelector('.credits'))));
   await load(lost);
   await named('Retry the Earth mission');
   assert.equal((await saved()).earth.season, 1);

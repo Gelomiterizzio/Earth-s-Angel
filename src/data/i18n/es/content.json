@@ -332,7 +332,8 @@
         "collected": "suelo llano donde recogiste mineral. Aquí puedes construir.",
         "misterio": "una señal extraña. No se puede construir encima. Quizá haya algo oculto cerca.",
         "nave": "la nave de aterrizaje. Aquí no se puede construir."
-      }
+      },
+      "supportShip": "Nave de apoyo. Trajo a los dos tripulantes que vinieron a ayudar. Aquí no puedes construir."
     },
     "advisor": {
       "res": {

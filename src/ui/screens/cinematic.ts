@@ -6,8 +6,8 @@ import { spaceAppsEntry } from '../components/space-apps';
 import { drawLunarLander } from '../../map/art';
 import { bindChrome, press } from '../chrome';
 import { cleaner, el } from '../dom';
-import { mountPlayer } from '../cinematics/player';
-import { mountAnimatedIntro } from '../cinematics/intro';
+import { mountPlayer, type CinematicScene } from '../cinematics/player';
+import { mountAnimatedCinematic } from '../cinematics/animated-cinematic';
 import { mountBoarding } from '../cinematics/boarding';
 import { getScript } from '../cinematics/scripts';
 
@@ -48,8 +48,10 @@ function mountCinematic(root: HTMLElement, ctx: AppContext): () => void {
     stopPlayer?.();
     ctx.flow.completeCinematic(id);
   };
+  const skipKey = id === 'moonToMars' ? 'ui.cine.skipTravel'
+    : id === 'marsVictory' ? 'ui.cine.skipEnding' : 'ui.cine.skip';
   const skip = button({
-    label: ctx.t(id === 'moonToMars' ? 'ui.cine.skipTravel' : 'ui.cine.skip'),
+    label: ctx.t(skipKey),
     className: 'skip',
     onClick: press(ctx, finish, 'sfx-confirm'),
   });
@@ -67,8 +69,11 @@ function mountCinematic(root: HTMLElement, ctx: AppContext): () => void {
   const campaign = ctx.store.getState()?.campaign;
   const manifest = id === 'moonToMars' ? campaign?.manifest : null;
   const bonus = manifest?.bonusDaysApplied ?? ctx.data.difficulty[campaign?.difficulty ?? 'media']?.bonusDays ?? 0;
-  const playScript = (scenes = script.scenes): void => {
-    const mount = script.id === 'intro' ? mountAnimatedIntro : mountPlayer;
+  const playScript = (
+    scenes: CinematicScene[],
+    mount: typeof mountPlayer,
+    onFinish = finish,
+  ): void => {
     stopPlayer = mount(stage, caption, {
       script: { ...script, scenes },
       reducedMotion: ctx.options.get().reducedMotion,
@@ -79,22 +84,27 @@ function mountCinematic(root: HTMLElement, ctx: AppContext): () => void {
           ? `${line} ${ctx.t('ui.cine.marsVictory.earthFailed')}`
           : line;
       },
-      onFinish: finish,
+      onFinish,
       playSfx: (sfx) => ctx.audio.playSfx(sfx),
     });
   };
   const start = (): void => {
     skip.focus();
-    if (id !== 'moonToMars' || ctx.options.get().reducedMotion
-      || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      playScript();
+    if (id !== 'moonToMars') {
+      const mount = script.id === 'intro' || script.id === 'marsVictory' ? mountAnimatedCinematic : mountPlayer;
+      playScript(script.scenes, mount);
+      return;
+    }
+    const arrival = (): void => playScript(script.scenes.slice(4), mountAnimatedCinematic);
+    if (ctx.options.get().reducedMotion || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      playScript(script.scenes.slice(0, 4), mountPlayer, arrival);
       return;
     }
     stopPlayer = mountBoarding(stage, (beat) => {
       caption.hidden = !ctx.options.get().subtitles;
       caption.textContent = ctx.t(`ui.cine.boarding.${beat}`);
       if (beat === 'launch') ctx.audio.playSfx('sfx-launch');
-    }, () => playScript(script.scenes.slice(2)));
+    }, () => playScript(script.scenes.slice(2, 4), mountPlayer, arrival));
   };
   const openedAt = performance.now();
   let continueManifest: HTMLButtonElement | undefined;
@@ -118,7 +128,7 @@ function mountCinematic(root: HTMLElement, ctx: AppContext): () => void {
     continueManifest.focus();
   } else start();
   bag.add(ctx.options.subscribe(() => {
-    skip.textContent = ctx.t(id === 'moonToMars' ? 'ui.cine.skipTravel' : 'ui.cine.skip');
+    skip.textContent = ctx.t(skipKey);
     if (banner && bannerKey) banner.textContent = ctx.t(bannerKey);
   }));
   return () => bag.run();

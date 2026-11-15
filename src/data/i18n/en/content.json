@@ -332,7 +332,8 @@
         "collected": "flat ground where you collected minerals. You can build here.",
         "misterio": "a strange signal. You cannot build on it. Something may be hidden nearby.",
         "nave": "the landing ship. You cannot build here."
-      }
+      },
+      "supportShip": "Support ship. It brought the two extra crew members who came to help. You cannot build here."
     },
     "advisor": {
       "res": {

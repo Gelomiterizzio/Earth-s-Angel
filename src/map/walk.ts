@@ -13,7 +13,7 @@ import type {
 } from '../core/types';
 import { buildTerrain } from '../core/terrain';
 import { lifeSupportAdvice } from './advisor';
-import { TILE_PX } from './art';
+import { MARS_SUPPORT_SHIP, TILE_PX } from './art';
 import { createAstronautAnimation, drawAstronaut, type SuitRole } from './astronaut-art';
 import {
   actionForTool,
@@ -273,6 +273,8 @@ export function describeWalkTarget(ctx: AppContext, state: GameState, info: Walk
     const desc = def ? ctx.t(def.descKey) : '';
     return look('building.working', { name, desc });
   }
+  if (state.mission.level === 'marte' && info.position.x === MARS_SUPPORT_SHIP.x
+    && info.position.y === MARS_SUPPORT_SHIP.y) return look('supportShip');
   const terrain = buildTerrain(tile);
   if (tile.terrain === 'mineral' && tile.collected) return look('terrain.collected');
   if (terrain === 'mineral') {

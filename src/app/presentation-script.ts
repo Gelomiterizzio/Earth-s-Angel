@@ -31,17 +31,20 @@ export const MOON_SCRIPT: Record<number, ScriptDay> = {
 };
 
 export const MARS_SCRIPT: Record<number, ScriptDay> = {
-  1: { caption: 'mars1', actions: [build('panel', 8, 7), build('generador', 8, 8), build('invernadero', 8, 9), explore(12, 8)] },
+  // Same economy as tests/core/plans/mars.ts, with the base laid out so the astronaut can
+  // always walk from the west side to the east side (columns 10 to 12 stay open) and reach
+  // every target on foot.
+  1: { caption: 'mars1', actions: [explore(12, 8), build('panel', 8, 7), build('generador', 8, 8), build('invernadero', 13, 7)] },
   2: { caption: 'mars2', actions: [build('panel', 9, 7), build('extractor', 9, 6), explore(14, 8), explore(11, 11)] },
-  3: { actions: [collect(15, 8), build('extractor', 10, 6), build('reciclador', 9, 9)] },
+  3: { actions: [collect(15, 8), build('extractor', 10, 6), build('reciclador', 13, 9)] },
   4: { caption: 'mars4', actions: [explore(12, 13), collect(12, 13), build('panel', 10, 7), clean] },
-  5: { actions: [build('panel', 11, 7), build('bateria', 10, 9), explore(13, 6), explore(15, 5), explore(6, 10)] },
+  5: { actions: [build('panel', 11, 7), build('bateria', 14, 9), explore(13, 6), explore(15, 5), explore(6, 10)] },
   6: { actions: [explore(16, 3), explore(18, 4), clean] },
-  7: { actions: [collect(19, 4), build('invernadero', 11, 9), build('panel', 11, 8)] },
+  7: { actions: [collect(19, 4), build('invernadero', 15, 7), build('panel', 14, 7)] },
   8: { actions: [explore(4, 10), explore(2, 10), collect(2, 10)] },
   9: { caption: 'mars9', actions: [build('refugio', 7, 7), build('refugio', 7, 8)] },
-  10: { actions: [explore(5, 8), explore(3, 6), explore(2, 4), clean] },
-  11: { caption: 'mars11', actions: [explore(2, 2), collect(2, 2), build('comunicaciones', 10, 10)] },
+  10: { actions: [explore(5, 8), explore(16, 8), explore(18, 9), clean] },
+  11: { caption: 'mars11', actions: [explore(20, 9), collect(20, 9), build('comunicaciones', 14, 5)] },
   14: { actions: [explore(15, 1), collect(14, 0), build('generador', 7, 9)] },
   15: { actions: [build('panel', 10, 8), clean] },
 };

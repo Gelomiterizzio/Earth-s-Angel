@@ -146,7 +146,9 @@ function mountOptions(root: HTMLElement, ctx: AppContext): () => void {
 
   const heading = el('h1', 'screen-title', ctx.t('ui.options.heading'));
   screen.append(heading, list, actions);
-  back.focus();
+  // Focus stays on Back for the keyboard, without scrolling the list to the bottom.
+  back.focus({ preventScroll: true });
+  screen.scrollTop = 0;
 
   const relabel = (): void => {
     heading.textContent = ctx.t('ui.options.heading');
