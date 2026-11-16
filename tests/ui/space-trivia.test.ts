@@ -31,6 +31,7 @@ describe('space questions', () => {
     const asked = new Set<string>();
     for (let i = 0; i < TRIVIA.length; i++) asked.add(nextTriviaId());
     expect(asked.size).toBe(TRIVIA.length);
-    expect(TRIVIA.some((q) => q.id === nextTriviaId())).toBe(true);
+    const again = nextTriviaId();
+    expect(TRIVIA.some((q) => q.id === again)).toBe(true);
   });
 });

@@ -84,3 +84,33 @@ describe('random map option', () => {
     expect(count(randomMars.state.mission.map.tiles, 'hielo')).toBe(count(fixedMars.state.mission.map.tiles, 'hielo'));
   });
 });
+
+/** Is there a mineral the astronaut can walk up to on day 1, without exploring? */
+function mineralOnFoot(state: GameState): boolean {
+  const { width, height, tiles } = state.mission.map;
+  const at = (x: number, y: number) => (x >= 0 && y >= 0 && x < width && y < height ? tiles[y * width + x] : undefined);
+  const walkable = (t?: Tile) => Boolean(t && t.explored && !['roca', 'crater', 'nave', 'mineral'].includes(t.terrain));
+  const ship = luna.ship;
+  const queue = [[ship.x, ship.y + 1], [ship.x, ship.y - 1], [ship.x + 1, ship.y], [ship.x - 1, ship.y]]
+    .filter(([x, y]) => walkable(at(x, y)));
+  const seen = new Set(queue.map(([x, y]) => y * width + x));
+  for (let i = 0; i < queue.length; i++) {
+    const [x, y] = queue[i];
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const next = at(x + dx, y + dy);
+      if (next?.terrain === 'mineral' && next.explored && !next.collected) return true;
+      const key = (y + dy) * width + (x + dx);
+      if (walkable(next) && !seen.has(key)) { seen.add(key); queue.push([x + dx, y + dy]); }
+    }
+  }
+  return false;
+}
+
+describe('random map, first day', () => {
+  it('always leaves a mineral reachable on foot from the start zone (250 seeds)', () => {
+    expect(mineralOnFoot(moon('EA-FIXED'))).toBe(true);
+    const missing = [];
+    for (let i = 0; i < 250; i++) if (!mineralOnFoot(moon(`EA-R${i}`, true))) missing.push(i);
+    expect(missing).toEqual([]);
+  }, 60_000);
+});

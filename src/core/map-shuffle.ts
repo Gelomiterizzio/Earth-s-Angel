@@ -18,6 +18,9 @@ const chebyshev = (a: { x: number; y: number }, b: { x: number; y: number }): nu
 /** Tiles that never receive or lose a resource: around the ship, the clues and the lunar corner. */
 function isProtected(tile: Tile, level: LevelId, cfg: LevelConfig, landmarks: { x: number; y: number }[]): boolean {
   if (chebyshev(tile, cfg.ship) <= 1) return true;
+  // The zone visible on day 1 keeps its layout: the first-day tutorial (collect the mineral,
+  // then explore) needs a mineral the astronaut can walk to before knowing how to explore.
+  if (tile.explored) return true;
   if (landmarks.some((mark) => chebyshev(tile, mark) <= 1)) return true;
   return level === 'luna' && tile.x >= cfg.width - SECRET_CORNER && tile.y < SECRET_CORNER;
 }

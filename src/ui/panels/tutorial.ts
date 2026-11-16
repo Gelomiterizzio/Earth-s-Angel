@@ -207,8 +207,12 @@ function tutorialAnchor(highlight: string | null, state: GameState | null): HTML
   if (state?.mission.level === 'luna') {
     if (highlight === 'tool-explore' || highlight === 'tool-collect' || highlight === 'palette-extractor') {
       const terrain = highlight === 'tool-collect' ? 'mineral' : 'hielo';
-      const tile = state.mission.map.tiles.find((tile) => tile.terrain === terrain && !tile.collected
-        && (terrain === 'hielo' || tile.explored));
+      // The nearest deposit to the astronaut, preferring one already in view (reachable on foot).
+      const from = state.mission.map.tiles.find((t) => t.terrain === 'nave') ?? { x: 0, y: 0 };
+      const near = (t: { x: number; y: number }) => Math.abs(t.x - from.x) + Math.abs(t.y - from.y);
+      const tile = state.mission.map.tiles
+        .filter((t) => t.terrain === terrain && !t.collected && (terrain === 'hielo' || t.explored))
+        .sort((a, b) => Number(b.explored) - Number(a.explored) || near(a) - near(b))[0];
       if (tile) add(`#map .map-cell[data-x="${tile.x}"][data-y="${tile.y}"]`);
     }
     if (highlight === 'hud-forecast' || highlight === 'hud-objectives') add('[data-hud-focus="base"]');
