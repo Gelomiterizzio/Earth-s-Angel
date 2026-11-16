@@ -43,7 +43,7 @@ describe('Options persistence and validation (U-OPC-01..04)', () => {
       fullscreen: false,
       tutorial: true,
       learningCheck: true,
-      randomMap: false,
+      randomMap: true,
     });
   });
 

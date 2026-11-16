@@ -16,10 +16,10 @@ const moon = (seed: string, randomMap?: boolean): GameState =>
   startDay(createCampaign('media', seed, data, { canonical: false, randomMap }), data).state;
 
 describe('random map option', () => {
-  it('is off by default, and an old options file without it stays off', () => {
-    expect(getDefaultOptions().randomMap).toBe(false);
-    expect(sanitizeOptions({ language: 'es' }).randomMap).toBe(false);
-    expect(sanitizeOptions({ randomMap: true }).randomMap).toBe(true);
+  it('is on by default, an old options file without it turns it on, and off stays off', () => {
+    expect(getDefaultOptions().randomMap).toBe(true);
+    expect(sanitizeOptions({ language: 'es' }).randomMap).toBe(true);
+    expect(sanitizeOptions({ randomMap: false }).randomMap).toBe(false);
   });
 
   it('without the option, the Moon keeps its fixed layout', () => {

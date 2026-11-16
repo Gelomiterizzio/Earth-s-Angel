@@ -34,7 +34,7 @@ Cada control llama a `ctx.options.set(clave, valor)`. El servicio valida, guarda
 | Movimiento reducido | Interruptor | Lo que indique el sistema | P0 |
 | Tutorial | Interruptor | Sí | P0 |
 | Pregunta de aprendizaje | Interruptor | Sí | P0 |
-| Mapa aleatorio (partidas nuevas): hielo y minerales en otros lugares, decididos por la semilla. No afecta a las presentaciones X y Z | Interruptor | No | EARTH'S ANGEL 2 |
+| Mapa aleatorio (partidas nuevas): hielo y minerales en otros lugares, decididos por la semilla. No afecta a las presentaciones X, Z y V, que siempre usan el mapa estándar | Interruptor | Sí | EARTH'S ANGEL 2 |
 | Pantalla completa | Interruptor, solo si el navegador lo permite | No | P1 |
 | Controles | Lista de teclas, solo lectura | — | P0 |
 | Restablecer | Botón con confirmación | — | P0 |

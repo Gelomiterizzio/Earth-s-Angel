@@ -434,6 +434,8 @@ function setupMissionTestHarness(difficulty: 'facil' | 'media' | 'imposible' = '
   options.set('reducedMotion', true);
   options.set('tutorial', false);
   options.set('learningCheck', false);
+  // These checks use the fixed Moon layout from the level document.
+  options.set('randomMap', false);
   const i18n = createI18n(options.get().language);
   options.subscribe(({ language }) => i18n.setLang(language));
 

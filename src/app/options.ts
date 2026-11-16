@@ -23,7 +23,7 @@ export function getDefaultOptions(): Options {
     fullscreen: false,
     tutorial: true,
     learningCheck: true,
-    randomMap: false,
+    randomMap: true,
   };
 }
 
