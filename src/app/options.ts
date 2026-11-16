@@ -24,6 +24,7 @@ export function getDefaultOptions(): Options {
     tutorial: true,
     learningCheck: true,
     randomMap: true,
+    platform: 'pc',
   };
 }
 
@@ -56,6 +57,7 @@ export function sanitizeOptions(raw: unknown, defaults = getDefaultOptions()): O
     learningCheck:
       typeof obj.learningCheck === 'boolean' ? obj.learningCheck : defaults.learningCheck,
     randomMap: typeof obj.randomMap === 'boolean' ? obj.randomMap : defaults.randomMap,
+    platform: obj.platform === 'pc' || obj.platform === 'mobile' ? obj.platform : defaults.platform,
   };
 }
 
@@ -80,7 +82,9 @@ export function createOptionsService(customStorage?: StorageLike | null): Option
       const raw = storage.getItem(OPTIONS_STORAGE_KEY);
       if (raw) {
         const parsed: unknown = JSON.parse(raw);
-        current = sanitizeOptions(parsed, defaults);
+        // The platform is never read back from saved options: every new session starts on PC.
+        // The tab session keeps the choice through reloads (see app/platform.ts).
+        current = { ...sanitizeOptions(parsed, defaults), platform: defaults.platform };
       }
     } catch {
       current = { ...defaults };

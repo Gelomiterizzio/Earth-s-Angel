@@ -7,6 +7,7 @@ import { setToggle, toggle } from '../components/toggle';
 import { bindChrome, press, showNarrow } from '../chrome';
 import { cleaner, el, on } from '../dom';
 import { CONTROL_LABEL_KEYS } from '../shortcuts';
+import { platformSwitch } from '../components/platform-switch';
 
 let cleanup: (() => void) | null = null;
 
@@ -120,7 +121,12 @@ function mountOptions(root: HTMLElement, ctx: AppContext): () => void {
   const soundGroup = group('🔊', 'ui.options.groupSound');
   soundGroup.box.append(master, music, sfx, muted);
   const displayGroup = group('🖥', 'ui.options.groupDisplay');
-  displayGroup.box.append(langRow, subs, motion);
+  // PC or Mobile/Tablet, also from here so a player can switch without going back to the title.
+  const platformRow = el('div', 'option-row');
+  const platformName = el('span', undefined, ctx.t('ui.platform.label'));
+  let platformButtons = platformSwitch(ctx, 'platform-switch-inline');
+  platformRow.append(platformName, platformButtons);
+  displayGroup.box.append(platformRow, langRow, subs, motion);
   const gameGroup = group('🚀', 'ui.options.groupGame');
   gameGroup.box.append(tutorial, learning, randomMap);
 
@@ -196,6 +202,12 @@ function mountOptions(root: HTMLElement, ctx: AppContext): () => void {
     en.setAttribute('aria-pressed', options.language === 'en' ? 'true' : 'false');
     es.setAttribute('aria-pressed', options.language === 'es' ? 'true' : 'false');
     langName.textContent = ctx.t('ui.options.language');
+    platformName.textContent = ctx.t('ui.platform.label');
+    const freshSwitch = platformSwitch(ctx, 'platform-switch-inline');
+    const hadFocus = platformButtons.contains(document.activeElement);
+    platformButtons.replaceWith(freshSwitch);
+    platformButtons = freshSwitch;
+    if (hadFocus) freshSwitch.querySelector<HTMLElement>('[aria-checked="true"]')?.focus({ preventScroll: true });
     labelOf(master, ctx.t('ui.options.master'));
     labelOf(music, ctx.t('ui.options.music'));
     labelOf(sfx, ctx.t('ui.options.sfx'));

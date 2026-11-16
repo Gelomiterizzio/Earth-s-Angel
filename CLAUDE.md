@@ -6,6 +6,7 @@ Juego educativo 2D por turnos para navegador. Entrada del equipo al NASA Space A
 
 - **14-nov-2026.** Luna, Marte y Tierra están integrados y verificados en la compilación local. [Comandos y verificación](docs/DESPLIEGUE.md).
 - **15-nov-2026 (EARTH'S ANGEL 2, versión definitiva en `main`).** Añadidos: diseño de misión antes del despegue (objetivo, lanzador, trayectoria, presupuesto, masa, nave, antena, carga, instrumentos y equipo), diseño visible durante la misión, resumen del diseño en el resultado, presentaciones X (gana) y Z (pierde) con rueda de velocidad, secreto lunar oculto (W S D A D A en la esquina superior derecha), casillas de misterio ocultas y opción «Mapa aleatorio». La carpeta `EARTH'S ANGEL` queda como respaldo.
+- **16-nov-2026 (solo local, sin subir).** Modo Móvil/Tablet: selector junto a la insignia del título, controles táctiles, guía de orientación horizontal y pantalla completa. [Ficha](docs/componentes/plataforma-movil.md).
 - Entrega local: **domingo 15-nov a las 12:00** (envío) y **14:00** (defensa), hora de Bolivia. Congelación interna de código: domingo 09:30.
 - La demo mínima del reto usa la Luna. La campaña publicada incluye Marte y la ruta opcional de Tierra cuando se complete el despliegue.
 

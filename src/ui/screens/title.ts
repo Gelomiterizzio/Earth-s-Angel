@@ -7,6 +7,7 @@ import { bindChrome, press, showNarrow } from '../chrome';
 import { cleaner, el, on } from '../dom';
 import { mountTitleCrew } from './title-crew';
 import { spaceAppsEntry } from '../components/space-apps';
+import { platformSwitch } from '../components/platform-switch';
 
 let cleanup: (() => void) | null = null;
 
@@ -45,8 +46,11 @@ function mountTitle(root: HTMLElement, ctx: AppContext): () => void {
     const focusId = document.activeElement instanceof HTMLElement ? document.activeElement.dataset.action : undefined;
     screen.classList.toggle('title-still', ctx.options.get().reducedMotion);
     body.replaceChildren();
-    screen.querySelector('.space-apps-entry')?.remove();
-    screen.append(spaceAppsEntry(ctx));
+    screen.querySelector('.title-corner')?.remove();
+    // The event badge and, beside it, the PC / Mobile-Tablet selector.
+    const corner = el('div', 'title-corner');
+    corner.append(spaceAppsEntry(ctx), platformSwitch(ctx));
+    screen.append(corner);
     const brand = el('div', 'title-brand');
     const logo = el('img', 'logo');
     logo.alt = '';

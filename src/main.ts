@@ -4,6 +4,8 @@ import { createFlow } from './app/flow';
 import { mountPresentationMode, recoverInterruptedPresentation } from './app/presentation';
 import { createI18n } from './app/i18n';
 import { createOptionsService } from './app/options';
+import { mountPlatform } from './app/platform';
+import { mountTouchControls } from './ui/touch/touch-controls';
 import { createPersistenceService } from './app/persistence';
 import { createStore } from './app/store';
 import { createUiStore } from './app/ui-store';
@@ -52,11 +54,16 @@ function boot(): void {
 
   registerScreens(flow);
   attachAudio(audio, store, flow);
+  // PC or Mobile/Tablet (texts, layout, orientation guide, full screen). Mounted before the first
+  // screen so its options listener runs first and the touch wording is ready when screens repaint.
+  mountPlatform(ctx, i18n);
   // The mounted UI and map handle their own keyboard shortcuts.
   flow.go('titulo');
 
   // X: presentation (the game plays itself). Z: defeat demo. Available in every build.
   mountPresentationMode(ctx, () => mapView.walk);
+  // Touch controls for Mobile/Tablet: they send the same commands as the keyboard.
+  mountTouchControls(ctx, () => mapView.walk);
 
   if (import.meta.env.DEV) {
     void import('./app/debug').then(({ mountDebugTools }) => mountDebugTools(ctx));

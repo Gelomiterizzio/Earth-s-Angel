@@ -44,6 +44,7 @@ describe('Options persistence and validation (U-OPC-01..04)', () => {
       tutorial: true,
       learningCheck: true,
       randomMap: true,
+      platform: 'pc',
     });
   });
 

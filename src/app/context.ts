@@ -39,6 +39,11 @@ export interface Options {
   learningCheck: boolean;
   /** New campaigns place ice and minerals at random (seeded). Presentations X and Z ignore it. */
   randomMap: boolean;
+  /**
+   * PC (keyboard and mouse) or Mobile/Tablet (touch controls, landscape, full screen).
+   * Each new session starts on PC; the choice survives reloads within the tab session.
+   */
+  platform: 'pc' | 'mobile';
 }
 
 export interface OptionsService {

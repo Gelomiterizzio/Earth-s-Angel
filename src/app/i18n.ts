@@ -5,6 +5,8 @@ export interface I18nService {
   getLang(): 'en' | 'es';
   setLang(lang: 'en' | 'es'): void;
   subscribe(fn: () => void): () => void;
+  /** 'touch' swaps texts that name keys for their touch-control wording (Mobile/Tablet mode). */
+  setVariant?(variant: 'touch' | null): void;
 }
 
 type RawJsonModule = { default?: Record<string, unknown> } & Record<string, unknown>;
@@ -51,6 +53,22 @@ function loadBundledDictionaries(): Record<'en' | 'es', Record<string, string>> 
   return dicts;
 }
 
+/**
+ * Touch wording, kept apart from the main catalogs so it never overwrites them. Each file is
+ * flat: the key of the original text and the version for touch controls.
+ */
+function loadTouchDictionaries(): Record<'en' | 'es', Record<string, string>> {
+  const modules = import.meta.glob('../data/i18n-touch/*.json', { eager: true }) as Record<string, RawJsonModule>;
+  const out: Record<'en' | 'es', Record<string, string>> = { en: {}, es: {} };
+  for (const [filePath, mod] of Object.entries(modules)) {
+    const match = /\/(en|es)\.json$/.exec(filePath.replace(/\\/g, '/'));
+    if (!match) continue;
+    const content = (mod.default ?? mod) as Record<string, unknown>;
+    for (const [k, v] of Object.entries(content)) if (typeof v === 'string') out[match[1] as 'en' | 'es'][k] = v;
+  }
+  return out;
+}
+
 export function createI18n(
   initialLang: 'en' | 'es' = 'en',
   customDictionaries?: Partial<Record<'en' | 'es', Record<string, string>>>,
@@ -62,6 +80,8 @@ export function createI18n(
   };
 
   let currentLang: 'en' | 'es' = initialLang;
+  let variant: 'touch' | null = null;
+  const touch = loadTouchDictionaries();
   if (typeof document !== 'undefined' && document.documentElement) {
     document.documentElement.lang = currentLang;
   }
@@ -70,7 +90,10 @@ export function createI18n(
 
   return {
     t(key: string, params?: Record<string, string | number>): string {
-      let template = dicts[currentLang]?.[key];
+      let template = variant === 'touch'
+        ? touch[currentLang]?.[key] ?? (currentLang !== 'en' && dicts[currentLang]?.[key] === undefined ? touch.en?.[key] : undefined)
+        : undefined;
+      if (template === undefined) template = dicts[currentLang]?.[key];
       if (template === undefined && currentLang !== 'en') {
         template = dicts.en?.[key];
       }
@@ -100,6 +123,12 @@ export function createI18n(
       for (const fn of [...listeners]) {
         fn();
       }
+    },
+
+    setVariant(next: 'touch' | null): void {
+      if (variant === next) return;
+      variant = next;
+      for (const fn of [...listeners]) fn();
     },
 
     subscribe(fn: () => void): () => void {
