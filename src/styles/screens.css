@@ -1356,7 +1356,8 @@
   min-width: calc(44 * var(--px));
   padding: calc(3 * var(--px)) calc(8 * var(--px));
   text-align: center;
-  font-family: var(--font-title);
+  font-family: var(--font-body);
+  font-weight: 800;
   font-size: calc(13 * var(--px));
   color: var(--bg);
   background: var(--accent);
@@ -1442,7 +1443,7 @@
   background: var(--panel);
   border: calc(1 * var(--px)) solid var(--border);
 }
-.report-stat-value { font-family: var(--font-title); font-size: calc(20 * var(--px)); color: var(--text); }
+.report-stat-value { font-family: var(--font-body); font-weight: 800; font-size: calc(22 * var(--px)); line-height: 1.1; color: var(--text); font-variant-numeric: tabular-nums; }
 .report-stat-label { font-size: calc(12 * var(--px)); color: var(--text-dim); text-align: center; }
 .report-stat[data-tone="ok"] .report-stat-value { color: var(--safe); }
 .report-stat[data-tone="warn"] .report-stat-value { color: var(--warn); }
@@ -1489,4 +1490,11 @@
   color: var(--accent);
   background: color-mix(in srgb, var(--accent) 12%, transparent);
   border: calc(1 * var(--px)) solid color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+/* Numbers in the normal bold font: the pixel font makes digits like 6 and 8 hard to tell apart. */
+.zone-count, .hud-streak-value, .goal-num, .crew-num, .hud-num-accent, .hud-num, .meter-num, .report-chart-net {
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
 }

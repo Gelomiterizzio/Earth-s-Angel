@@ -559,3 +559,10 @@
 .meter[data-status="critico"] .meter-num { color: var(--crit); }
 .meter .hud-bar { margin-top: calc(1 * var(--px)); }
 .reduced-motion .hud-bar i { transition: none; }
+
+/* Numbers in the normal bold font: the pixel font makes digits like 2, 5, 6 and 8 hard to tell apart. */
+.zone-count, .hud-streak-value, .goal-num, .crew-num, .hud-num-accent, .hud-num, .meter-num, .build-key {
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
