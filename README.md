@@ -1,27 +1,42 @@
 # Earth's Angel
 
-**A browser game where kids run a Moon outpost and learn why every decision in space has a cost.**
+**Design, launch and run a complete space mission, right in the browser.**
 
-Earth's Angel is our entry for the **2026 NASA International Space Apps Challenge** (Santa Cruz de la Sierra, Bolivia), answering the challenge **Build a Junior Astronaut Mission Trainer**.
+**▶ Play now: [earths-angel.vercel.app](https://earths-angel.vercel.app)** — free, no install, no account, English and Spanish.
 
-> Campaign status (14 Nov 2026). The Moon and Mars missions lead to the Mars ending or unlock an Earth recovery mission. Campaign progress saves in the browser.
+Earth's Angel is the entry of team **Los Bersercker** (Santa Cruz de la Sierra, Bolivia) for the **2026 NASA International Space Apps Challenge**, challenge **Space Mission Design Game**. It won **3rd place** at the Santa Cruz de la Sierra local event and goes on to global judging.
 
 ## The idea
 
-You lead the crew of Project Last Hope. Power, oxygen, water, food and radiation shielding all compete for the same limited resources. A solar storm is coming, and its warning comes from a real NASA space weather record. Do you send the crew to the shelter and lose a day of work and some power, or keep building and take the radiation?
+Kids learn best by playing, and exploring space is also a way to learn how to take care of our own planet. Earth's Angel is made for kids aged 8 to 12, and it is fun for families, classrooms and anyone curious about space. A Moon mission takes about 15 minutes, so it fits in one class.
 
-- **Audience:** kids ages 7–12 (the age range stated in the challenge), with harder difficulty levels for older players.
-- **Format:** turn-based 2D grid game. Plays in the browser. No download, no account, no payment.
-- **Campaign:** Moon outpost, Mars colony and the optional Second Chance mission on Earth.
+The game covers a whole mission, from concept to operation:
 
-## NASA data
+1. **Design (on Earth).** Pick an objective (self-sufficient base, ice science or space weather watch), a rocket (light, medium or heavy: mass capacity vs. cost), a trajectory (cheap and slow vs. fast and expensive, with a launch window), a spacecraft cabin, an antenna and a payload of supplies, science instruments and crew equipment. Budget and mass bars block the launch until the design is valid.
+2. **Launch and operation (Moon, then Mars).** The astronaut explores the map on foot, builds solar panels, batteries, ice extractors, water recyclers, oxygen generators, greenhouses and radiation shelters, and ends each day. A daily report explains cause and effect with a chart of what was made and used.
+3. **Evaluation.** The result screen puts the design next to the outcome: objective achieved or not, cost vs. budget, mass vs. capacity, plus learning badges.
 
-The storm decision is driven by archived records from the **Space Weather Database Of Notifications, Knowledge, Information (DONKI)**, listed in the challenge resources. The data is bundled with the game as a small curated extract. It is archived data, not a live feed. Radiation doses and thresholds inside the game are game units, not real measurements. Full traceability: [docs/CIENCIA-Y-DATOS.md](docs/CIENCIA-Y-DATOS.md).
+Every design choice changes the mission: supplies arrive at landing, the spectrometer maps more ground, the radiation sensor warns of storms earlier, the drill yields more minerals, shielded suits reduce exposure and the trajectory changes the time left on Earth's countdown. A failed design becomes the lesson for the next one.
 
-## Play
+## Real NASA data
 
-- Vercel production URL pending. [Production setup](docs/DESPLIEGUE.md#producción-en-vercel).
-- 30-second demo: `[POR COMPLETAR: public link]`
+The key decision is a real solar storm: an archived **NASA DONKI** record of the solar energetic particle event of **10 September 2017**, linked to an **X8.2** flare. The decision screen shows the record, the flare class and the instrument, with a link to DONKI: shelter the crew and lose power and a day of work, or keep working and take the radiation. Science cards cite NASA sources on ISS life support and water recovery, the Mars solar day, InSight and Curiosity.
+
+Costs, masses, resource amounts and thresholds are game balance values, and the game labels them so. The story is fiction. Full traceability: [docs/CIENCIA-Y-DATOS.md](docs/CIENCIA-Y-DATOS.md).
+
+## Try these
+
+- **X** on the title screen: presentation mode. A full mission plays by itself (design, Moon, Mars). Turn the mouse wheel to change speed.
+- **Z** on the title screen: defeat demo. See what happens when life support is ignored.
+- **Options → Random map**: resources move around for replay value.
+
+## Accessibility and honesty
+
+Full keyboard play, a reduced-motion option, colour plus text for every status, English and Spanish, and every number labeled as NASA data, simplification, game balance or fiction. No backend, no accounts, no data collection, and no images or voices of minors.
+
+## Tools
+
+TypeScript, Vite, HTML5 Canvas pixel art drawn by code, plain HTML and CSS for the interface, the Web Audio API for synthesized music, Vitest for automated tests and Vercel for hosting.
 
 ## Art and cinematic preview
 
@@ -65,11 +80,13 @@ Team work packages: [INTEGRANTE_A_SIMULACION.md](INTEGRANTE_A_SIMULACION.md), [I
 
 ## Use of AI
 
-The team defined the concept and story. Claude Code assisted with planning documents, Cursor Grok 4.7 assisted with the first interface, art and audio, and OpenAI Codex assisted with the visual redraw and interface and cinematic fixes. The local presentation omits visible artwork labels. NASA Space Apps requires visible watermarks on generated images and video for the submission. [AI use, credits and human review status](docs/IA-Y-CREDITOS.md).
+The team defined the concept, the story and every design decision. Claude Code assisted with planning documents, Cursor Grok 4.7 assisted with the first interface, art and audio, and OpenAI Codex assisted with the visual redraw and interface and cinematic fixes. The local presentation omits visible artwork labels. NASA Space Apps requires visible watermarks on generated images and video for the submission. [AI use, credits and human review status](docs/IA-Y-CREDITOS.md).
 
-## Team
+## Team Los Bersercker
 
-`[POR COMPLETAR: team name]` — `[POR COMPLETAR: member A]`, `[POR COMPLETAR: member B]`, `[POR COMPLETAR: member C]`.
+- **Oscar Fernando Calustro Tellez** — simulation and architecture
+- **Ruben Dario Quispe Andrade** — gameplay and science
+- **Angel Mauricio Viveros Cortez** — interface, art and delivery
 
 ## License
 

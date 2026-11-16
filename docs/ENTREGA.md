@@ -13,12 +13,14 @@ Borrador público en inglés, enlaces y comprobaciones de inscripción, atribuci
 | Campo | Valor |
 | --- | --- |
 | Link to Project Demo | `[POR COMPLETAR: enlace público al video de 30 s o al PDF de 7 diapositivas]` |
-| Link to Final Project | `[POR COMPLETAR: URL pública del juego]` |
+| Link to Final Project | <https://earths-angel.vercel.app> |
 | Repositorio | <https://github.com/Gelomiterizzio/Earth-s-Angel> |
 
 Recomendación: el enlace de proyecto final es la **URL jugable**. El repositorio se cita en la descripción y en los créditos del juego. Son dos enlaces distintos y ninguno pide registro.
 
 ## 2. Texto del formulario · en inglés
+
+Revisado el 15-nov-2026 para el reto *Space Mission Design Game*. Copiar cada bloque tal cual en el campo del mismo nombre de la pestaña **Project**.
 
 ### Project Name
 
@@ -29,120 +31,107 @@ Earth's Angel
 ### High-Level Project Summary
 
 ```text
-Earth's Angel is a free browser game where kids ages 7–12 run a Moon outpost and discover that
-every decision in space has a cost. Players place solar panels, batteries, an ice extractor, a
-water recycler, an oxygen generator, a greenhouse and a radiation shelter on a grid, then end
-the day and see what happened and why. Power, water, oxygen, food and shielding all compete for
-the same limited resources. The key moment is a solar storm driven by a real archived NASA
-DONKI space weather record: shelter the crew and lose power and a day of work, or keep building
-and take the radiation. There is no free choice. The game needs no download and no account,
-plays in English and Spanish, and explains every result in one plain sentence.
+Earth's Angel is a free browser game where players design, launch and run a complete space
+mission. On Earth they choose a mission objective, a launch vehicle, a trajectory and a payload
+(supplies, science instruments, crew equipment, spacecraft module and antenna) within a budget
+and the rocket's mass limit. Then they operate the mission on the Moon and on Mars: building
+power, water, oxygen, food and radiation protection with limited resources and action points,
+and facing a solar storm taken from a real NASA DONKI space weather record. At the end the game
+compares the original design with what happened: objective met or not, cost, mass and payload.
+It turns abstract engineering trade-offs into decisions with visible consequences, needs no
+download or account, and plays in English and Spanish.
 ```
 
 ### Detailed Project Description
 
 ```text
+WHO WE ARE AND WHY
+We are team Los Bersercker from Santa Cruz de la Sierra, Bolivia. We chose this challenge because we believe kids learn best by playing, and because exploring space is also a way to learn how to take care of our own planet. Earth's Angel is made for kids aged 8 to 12, and it is fun for families, classrooms and anyone curious about space.
+
 WHAT IT DOES
-Earth's Angel is a turn-based 2D game. Each day the player checks three gauges (Power, Life
-Support, Protection), reads the forecast, spends action points to build, explore or collect,
-and ends the day. A report then explains cause and effect: "The greenhouse had no power, so the
-harvest is one day late." The Moon mission is won by keeping the base stable for several days
-in a row with life support running, food growing, reserves above a threshold and the crew
-protected. Three difficulty levels change reserves, deadlines and the storm, not the rules.
+Earth's Angel covers a whole space mission, from concept to operation:
+1. Design (on Earth): pick an objective (self-sufficient base, ice science or space weather watch), a rocket (light, medium or heavy: mass capacity vs. cost), a trajectory (cheap and slow vs. expensive and fast, with a launch window), and a payload of supplies, science instruments (orbital spectrometer, radiation sensor), crew equipment (tool kit, sampling drill, shielded suits), a spacecraft cabin module and an antenna. Budget and mass bars block the launch until the design is valid.
+2. Launch and operation (Moon, then Mars): the astronaut explores the map on foot, builds solar panels, batteries, ice extractors, water recyclers, oxygen generators, greenhouses and radiation shelters, and ends each day. A daily report explains cause and effect and shows a chart of what was made and used.
+3. Evaluation: the result screen shows the design next to the outcome (objective achieved or not, cost vs. budget, mass vs. capacity) plus learning badges.
+Every design choice changes the mission: supplies arrive at landing, the spectrometer maps more ground, the sensor warns of storms earlier, the drill yields more minerals, the suits reduce radiation exposure, and the trajectory changes the time left on Earth's countdown. A Moon mission takes about 15 minutes, so it fits in one class.
 
 HOW IT WORKS
-- Power: solar panels generate, batteries store, modules are switched on in priority order.
-- Water and oxygen: ice is mined for water, used water is partly recycled, and oxygen is made
-  from water with electricity.
-- Food: a greenhouse needs power, water and four days. Neglect it for a day and the harvest is
-  later and smaller.
-- Radiation: a forecast warns of a solar storm two days ahead. The shelter takes two days to
-  build. On the storm day the player must decide.
-- Communication delay is introduced with an in-game science card. [POR COMPLETAR: confirm it is
-  in the build]
+- Power: solar panels generate (less in shadow or dust), batteries store, modules switch on by priority.
+- Life support: ice is mined for water, used water is recycled, oxygen is made from water with electricity, and greenhouses grow food if they stay powered.
+- Radiation: a forecast warns of a solar storm; on the storm day the player decides between sheltering the crew (costs power and a day of work) or keeping working (costs radiation exposure).
+- Mars adds dust on the panels, sols, a larger crew and a communications link with Earth.
+- Mission control warns when air, water or food are about to run out and says what to build.
 
-THE TRADE-OFF WE TEACH
-On Medium difficulty, sheltering during the storm costs 6 power and the day's work, and the
-mission is completed on day 9. Working through it keeps the day's actions but puts the crew
-under medical observation at half efficiency, and the mission is completed on day 11. Same
-storm, two choices, measurable results. [POR COMPLETAR: confirm these figures in the final build]
+REAL NASA DATA
+The solar storm comes from a real archived NASA DONKI record (10 September 2017, linked to an X8.2 flare). The decision screen shows the record, flare class, instrument and a link to DONKI. Science cards cite NASA sources: ISS life support and water recovery, the Mars solar day, InSight and Curiosity. Costs, masses, resource amounts and thresholds are game balance values, and the game labels them so. The story is fiction.
 
-WHAT IS REAL AND WHAT IS NOT
-The storm event (date, flare class, instrument, link) is a real NASA record. Radiation
-exposure, resource amounts and thresholds are game units chosen for play, and the game says so.
-The story of Project Last Hope is fiction. Every number in our design is labeled as NASA data,
-teaching simplification, game balance or fiction.
+WHAT PLAYERS TOLD US
+Visitors at our Space Apps venue in Santa Cruz played it. They learned that oxygen runs out and has to be planned for, they loved the pixel art, and when they lost their base they wanted to try again with a better strategy. That replay is exactly how the game teaches: a failed design becomes a lesson for the next one.
 
-BENEFITS AND GOALS
-A child finishes a 15-minute session able to say: in space everything runs out, everything is
-connected, and scientists warn about solar storms using real data from the Sun. The game runs
-on a classroom laptop with no install. A built-in question before and after the mission lets a
-teacher see whether the player's answer changed, without collecting any personal data.
-[POR COMPLETAR: report results only if collected, with sample size]
+BENEFITS AND IMPACT
+Kids who rarely get to plan a full mission experience the trade-offs between budget, mass, power, life support, communications and timing, and see how each choice shapes success. It runs on any laptop or classroom computer with no install, no account and no data collection.
 
-TOOLS
-TypeScript, Vite, Phaser 3 for the map, plain HTML and CSS for menus and HUD, the Web Audio
-API, Vitest for tests, GitHub Pages for hosting. No backend, no accounts, no API keys.
-[POR COMPLETAR: adjust to what was actually used]
+WHAT MAKES IT CREATIVE
+The mission design is not a menu before the game: it carries through the whole mission and is judged at the end against what really happened. The player walks the Moon and Mars like an explorer instead of filling in a spreadsheet, a real NASA space weather record decides the key moment, and a presentation mode (key X) plays a full mission by itself while a defeat demo (key Z) shows what happens when life support is ignored.
+
+FACTORS WE CONSIDERED
+Accessibility (full keyboard play, reduced-motion option, colour plus text for every status), two languages (English and Spanish), honesty about data (every number is labeled as NASA data, simplification, game balance or fiction), replay value (an optional random map), and no images or voices of minors.
 
 WHAT COMES NEXT
-Mars (dust storms, maintenance, logistics, communication delay) and a secret Earth epilogue are
-designed and documented in the repository. They are not part of this build.
+New missions to other worlds, more real NASA data inside the game, and more languages so more kids can play it.
+
+TOOLS
+TypeScript, Vite, HTML5 Canvas pixel art drawn by code, plain HTML and CSS for the interface, the Web Audio API for synthesized music, Vitest (229 automated tests) and Vercel for hosting. No backend, no accounts, no API keys.
 ```
 
 ### Use of Super Intelligence (SI)
 
-La guía de 2026 usa este nombre para las herramientas de IA. Texto de partida; **C lo completa con lo que realmente se usó**, tomándolo de [IA-Y-CREDITOS.md](IA-Y-CREDITOS.md).
+Texto de partida tomado de [IA-Y-CREDITOS.md](IA-Y-CREDITOS.md). **Revisadlo como equipo antes de enviar.** Los jueces no ven este campo, pero sí las marcas de IA dentro del proyecto.
 
 ```text
-Yes. The game concept, story, levels and mechanics were defined by the team.
-AI tools were used to speed up execution:
-- Claude Code (Anthropic, model claude-fable-5-2): drafting the planning and design documents
-  from the team's own brief, and a throwaway script to check game-balance numbers.
-- Cursor with Grok 4.7 assisted with the first UI, pixel art and Web Audio synthesis.
-- OpenAI Codex (GPT-6) assisted with the pixel-art redraw, UI, cinematic playback,
-  Web Audio scores and effects, and integration and browser checks.
-PNG metadata, source comments and in-game credits record provenance. The local presentation
-omits visual labels. The submitted images and demo video must carry visible watermarks where required.
-Generated content avoids NASA logos, flags and mission identifiers.
-[POR COMPLETAR: team review and public link to docs/IA-Y-CREDITOS.md]
+Yes. The game concept, story, levels and mechanics were defined by the team. SI tools were used
+to speed up execution, never to come up with the solution:
+- Claude Code (Anthropic): planning documents from the team's brief, mission design phase,
+  map exploration, interface, tests, reviews and deployment.
+- OpenAI Codex (GPT-6) and ChatGPT: pixel art drawn with code, cinematics, interface, Web Audio
+  music and integration checks.
+- Antigravity (Gemini): simulation core, balance and tests.
+- Cursor (Grok 4.7): first interface, pixel art and audio synthesis.
+All pixel art is drawn by code; source comments, PNG metadata, the in-game credits and the
+repository file docs/IA-Y-CREDITOS.md record where SI was used. Images in the demo carry a
+visible "SI-assisted" mark. Generated content uses no NASA logos, flags or mission identifiers.
 ```
 
 ### NASA Data
 
 ```text
 Space Weather Database Of Notifications, Knowledge, Information (DONKI), NASA CCMC
-https://ccmc.gsfc.nasa.gov/tools/DONKI/  (listed in this challenge's Resources)
+https://ccmc.gsfc.nasa.gov/tools/DONKI/
 
 We use archived Solar Energetic Particle (SEP) records and their linked solar flare records.
-Main record: 2017-09-10T16:25:00-SEP-001 (GOES13: SEM/EPS >100 MeV), linked to flare
-2017-09-10T15:35:00-FLR-001 (class X8.2, active region 12673).
+Main record: 2017-09-10T16:25:00-SEP-001, linked to flare 2017-09-10T15:35:00-FLR-001.
+The record decides the solar storm in the Moon mission: its channel sets how severe the storm
+is, and the decision screen shows the event date, flare class, instrument, the record ID and a
+link to DONKI. The extract is bundled with the game and labeled as archived, not live data.
 
-How it is used: the record decides the storm in the mission. A record in the >100 MeV channel
-becomes a "severe" storm in the game; a >10 MeV-only record becomes a "moderate" one. On the
-storm day the decision screen shows the event date, flare class, instrument, the minutes
-between the flare and the first particles, the record ID and a link to DONKI. The data is a
-small curated extract bundled with the game and is labeled as archived, not live.
-[POR COMPLETAR: list the other record IDs included in the final extract]
+NASA pages cited in the in-game science cards ("In real life"):
+- ECLSS, ISS life support: https://www.nasa.gov/reference/environmental-control-and-life-support-systems-eclss/
+- ISS water recovery milestone: https://www.nasa.gov/missions/station/iss-research/nasa-achieves-water-recovery-milestone-on-international-space-station/
+- Mars24, Mars solar day: https://www.giss.nasa.gov/tools/mars24/help/notes.html
+- InSight waits out a dust storm: https://www.jpl.nasa.gov/news/nasas-insight-waits-out-dust-storm/
+- Solar storm doubles radiation on Mars: https://www.jpl.nasa.gov/news/large-solar-storm-sparks-global-aurora-and-doubles-radiation-levels-on-the-martian-surface/
 ```
 
 ### Space Agency Partner Data and Other References
 
 ```text
-NASA references used for teaching content (not live data):
-- Environmental Control and Life Support Systems (ECLSS), NASA
-  https://www.nasa.gov/reference/environmental-control-and-life-support-systems-eclss/
-- [POR COMPLETAR: other NASA pages actually cited in science cards]
-
-Space Agency Partner resources:
-- [POR COMPLETAR: CSA "Food production on the moon and in remote areas", only if used]
-
-Software and tools:
-- Phaser 3.90.0 (MIT), Vite (MIT), TypeScript (Apache-2.0), Vitest (MIT)
-- [POR COMPLETAR: fonts with license]
-- [POR COMPLETAR: any third-party art or audio with author and license]
-
-AI tools: see the "Use of SI" field.
+Software and tools: TypeScript (Apache-2.0), Vite (MIT), Vitest (MIT), Phaser 3 (MIT, listed
+dependency), Vercel hosting.
+Font: Pixelify Sans (SIL Open Font License), Google Fonts.
+Art and audio: original, drawn and synthesized by code in the repository.
+Source code: https://github.com/Gelomiterizzio/Earth-s-Angel
+Full credits and SI log: docs/IA-Y-CREDITOS.md in the repository.
+Space Agency Partner data: not used.
 ```
 
 ## 3. Matriz del reto
