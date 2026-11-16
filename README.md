@@ -4,7 +4,7 @@
 
 **▶ Play now: [earths-angel.vercel.app](https://earths-angel.vercel.app)** — free, no install, no account, English and Spanish.
 
-On a phone or tablet, choose **Mobile/Tablet** at the top left of the title screen: touch controls, landscape and full screen. [How it works](docs/componentes/plataforma-movil.md).
+On a phone or tablet, choose **Mobile/Tablet** at the top right of the title screen: touch controls, landscape and full screen. [How it works](docs/componentes/plataforma-movil.md).
 
 Earth's Angel is the entry of team **Los Bersercker** (Santa Cruz de la Sierra, Bolivia) for the **2026 NASA International Space Apps Challenge**, challenge **Space Mission Design Game**. It won **3rd place** at the Santa Cruz de la Sierra local event and goes on to global judging.
 

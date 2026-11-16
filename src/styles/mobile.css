@@ -3,56 +3,112 @@
    PC mode never loads a rule from here that changes its layout: every mobile rule is scoped to
    html[data-platform="mobile"]. */
 
-/* ---- Title corner: event badge + platform selector ---- */
-.title-corner {
+/* ---- PC / Mobile-Tablet selector (title: top right; Options: inline) ---- */
+.title-platform {
   position: absolute;
-  inset: calc(13 * var(--px)) auto auto calc(13 * var(--px));
+  inset: calc(13 * var(--px)) calc(13 * var(--px) + env(safe-area-inset-right, 0px)) auto auto;
   z-index: 2;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: stretch;
-  gap: calc(8 * var(--px));
-  max-width: calc(100% - 26 * var(--px));
 }
-.title-corner > .space-apps-entry { position: static; }
-
 .platform-switch {
-  display: inline-flex;
-  align-items: stretch;
-  padding: calc(3 * var(--px));
-  gap: calc(3 * var(--px));
-  border: 1px solid #53638b;
-  border-radius: .55em;
-  background: #10192be8;
+  display: inline-grid;
+  gap: .35em;
+  justify-items: stretch;
+  padding: .5em .55em .55em;
+  border: 1px solid color-mix(in srgb, var(--focus) 30%, #53638b);
+  border-radius: .8em;
+  background: linear-gradient(180deg, #16223ae8, #0d1528f0);
+  box-shadow: 0 .35em 1.2em #00000059, inset 0 1px 0 #ffffff12;
   pointer-events: auto;
-  font-size: clamp(10px, calc(13 * var(--px)), 16px);
+  font-size: clamp(11px, calc(13 * var(--px)), 16px);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
 }
+.platform-caption {
+  padding-inline: .25em;
+  font-size: .72em;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #8fa6c9;
+}
+.platform-track {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: .2em;
+  border-radius: .6em;
+  background: #070c1acc;
+  border: 1px solid #ffffff10;
+}
+/* Highlight under the selected option. */
+.platform-thumb {
+  position: absolute;
+  top: .2em;
+  bottom: .2em;
+  left: .2em;
+  width: calc(50% - .2em);
+  border-radius: .45em;
+  background: linear-gradient(180deg, #ffe08a, var(--accent));
+  box-shadow: 0 0 0 1px #ffffff40 inset, 0 .2em .8em color-mix(in srgb, var(--accent) 45%, transparent);
+  transition: transform .22s cubic-bezier(.3, .7, .2, 1);
+  animation: platform-thumb-in .22s ease-out;
+}
+.platform-switch[data-selected="mobile"] .platform-thumb { transform: translateX(100%); }
+@keyframes platform-thumb-in { from { opacity: .4; } }
 .platform-option {
+  position: relative;
+  z-index: 1;
   display: inline-flex;
   align-items: center;
-  gap: .4em;
+  justify-content: center;
+  gap: .45em;
   min-height: 34px;
-  padding: .3em .75em;
-  border: 1px solid transparent;
-  border-radius: .4em;
+  padding: .4em .9em;
+  border: 0;
+  border-radius: .45em;
   background: transparent;
-  color: #a8bfda;
+  color: #b9c8e3;
+  font: inherit;
   font-weight: 700;
+  white-space: nowrap;
   cursor: pointer;
-  transition: background .15s, color .15s, border-color .15s, transform .1s;
+  transition: color .18s;
   touch-action: manipulation;
 }
-.platform-option:hover { color: var(--text); border-color: #53638b; }
-.platform-option:active { transform: scale(.96); }
-.platform-option[aria-checked="true"] {
-  color: var(--bg);
-  background: var(--accent);
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 30%, transparent);
+.platform-option:hover { color: #fff; }
+.platform-option[aria-checked="true"] { color: #1a1300; }
+.platform-option:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.platform-option:active { transform: scale(.97); }
+.platform-icon {
+  width: 1.25em;
+  height: 1.25em;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
-.platform-option:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
-.platform-icon { font-size: 1.1em; line-height: 1; }
-.platform-switch-inline { font-size: inherit; }
+@media (prefers-reduced-motion: reduce) {
+  .platform-thumb { transition: none; animation: none; }
+}
+/* Short landscape phones: compact, so it never reaches the title menu. */
+@media (max-height: 520px) {
+  .title-platform { padding: .25em; }
+  .title-platform .platform-caption { display: none; }
+  .title-platform .platform-option { padding-block: .2em; }
+}
+/* Inside Options: no card around it, just the track. */
+.platform-switch-inline {
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  font-size: inherit;
+}
+.platform-switch-inline .platform-caption { display: none; }
 
 /* ---- Short notices (mode switched, full-screen tip) ---- */
 .platform-tip {

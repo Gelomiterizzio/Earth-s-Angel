@@ -46,11 +46,10 @@ function mountTitle(root: HTMLElement, ctx: AppContext): () => void {
     const focusId = document.activeElement instanceof HTMLElement ? document.activeElement.dataset.action : undefined;
     screen.classList.toggle('title-still', ctx.options.get().reducedMotion);
     body.replaceChildren();
-    screen.querySelector('.title-corner')?.remove();
-    // The event badge and, beside it, the PC / Mobile-Tablet selector.
-    const corner = el('div', 'title-corner');
-    corner.append(spaceAppsEntry(ctx), platformSwitch(ctx));
-    screen.append(corner);
+    screen.querySelector('.space-apps-entry')?.remove();
+    screen.querySelector('.title-platform')?.remove();
+    // Event badge at the top left; PC / Mobile-Tablet selector at the top right.
+    screen.append(spaceAppsEntry(ctx), platformSwitch(ctx, 'title-platform'));
     const brand = el('div', 'title-brand');
     const logo = el('img', 'logo');
     logo.alt = '';

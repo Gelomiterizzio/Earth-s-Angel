@@ -9,7 +9,7 @@ Earth's Angel es un solo juego con dos formas de jugar:
 - **PC:** teclado y ratón. Es el modo por defecto y no cambia nada de la experiencia original.
 - **Móvil/Tablet:** controles táctiles, pantalla horizontal y pantalla completa cuando el navegador lo permite.
 
-El selector está en la esquina superior izquierda del título, junto a la insignia del Space Apps, y también en **Opciones → Pantalla e idioma**. Se puede cambiar en cualquier momento, también a mitad de partida, sin recargar ni perder progreso.
+El selector está en la esquina superior derecha del título («Jugar en: PC | Móvil/Tablet»), y también en **Opciones → Pantalla e idioma**. Se puede cambiar en cualquier momento, también a mitad de partida, sin recargar ni perder progreso.
 
 Cada sesión nueva empieza en PC. Dentro de la misma pestaña, el modo elegido se conserva al recargar (`sessionStorage`), para que un móvil que recarga no vuelva al teclado.
 
