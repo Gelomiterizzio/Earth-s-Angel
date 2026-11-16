@@ -639,5 +639,15 @@
   "ui.hud.crewActive": "{n} / {total} active",
   "ui.hud.apShort": "AP",
   "ui.hud.costMaterials": "Needs {n} materials (you have {have})",
-  "ui.hud.costAp": "Needs {n} action points (you have {have})"
+  "ui.hud.costAp": "Needs {n} action points (you have {have})",
+  "ui.options.groupSound": "Sound",
+  "ui.options.groupDisplay": "Display and language",
+  "ui.options.groupGame": "Gameplay",
+  "ui.pause.subtitle": "The mission waits for you. Nothing moves while you are here.",
+  "ui.cards.emptyHint": "Explore the map, build and finish days to unlock cards with real NASA facts.",
+  "ui.report.stat.short": "Short",
+  "ui.report.stat.exposure": "Exposure",
+  "ui.report.buildings": "Under construction",
+  "ui.report.crew": "Crew",
+  "ui.report.goals": "Progress"
 }

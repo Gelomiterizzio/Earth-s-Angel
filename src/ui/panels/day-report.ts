@@ -9,23 +9,24 @@ export function mountDayReport(root: HTMLElement, ctx: AppContext): () => void {
   const state = ctx.store.getState();
   const report = state?.mission.lastReport ?? null;
   const veil = el('div', 'veil');
-  const dialog = el('div', 'dialog');
+  const dialog = el('div', 'dialog day-report');
   dialog.setAttribute('role', 'dialog');
   dialog.setAttribute('aria-modal', 'true');
   const title = el('h2');
   title.id = 'day-report-title';
   title.tabIndex = -1;
   dialog.setAttribute('aria-labelledby', title.id);
-  const events = el('p');
-  const causes = el('div');
-  const blocks = el('div', 'stack');
-  const goals = el('p');
+  const events = el('p', 'report-events');
+  const causes = el('section', 'report-card report-why');
+  const blocks = el('div', 'report-grid');
+  const goals = el('p', 'report-goals');
+  const chart = el('div', 'report-card report-chart-card');
   const more = el('button', 'btn');
   more.type = 'button';
   more.hidden = true;
   const go = el('button', 'btn btn-primary');
   go.type = 'button';
-  dialog.append(title, events, causes, blocks, goals, more, go);
+  dialog.append(title, events, causes, more, chart, blocks, goals, go);
   veil.append(dialog);
   root.append(veil);
 
@@ -34,12 +35,18 @@ export function mountDayReport(root: HTMLElement, ctx: AppContext): () => void {
     const mission = ctx.store.getState()?.mission;
     const current = mission?.lastReport ?? report;
     title.textContent = ctx.t(mission?.level === 'marte' ? 'ui.report.solTitle' : 'ui.report.title', { day: current?.day ?? '—' });
-    events.textContent = current && current.activeEvents.length > 0
-      ? current.activeEvents.map((item) => ctx.t(`content.event.${item.type}.name`)).join(' · ')
-      : ctx.t('ui.report.noEvents');
+    events.replaceChildren();
+    const active = current?.activeEvents ?? [];
+    events.dataset.quiet = active.length > 0 ? 'false' : 'true';
+    if (active.length > 0) {
+      for (const item of active) events.append(el('span', 'report-event', ctx.t(`content.event.${item.type}.name`)));
+    } else {
+      events.append(el('span', 'report-event', ctx.t('ui.report.noEvents')));
+    }
     paintCauses(causes, more, current, expanded, ctx);
     blocks.replaceChildren();
-    if (current) blocks.append(balanceChart(ctx, current), energyBlock(ctx, current), lifeBlock(ctx, current), shieldBlock(ctx, current));
+    if (current) blocks.append(energyBlock(ctx, current), lifeBlock(ctx, current), shieldBlock(ctx, current));
+    chart.replaceChildren(...(current ? [balanceChart(ctx, current)] : []));
     goals.textContent = goalLine(ctx, current);
     go.textContent = ctx.t('ui.report.continue');
     more.textContent = ctx.t('ui.report.more');
@@ -86,7 +93,7 @@ function paintCauses(
   expanded: boolean,
   ctx: AppContext,
 ): void {
-  host.replaceChildren(el('h3', undefined, ctx.t('ui.report.causes')));
+  host.replaceChildren(heading('💡', ctx.t('ui.report.causes')));
   const keys = report?.causeEffectKeys ?? [];
   const shown = expanded ? keys : keys.slice(0, 5);
   const list = el('ul', 'report-causes');
@@ -152,41 +159,84 @@ function balanceChart(ctx: AppContext, report: DayReport): HTMLElement {
   return block;
 }
 
+/** A card title with an icon, matching the base panel. */
+function heading(icon: string, text: string): HTMLElement {
+  const h = el('h3', 'report-card-title', text);
+  h.dataset.icon = icon;
+  return h;
+}
+
+/** The label of a "Label {n}" string without its number. */
+function labelOf(ctx: AppContext, key: string): string {
+  return ctx.t(key, { n: '' }).replace(/[:\s]+$/, '').trim();
+}
+
+/** A small figure tile: big number, short label under it. */
+function stat(value: number | string, label: string, tone?: 'ok' | 'warn' | 'crit' | 'dim'): HTMLElement {
+  const tile = el('div', 'report-stat');
+  if (tone) tile.dataset.tone = tone;
+  tile.append(el('strong', 'report-stat-value', String(value)), el('span', 'report-stat-label', label));
+  return tile;
+}
+
 function energyBlock(ctx: AppContext, report: DayReport): HTMLElement {
-  const block = el('section');
-  block.append(
-    el('h3', undefined, ctx.t('ui.report.energy')),
-    el('p', undefined, ctx.t('ui.report.generated', { n: report.energy.generated })),
-    el('p', undefined, ctx.t('ui.report.used', { n: report.energy.used })),
-    el('p', undefined, ctx.t('ui.report.stored', { n: report.energy.end })),
-    el('p', undefined, ctx.t('ui.report.wasted', { n: report.energy.wasted })),
-  );
+  const block = el('section', 'report-card');
+  block.append(heading('⚡', ctx.t('ui.report.energy')));
+  const tiles = el('div', 'report-stats');
   const mission = ctx.store.getState()?.mission;
+  tiles.append(
+    stat(report.energy.generated, labelOf(ctx, 'ui.report.generated'), report.energy.generated > 0 ? 'ok' : 'dim'),
+    stat(report.energy.used, labelOf(ctx, 'ui.report.used')),
+    stat(report.energy.end, labelOf(ctx, 'ui.report.stored'), report.energy.end > 0 ? 'ok' : 'warn'),
+    stat(report.energy.wasted, labelOf(ctx, 'ui.report.wasted'), report.energy.wasted > 0 ? 'warn' : 'dim'),
+  );
+  if (mission) tiles.append(stat(mission.resources.materiales, labelOf(ctx, 'ui.hud.materials')));
+  block.append(tiles);
   if (mission) {
-    block.append(el('p', undefined, ctx.t('ui.hud.materials', { n: mission.resources.materiales })));
     const constructions = mission.buildings.filter(
       (b) => b.type !== 'nave' && (b.placedDay === report.day || b.operationalFromDay > report.day),
     );
-    for (const b of constructions) {
-      const name = ctx.t(ctx.data.buildings[b.type]?.nameKey ?? b.type);
-      const ready = ctx.t('content.map.readyDay', { day: b.operationalFromDay });
-      block.append(el('p', undefined, `${name} · ${ready}`));
+    if (constructions.length > 0) {
+      block.append(el('p', 'report-sub', ctx.t('ui.report.buildings')));
+      const chips = el('div', 'report-chips');
+      for (const b of constructions) {
+        const name = ctx.t(ctx.data.buildings[b.type]?.nameKey ?? b.type);
+        const ready = ctx.t('content.map.readyDay', { day: b.operationalFromDay });
+        chips.append(el('span', 'report-chip', `${name} · ${ready}`));
+      }
+      block.append(chips);
     }
   }
   return block;
 }
 
+const LIFE_ICON = { oxigeno: '💨', agua: '💧', alimentos: '🥕' } as const;
+
 function lifeBlock(ctx: AppContext, report: DayReport): HTMLElement {
-  const block = el('section');
-  block.append(el('h3', undefined, ctx.t('ui.report.life')));
+  const block = el('section', 'report-card');
+  block.append(heading('🫁', ctx.t('ui.report.life')));
+  const table = el('div', 'report-life');
   for (const id of ['oxigeno', 'agua', 'alimentos'] as const) {
-    block.append(el('p', undefined, ctx.t('ui.report.line', {
+    const short = report.shortages[id];
+    const row = el('div', 'report-life-row');
+    row.dataset.short = short > 0 ? 'true' : 'false';
+    row.setAttribute('aria-label', ctx.t('ui.report.line', {
       name: ctx.t(`ui.resource.${id}`),
       made: report.produced[id],
       used: report.crewConsumed[id],
-      short: report.shortages[id],
-    })));
+      short,
+    }));
+    const name = el('span', 'report-life-name', ctx.t(`ui.resource.${id}`));
+    name.dataset.icon = LIFE_ICON[id];
+    row.append(
+      name,
+      stat(report.produced[id], ctx.t('ui.report.chart.made'), report.produced[id] > 0 ? 'ok' : 'dim'),
+      stat(report.crewConsumed[id], ctx.t('ui.report.chart.used')),
+      stat(short, ctx.t('ui.report.stat.short'), short > 0 ? 'crit' : 'dim'),
+    );
+    table.append(row);
   }
+  block.append(table);
   return block;
 }
 
@@ -197,22 +247,30 @@ export function suitExposureReduction(state: GameState, report: DayReport, data:
 }
 
 function shieldBlock(ctx: AppContext, report: DayReport): HTMLElement {
-  const block = el('section');
-  block.append(
-    el('h3', undefined, ctx.t('ui.report.shield')),
-    el('p', undefined, ctx.t(report.shelter.active ? 'ui.report.shelterOn' : 'ui.report.shelterOff')),
-  );
+  const block = el('section', 'report-card');
+  block.append(heading('🛡', ctx.t('ui.report.shield')));
+  const shelter = el('p', 'report-chip report-shelter', ctx.t(report.shelter.active ? 'ui.report.shelterOn' : 'ui.report.shelterOff'));
+  shelter.dataset.on = report.shelter.active ? 'true' : 'false';
+  block.append(shelter);
   const state = ctx.store.getState();
   const reduced = state ? suitExposureReduction(state, report, ctx.data) : 0;
-  if (reduced > 0) block.append(el('p', undefined, ctx.t('ui.onboard.suits', { n: reduced })));
+  if (reduced > 0) block.append(el('p', 'report-sub', ctx.t('ui.onboard.suits', { n: reduced })));
+  const crew = el('div', 'report-crew');
   for (const member of report.crew) {
     const known = state?.mission.crew.find((person) => person.id === member.id);
-    block.append(el('p', undefined, ctx.t('ui.report.crewLine', {
-      name: ctx.t(known?.nameKey ?? `content.crew.${member.id}`),
-      exposure: member.exposure,
-      delta: member.exposureDelta,
-    })));
+    const name = ctx.t(known?.nameKey ?? `content.crew.${member.id}`);
+    const row = el('div', 'report-crew-row');
+    row.setAttribute('aria-label', ctx.t('ui.report.crewLine', { name, exposure: member.exposure, delta: member.exposureDelta }));
+    const delta = el('span', 'report-delta', `${member.exposureDelta > 0 ? '+' : ''}${member.exposureDelta}`);
+    delta.dataset.tone = member.exposureDelta > 0 ? 'warn' : 'ok';
+    row.append(
+      el('span', 'report-crew-name', name),
+      el('span', 'report-crew-exposure', `${ctx.t('ui.report.stat.exposure')} ${member.exposure}`),
+      delta,
+    );
+    crew.append(row);
   }
+  block.append(crew);
   return block;
 }
 
@@ -220,7 +278,7 @@ function goalLine(ctx: AppContext, report: DayReport | null): string {
   if (!report) return ctx.t('ui.report.empty');
   const fresh = report.objectives.filter((goal) => newlyMet(goal, report));
   const names = fresh.map((goal) => ctx.t(`ui.objective.${goal.id}`)).join(', ');
-  return ctx.t('ui.report.streak', { n: report.streak, goals: names || ctx.t('ui.report.noNewGoals') });
+  return `🏁 ${ctx.t('ui.report.streak', { n: report.streak, goals: names || ctx.t('ui.report.noNewGoals') })}`;
 }
 
 function newlyMet(goal: ObjectiveStatus, report: DayReport): boolean {

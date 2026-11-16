@@ -84,7 +84,13 @@ export function openCards(root: HTMLElement, ctx: AppContext, practiceId?: strin
     close.textContent = ctx.t('ui.cards.close');
     list.replaceChildren();
     if (cards.length === 0) {
-      list.append(el('p', undefined, ctx.t('ui.cards.empty')));
+      const empty = el('div', 'cards-empty');
+      empty.append(
+        el('span', 'cards-empty-icon', '🔭'),
+        el('strong', undefined, ctx.t('ui.cards.empty')),
+        el('p', undefined, ctx.t('ui.cards.emptyHint')),
+      );
+      list.append(empty);
       return;
     }
     for (const card of cards) list.append(cardView(ctx, card, card.id === practiceId));

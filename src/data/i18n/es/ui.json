@@ -639,5 +639,15 @@
   "ui.hud.crewActive": "{n} / {total} activos",
   "ui.hud.apShort": "PA",
   "ui.hud.costMaterials": "Necesita {n} materiales (tienes {have})",
-  "ui.hud.costAp": "Necesita {n} puntos de acción (tienes {have})"
+  "ui.hud.costAp": "Necesita {n} puntos de acción (tienes {have})",
+  "ui.options.groupSound": "Sonido",
+  "ui.options.groupDisplay": "Pantalla e idioma",
+  "ui.options.groupGame": "Juego",
+  "ui.pause.subtitle": "La misión te espera. Nada avanza mientras estás aquí.",
+  "ui.cards.emptyHint": "Explora el mapa, construye y termina días para desbloquear tarjetas con datos reales de la NASA.",
+  "ui.report.stat.short": "Faltó",
+  "ui.report.stat.exposure": "Exposición",
+  "ui.report.buildings": "En construcción",
+  "ui.report.crew": "Tripulación",
+  "ui.report.goals": "Progreso"
 }

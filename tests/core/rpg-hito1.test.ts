@@ -756,7 +756,7 @@ describe('Hito 1 · Una misión lunar jugable (T-RPG-A1)', () => {
       const reportCleanup = mountDayReport(energyRun.uiEl as unknown as HTMLElement, energyRun.ctx);
       energyDay1ReportText = energyRun.uiEl.textContent;
       energyDay1Materials = energyRun.store.getState()!.mission.resources.materiales;
-      expect(energyDay1ReportText).toContain('Materials 34');
+      expect(energyDay1ReportText).toMatch(/34\s*Materials/);
       expect(energyDay1ReportText).toContain('Solar panel · Ready on day 2');
 
       // Acknowledge Day 1 report and close Day 2 to verify operationalFromDay = 2 power generation
@@ -801,7 +801,7 @@ describe('Hito 1 · Una misión lunar jugable (T-RPG-A1)', () => {
         materialsRun.ctx,
       );
       const materialsDay1ReportText = materialsRun.uiEl.textContent;
-      expect(materialsDay1ReportText).toContain('Materials 55');
+      expect(materialsDay1ReportText).toMatch(/55\s*Materials/);
       expect(materialsDay1ReportText).not.toContain('Solar panel · Ready on day 2');
 
       // Acknowledge Day 1 report and close Day 2: no solar panel built, so generated is 0

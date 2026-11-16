@@ -108,7 +108,21 @@ function mountOptions(root: HTMLElement, ctx: AppContext): () => void {
   langButtons.append(en, es);
   langRow.append(langName, langButtons);
 
-  list.append(master, music, sfx, muted, subs, motion, tutorial, learning, randomMap, langRow);
+  // Grouped in cards, like the base panel: sound, display and language, gameplay, controls.
+  const group = (icon: string, titleKey: string): { box: HTMLElement; title: HTMLElement } => {
+    const box = el('section', 'opt-group');
+    const title = el('h2', 'opt-group-title', ctx.t(titleKey));
+    title.dataset.icon = icon;
+    box.append(title);
+    list.append(box);
+    return { box, title };
+  };
+  const soundGroup = group('🔊', 'ui.options.groupSound');
+  soundGroup.box.append(master, music, sfx, muted);
+  const displayGroup = group('🖥', 'ui.options.groupDisplay');
+  displayGroup.box.append(langRow, subs, motion);
+  const gameGroup = group('🚀', 'ui.options.groupGame');
+  gameGroup.box.append(tutorial, learning, randomMap);
 
   let fullscreenRow: HTMLLabelElement | null = null;
   let fullscreenNote = el('p', 'dim', '');
@@ -118,13 +132,23 @@ function mountOptions(root: HTMLElement, ctx: AppContext): () => void {
       checked: ctx.options.get().fullscreen,
       onChange: (checked) => void setFullscreen(ctx, checked, fullscreenNote, fullscreenRow),
     });
-    list.append(fullscreenRow, fullscreenNote);
+    displayGroup.box.append(fullscreenRow, fullscreenNote);
   }
 
-  const controlsTitle = el('h2', undefined, ctx.t('ui.options.controls'));
+  const controlsGroup = group('⌨', 'ui.options.controls');
+  const controlsTitle = controlsGroup.title;
   const controls = el('ul', 'controls-list');
-  for (const key of CONTROL_LABEL_KEYS) controls.append(el('li', undefined, ctx.t(key)));
-  list.append(controlsTitle, controls);
+  const paintControl = (item: HTMLElement, text: string): void => {
+    // "Key — what it does": the key becomes a keycap, the rest its description.
+    const [keys, ...rest] = text.split(' — ');
+    item.replaceChildren(el('kbd', 'control-key', keys), el('span', 'control-what', rest.join(' — ')));
+  };
+  for (const key of CONTROL_LABEL_KEYS) {
+    const item = el('li');
+    paintControl(item, ctx.t(key));
+    controls.append(item);
+  }
+  controlsGroup.box.append(controls);
 
   const reset = button({
     label: ctx.t('ui.options.reset'),
@@ -183,10 +207,13 @@ function mountOptions(root: HTMLElement, ctx: AppContext): () => void {
     labelOf(randomMap, ctx.t('ui.options.randomMap'));
     if (fullscreenRow) labelOf(fullscreenRow, ctx.t('ui.options.fullscreen'));
     controlsTitle.textContent = ctx.t('ui.options.controls');
+    soundGroup.title.textContent = ctx.t('ui.options.groupSound');
+    displayGroup.title.textContent = ctx.t('ui.options.groupDisplay');
+    gameGroup.title.textContent = ctx.t('ui.options.groupGame');
     const items = controls.querySelectorAll('li');
     CONTROL_LABEL_KEYS.forEach((key, index) => {
       const item = items[index];
-      if (item) item.textContent = ctx.t(key);
+      if (item) paintControl(item, ctx.t(key));
     });
     reset.textContent = ctx.t('ui.options.reset');
     back.textContent = ctx.t('ui.options.back');

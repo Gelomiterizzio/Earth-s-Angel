@@ -47,12 +47,26 @@ function mountPause(root: HTMLElement, ctx: AppContext): () => void {
       label: ctx.t('ui.pause.exit'),
       onClick: press(ctx, () => confirm(ctx, screen, 'ui.pause.confirmExit', () => ctx.flow.go('titulo'))),
     });
-    const actions = el('div', 'menu-actions');
+    resume.dataset.icon = '▶';
+    options.dataset.icon = '⚙';
+    retry.dataset.icon = '↻';
+    exit.dataset.icon = '⏏';
+    exit.classList.add('pause-exit');
+    const actions = el('div', 'menu-actions pause-actions');
     actions.append(resume, options);
     const state: CampaignState | null = ctx.store.getState();
     if (state?.campaign.level !== 'tierra') actions.append(retry);
     actions.append(exit);
-    screen.append(el('h1', 'screen-title', ctx.t('ui.pause.heading')), actions);
+    const card = el('div', 'pause-card');
+    const head = el('div', 'pause-head');
+    head.append(el('h1', 'screen-title', ctx.t('ui.pause.heading')));
+    const day = state?.mission.day;
+    if (day !== undefined) {
+      const chip = el('span', 'pause-day', ctx.t(state?.mission.level === 'marte' ? 'ui.report.solTitle' : 'ui.report.title', { day }));
+      head.append(chip);
+    }
+    card.append(head, el('p', 'pause-subtitle', ctx.t('ui.pause.subtitle')), actions);
+    screen.append(card);
     resume.focus();
   };
   paint();
