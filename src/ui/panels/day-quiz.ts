@@ -5,6 +5,7 @@ import type { AppContext } from '../app-bridge';
 import type { DayReport, GameState } from '../core-bridge';
 import { shouldAskPost } from './learning-check';
 import { hasScienceQuestion, openCards, unlockCard } from './science-card';
+import { openTrivia } from './space-trivia';
 
 /** Card ids with a quick question, in priority order when several apply on the same day. */
 export const DAY_QUIZ_ORDER = ['solarStorm', 'power', 'airFromWater', 'waterLoop'] as const;
@@ -60,7 +61,12 @@ export function mountDayQuiz(root: HTMLElement, ctx: AppContext): () => void {
     offered.set(key, already);
     // The storm question would answer the end-of-mission learning check in advance.
     const id = quizForReport(report, state, already, { skipStorm: shouldAskPost(ctx) });
-    if (!id) return;
+    if (!id) {
+      // No question about the day itself: a rotating space question instead.
+      closeQuiz?.();
+      closeQuiz = openTrivia(root, ctx);
+      return;
+    }
     already.add(id);
     unlockCard(state.campaign.seed, id);
     closeQuiz?.();

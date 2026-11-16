@@ -1498,3 +1498,8 @@
   font-weight: 800;
   font-variant-numeric: tabular-nums;
 }
+
+/* Space question: source link readable on the dark panel. */
+.trivia a { color: var(--focus); }
+.trivia .science-question h3 { font-family: var(--font-body); font-weight: 800; line-height: 1.3; }
+
