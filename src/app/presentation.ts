@@ -4,6 +4,8 @@
 //   collect) through the Moon, the solar storm and Mars, with a caption per day.
 // - Z: a defeat demo. The crew ignores life support until the air runs out and the
 //   game-over sequence shows the world exploding.
+// - V: the lunar secret demo. The astronaut walks to the top-right corner of the Moon and
+//   types the hidden combo (W S D A D A) so the secret cinematic plays.
 // Pressing the same key again stops. The player's save and options are restored afterwards,
 // even if the page reloads in the middle, so a demo never overwrites a real campaign.
 import { createCampaign, DEFAULT_DESIGN, launchWithDesign, startDay, type MissionDesign } from '../core';
@@ -27,7 +29,7 @@ import '../styles/presentation.css';
 const BACKUP_KEY = 'ea.presentation.backup';
 
 type Backup = { save: string | null; options: string | null };
-type Mode = 'victory' | 'defeat';
+type Mode = 'victory' | 'defeat' | 'secret';
 
 /** Put the player's save and options back, if a presentation left a backup behind. */
 function restoreBackup(): boolean {
@@ -516,6 +518,47 @@ export function mountPresentationMode(ctx: AppContext, getWalk: () => LunarWalkC
     await wait(7000);
   }
 
+  /** The hidden lunar combo, shown on purpose: walk to the top-right corner and type it. */
+  async function runSecret(): Promise<void> {
+    say('start');
+    goToTitle();
+    await wait(1500);
+    if (stopped) return;
+    await startCampaign(PRESENTATION_DESIGN, 'design');
+    if (stopped) return;
+    await hold(2500);
+    if (stopped) return;
+    ctx.flow.completeCinematic('opening');
+    await wait(900);
+    pick('[data-onboard-arrival] button');
+    await wait(1200);
+    if (stopped) return;
+    // A player would explore their way there; the demo lifts the fog so the walk is short.
+    const now = state();
+    ctx.store.replaceState({
+      ...now,
+      mission: {
+        ...now.mission,
+        map: { ...now.mission.map, tiles: now.mission.map.tiles.map((tile) => ({ ...tile, explored: true })) },
+      },
+    });
+    await wait(1200);
+    const corner = { x: now.mission.map.width - 1, y: 0 };
+    await walkTo(corner, false, 'luna');
+    const here = getWalk()?.getSnapshot().position;
+    if (here && (here.x !== corner.x || here.y !== corner.y)) await walkTo(corner, true, 'luna');
+    await wait(900);
+    for (const key of 'wsdada') {
+      if (stopped) return;
+      press(key);
+      await wait(520);
+    }
+    // The cinematic plays at its own pace; the show ends when it closes.
+    await until(() => Boolean(document.querySelector('[data-lunar-secret]')), 3000);
+    await until(() => !document.querySelector('[data-lunar-secret]'), 70_000);
+    await wait(1500);
+  }
+
   async function run(mode: Mode): Promise<void> {
     running = mode;
     stopped = false;
@@ -561,7 +604,7 @@ export function mountPresentationMode(ctx: AppContext, getWalk: () => LunarWalkC
     placeSpeed();
     speedTimer = setInterval(placeSpeed, 300);
 
-    await (mode === 'defeat' ? runDefeat() : runVictory());
+    await (mode === 'defeat' ? runDefeat() : mode === 'secret' ? runSecret() : runVictory());
     if (!stopped) stop();
   }
 
@@ -570,7 +613,7 @@ export function mountPresentationMode(ctx: AppContext, getWalk: () => LunarWalkC
     const target = event.target as HTMLElement | null;
     if (target?.closest?.('input, textarea, select') || target?.isContentEditable) return;
     const key = event.key.toLowerCase();
-    const mode: Mode | null = key === 'x' ? 'victory' : key === 'z' ? 'defeat' : null;
+    const mode: Mode | null = key === 'x' ? 'victory' : key === 'z' ? 'defeat' : key === 'v' ? 'secret' : null;
     if (mode && !event.ctrlKey && !event.altKey && !event.metaKey) {
       event.preventDefault();
       event.stopImmediatePropagation();

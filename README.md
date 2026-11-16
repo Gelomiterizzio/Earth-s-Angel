@@ -28,6 +28,7 @@ Costs, masses, resource amounts and thresholds are game balance values, and the 
 
 - **X** on the title screen: presentation mode. A full mission plays by itself (design, Moon, Mars). Turn the mouse wheel to change speed.
 - **Z** on the title screen: defeat demo. See what happens when life support is ignored.
+- **V** on the title screen: lunar secret demo. The astronaut walks to a hidden corner of the Moon and types the secret combo, which unlocks a bonus cinematic.
 - **Options → Random map**: resources move around for replay value.
 
 ## Accessibility and honesty
