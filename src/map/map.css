@@ -440,3 +440,108 @@
   0%, 100% { translate: 0 0; }
   50% { translate: 0 -3px; }
 }
+
+/* ---- Mission journal: cards with icons and colors, like the base panel ---- */
+.walk-journal-veil .walk-journal { gap: calc(100cqw * 10 / 1280); }
+.walk-journal section {
+  gap: calc(100cqw * 6 / 1280);
+  padding: calc(100cqw * 10 / 1280) calc(100cqw * 12 / 1280);
+  border: 1px solid var(--border);
+  border-radius: calc(100cqw * 10 / 1280);
+  background: color-mix(in srgb, var(--bg) 50%, transparent);
+}
+.walk-journal section > h3 { display: flex; align-items: center; gap: .5em; }
+.walk-journal section > h3::before {
+  display: inline-grid;
+  place-items: center;
+  width: 1.7em;
+  height: 1.7em;
+  font-size: .85em;
+  border-radius: calc(100cqw * 6 / 1280);
+  background: color-mix(in srgb, var(--focus) 14%, transparent);
+}
+.walk-journal [data-journal-section="active"] > h3::before { content: "🎯"; }
+.walk-journal [data-journal-section="deadlines"] > h3::before { content: "⏳"; }
+.walk-journal [data-journal-section="progress"] > h3::before { content: "📈"; }
+.walk-journal [data-journal-section="onboard"] > h3::before { content: "🧰"; }
+.walk-journal [data-journal-section="active"] {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+  background: color-mix(in srgb, var(--accent) 8%, var(--bg));
+}
+.walk-journal [data-journal-active-objective] { font-size: 1.15em; color: var(--accent); }
+.walk-journal [data-journal-window],
+.walk-journal [data-journal-earth],
+.walk-journal [data-journal-streak] {
+  display: flex;
+  align-items: center;
+  gap: .55em;
+  padding: .35em .6em;
+  border-radius: calc(100cqw * 8 / 1280);
+  background: var(--panel);
+  border-left: 3px solid var(--focus);
+}
+.walk-journal [data-journal-window]::before { content: "📅"; }
+.walk-journal [data-journal-earth] { border-left-color: var(--ocean); }
+.walk-journal [data-journal-earth]::before { content: "🌍"; }
+.walk-journal [data-journal-streak] { border-left-color: var(--safe); }
+.walk-journal [data-journal-streak]::before { content: "🔥"; }
+.walk-journal .goal-list { list-style: none; padding: 0; gap: .4em; }
+.walk-journal .goal-list li {
+  display: flex;
+  align-items: center;
+  gap: .5em;
+  padding: .4em .6em;
+  border-radius: calc(100cqw * 8 / 1280);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  line-height: 1.25;
+}
+.walk-journal .goal-list li::before {
+  content: "○";
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 1.4em;
+  height: 1.4em;
+  border-radius: 50%;
+  border: 1.5px solid var(--text-dim);
+  color: var(--text-dim);
+  font-size: .8em;
+}
+.walk-journal .goal-list li[data-objective-met="true"] {
+  border-color: color-mix(in srgb, var(--safe) 60%, transparent);
+  background: color-mix(in srgb, var(--safe) 10%, var(--panel));
+}
+.walk-journal .goal-list li[data-objective-met="true"]::before {
+  content: "✓";
+  border-color: var(--safe);
+  background: var(--safe);
+  color: var(--bg);
+  font-weight: 800;
+}
+.walk-journal [data-journal-stats] {
+  padding: .35em .6em;
+  border-radius: 99px;
+  justify-self: start;
+  align-self: flex-start;
+  font-size: .9em;
+  color: var(--focus);
+  background: color-mix(in srgb, var(--focus) 12%, transparent);
+}
+.walk-journal .onboard-cargo { grid-template-columns: repeat(auto-fill, minmax(calc(100cqw * 250 / 1280), 1fr)); gap: .4em; }
+.walk-journal .onboard-cargo li {
+  align-items: start;
+  padding: .45em .6em;
+  border-radius: calc(100cqw * 8 / 1280);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  line-height: 1.3;
+}
+.walk-journal .onboard-cargo li strong { color: var(--accent); }
+.walk-journal-hint {
+  padding: .35em .6em;
+  border-radius: calc(100cqw * 8 / 1280);
+  color: var(--warn);
+  background: color-mix(in srgb, var(--warn) 12%, transparent);
+}
+
